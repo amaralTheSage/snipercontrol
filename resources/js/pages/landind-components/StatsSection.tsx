@@ -26,30 +26,18 @@ const StatsSection: React.FC = () => {
     ];
 
     return (
-        <section className="relative w-full overflow-hidden border-t border-white/5 bg-[#030f0b] py-32">
-            {/* Vertical Grid Lines - Exactly like reference */}
-            <div className="pointer-events-none absolute inset-0 flex justify-center opacity-10">
-                <div className="grid h-full w-full max-w-7xl grid-cols-1 border-r border-primary/30 md:grid-cols-3">
-                    <div className="h-full border-l border-primary/30"></div>
-                    <div className="hidden h-full border-l border-primary/30 md:block"></div>
-                    <div className="hidden h-full border-l border-primary/30 md:block"></div>
-                </div>
-            </div>
-
+        <section className="relative w-full overflow-hidden border-t border-white/5 py-32">
             <div className="relative z-10 mx-auto max-w-7xl px-6">
                 {/* Header Section */}
                 <div className="mb-24 grid grid-cols-1 gap-12 lg:grid-cols-2">
                     <div>
                         <div className="mb-6 flex items-center gap-4">
-                            <span className="rounded border border-primary/20 bg-[#062c23] px-2 py-1 text-[10px] font-bold text-primary">
-                                03
-                            </span>
-                            <div className="h-px w-12 bg-emerald-900"></div>
                             <span className="text-[10px] font-bold tracking-[0.2em] text-slate-400 uppercase">
                                 Impacto Real
                             </span>
+                            <div className="h-px w-12 bg-primary"></div>
                         </div>
-                        <h2 className="text-5xl leading-tight font-light tracking-tight text-white md:text-6xl">
+                        <h2 className="tracking- text-5xl leading-tight font-light md:text-6xl">
                             Resultados{' '}
                             <span className="text-primary">Comprovados</span>
                         </h2>
@@ -68,7 +56,7 @@ const StatsSection: React.FC = () => {
                     {stats.map((stat) => (
                         <div
                             key={stat.id}
-                            className="group relative flex h-[360px] flex-col justify-between overflow-hidden rounded-3xl border border-emerald-900/30 bg-[#051612] p-8 transition-all duration-500 hover:border-primary/50"
+                            className="group relative flex h-[340px] flex-col justify-between overflow-hidden rounded-3xl border border-primary/30 bg-card-dark p-8 transition-all duration-500 hover:border-primary/50"
                         >
                             {/* Hover Glow Effect */}
                             <div className="pointer-events-none absolute top-0 left-0 h-full w-full bg-primary/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
@@ -81,7 +69,7 @@ const StatsSection: React.FC = () => {
                                 </div>
 
                                 {/* Description */}
-                                <h3 className="mb-4 text-xl font-medium text-emerald-400">
+                                <h3 className="mb-4 text-xl font-medium text-primary">
                                     {stat.description}
                                 </h3>
                                 <p className="max-w-[90%] text-xs leading-relaxed text-slate-400 opacity-80">
@@ -90,13 +78,9 @@ const StatsSection: React.FC = () => {
                             </div>
 
                             {/* Footer / Company */}
-                            <div className="relative z-10 mt-auto flex items-center justify-between border-t border-emerald-900/30 pt-6 transition-colors group-hover:border-primary/30">
-                                <span className="text-[10px] font-bold tracking-[0.25em] text-emerald-700 uppercase transition-colors group-hover:text-emerald-400">
+                            <div className="relative z-10 mt-auto flex items-center justify-between border-t border-primary/30 pt-6 transition-colors group-hover:border-primary/30">
+                                <span className="text-[10px] font-bold tracking-[0.25em] text-primary uppercase transition-colors group-hover:text-primary">
                                     {stat.company}
-                                </span>
-                                {/* Subtle arrow like reference */}
-                                <span className="transform text-emerald-900 transition-all duration-300 group-hover:translate-x-1 group-hover:text-emerald-400">
-                                    →
                                 </span>
                             </div>
                         </div>

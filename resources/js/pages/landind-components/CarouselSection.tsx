@@ -50,7 +50,7 @@ export default function CarouselSection() {
         <section className="overflow-hidden">
             {/* Full width container with small margin */}
             <div className="mx-4 md:mx-8 lg:mx-12">
-                <div className="group relative h-[600px] w-full overflow-hidden rounded-[1rem] shadow-2xl md:aspect-video md:h-[700px] md:rounded-[2.5rem]">
+                <div className="group relative h-[600px] w-full overflow-hidden rounded-[1rem] md:aspect-video md:h-[700px] md:rounded-[2.5rem]">
                     {/* Slides */}
                     {SLIDES.map((slide, index) => (
                         <div
@@ -111,7 +111,7 @@ export default function CarouselSection() {
                     {/* Navigation Arrows */}
                     <button
                         onClick={prev}
-                        className="absolute top-0 bottom-0 left-0 z-30 flex w-24 cursor-pointer items-center justify-center opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-300/30"
+                        className="absolute top-0 bottom-0 left-0 z-30 flex w-24 cursor-pointer items-center justify-center rounded-l-4xl opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-300/30"
                     >
                         <ChevronLeft
                             size={48}
@@ -120,7 +120,7 @@ export default function CarouselSection() {
                     </button>
                     <button
                         onClick={next}
-                        className="absolute top-0 right-0 bottom-0 z-30 flex w-24 cursor-pointer items-center justify-center opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-300/30"
+                        className="absolute top-0 right-0 bottom-0 z-30 flex w-24 cursor-pointer items-center justify-center rounded-r-4xl opacity-0 transition-all group-hover:opacity-100 hover:bg-gray-300/30"
                     >
                         <ChevronRight
                             size={48}

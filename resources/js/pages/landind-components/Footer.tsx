@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer className="border-t border-slate-100 bg-white py-24">
+        <footer className="border-t border-slate-100 py-24">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
                 {/* Logo / Brand Name */}
                 <div className="mb-12 flex items-center gap-2 select-none">
