@@ -42,19 +42,10 @@ jobs:
       - name: 'Build front-end'
         env:
           VITE_APP_NAME: SniperControl
-          # VITE_REVERB_APP_KEY: ${{ secrets.REVERB_APP_KEY }}
-          # VITE_REVERB_HOST: ${{ secrets.REVERB_HOST }}
-          # VITE_REVERB_SCHEME: ${{ secrets.REVERB_SCHEME }}
+          VITE_REVERB_APP_KEY: ${{ secrets.REVERB_APP_KEY }}
+          VITE_REVERB_HOST: ${{ secrets.REVERB_HOST }}
+          VITE_REVERB_SCHEME: ${{ secrets.REVERB_SCHEME }}
         run: npm run build
-
-      - name: Debug SSH Connection
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-          ssh -vvv -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no \
-            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "echo 'Connection successful'"
 
       - name: 'run pre deploy script'
         uses: appleboy/ssh-action@v1
@@ -64,7 +55,6 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: 'cd /srv/snipercontrol/ && bash ./.github/scripts/pre-deploy.sh'
-
       - name: 'deploy files in ec2'
         uses: burnett01/rsync-deployments@5.2
         with:
