@@ -48,13 +48,18 @@ jobs:
         run: npm run build
 
       - name: 'run pre deploy script'
-        uses: appleboy/ssh-action@v1
+        uses: easingthemes/ssh-deploy@main
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.SSH_HOST }}
+          REMOTE_USER: ${{ secrets.SSH_USER }}
+          REMOTE_PORT: ${{ secrets.SSH_PORT }}
+          TARGET: '/srv/snipercontrol/'
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: 'cd /srv/snipercontrol/ && bash ./.github/scripts/pre-deploy.sh'
+          SCRIPT_BEFORE: |
+            cd /srv/snipercontrol/
+            bash ./.github/scripts/pre-deploy.sh
+
       - name: 'deploy files in ec2'
         uses: burnett01/rsync-deployments@5.2
         with:
