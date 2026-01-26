@@ -47,18 +47,19 @@ jobs:
           # VITE_REVERB_SCHEME: ${{ secrets.REVERB_SCHEME }}
         run: npm run build
 
-      - name: 'run pre deploy script'
-        uses: easingthemes/ssh-deploy@main
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.SSH_HOST }}
-          REMOTE_USER: ${{ secrets.SSH_USER }}
-          REMOTE_PORT: ${{ secrets.SSH_PORT }}
-          TARGET: '/srv/snipercontrol/'
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
         with:
-          SCRIPT_BEFORE: |
-            cd /srv/snipercontrol/
-            bash ./.github/scripts/pre-deploy.sh
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: 'placeholder'
+
+      - name: Adding Known Hosts
+        run: ssh-keyscan -p ${{ secrets.SSH_PORT }} -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: 'run pre deploy script'
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+          "cd /srv/snipercontrol/ && bash ./.github/scripts/pre-deploy.sh"
 
       - name: 'deploy files in ec2'
         uses: burnett01/rsync-deployments@5.2
@@ -71,13 +72,9 @@ jobs:
           remote_key: ${{ secrets.SSH_KEY }}
 
       - name: 'run post deploy script'
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.SSH_PORT }}
-          script: 'cd /srv/snipercontrol && bash ./.github/scripts/post-deploy.sh'
+        run: |
+          ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+          "cd /srv/snipercontrol && bash ./.github/scripts/post-deploy.sh"
 
       # - name: Iniciar Nightwatch Agent
       #   run: nohup php artisan nightwatch:agent > /dev/null 2>&1 &
