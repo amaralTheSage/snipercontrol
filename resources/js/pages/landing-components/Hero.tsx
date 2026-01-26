@@ -1,4 +1,4 @@
-import { ArrowRight, Battery, Navigation, Wifi } from 'lucide-react';
+import { ArrowDown, ArrowRight, Battery, Navigation, Wifi } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 export default function Hero() {
@@ -23,10 +23,10 @@ export default function Hero() {
                     <div className="absolute top-1/2 left-0 -z-10 h-[500px] w-[500px] -translate-y-1/2 rounded-full bg-teal-200/30 blur-[120px]"></div>
 
                     <div className="mb-6 flex items-center gap-4">
-                        <div className="h-[1px] w-8 bg-slate-300"></div>
                         <span className="text-xs tracking-[0.2em] text-slate-500 uppercase">
                             Hardware <br /> Integrado
                         </span>
+                        <div className="h-[1px] w-8 bg-slate-300"></div>
                     </div>
 
                     <h1 className="animate-in text-5xl leading-[0.95] font-bold tracking-tight text-slate-900 delay-100 duration-700 fade-in slide-in-from-bottom-8 md:text-6xl lg:text-7xl">
@@ -76,12 +76,12 @@ export default function Hero() {
                     {/* Buttons */}
                     <div className="mt-2 flex animate-in flex-wrap items-center gap-4 delay-400 duration-700 fade-in slide-in-from-bottom-8">
                         <button className="group relative flex cursor-pointer items-center gap-2 rounded-full bg-gradient-to-tl from-primary/80 to-primary/10 px-8 py-4 font-bold text-slate-900 shadow-md transition-all hover:to-primary/40 hover:shadow-[0_10px_25px_rgba(52,211,153,0.4)]">
-                            Começar Agora <Navigation size={18} />
+                            Começar Agora <ArrowRight size={18} />
                         </button>
 
-                        <button className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-8 py-4 font-bold text-slate-900 shadow-sm transition-colors hover:bg-slate-50">
-                            Ver Demo <ArrowRight size={18} />
-                        </button>
+                        <a href='#demos' className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-8 py-4 font-bold text-slate-900 shadow-sm transition-colors hover:bg-slate-50">
+                            Demonstração <ArrowDown size={18} />
+                        </a>
                     </div>
 
                     {/* Bottom Left Small Card - Styled EXACTLY like reference */}

@@ -1,14 +1,16 @@
 import { useAppearance } from '@/hooks/use-appearance';
 import type { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import CarouselSection from './landind-components/CarouselSection';
-import CTASection from './landind-components/CTASection';
-import FeaturesSection from './landind-components/FeaturesSection';
-import Footer from './landind-components/Footer';
-import Header from './landind-components/Header';
-import Hero from './landind-components/Hero';
-import StatsSection from './landind-components/StatsSection';
-import TimelineSection from './landind-components/TimelineSection';
+import CarouselSection from './landing-components/CarouselSection';
+import CTASection from './landing-components/CTASection';
+import FeaturesSection from './landing-components/FeaturesSection';
+import Footer from './landing-components/Footer';
+import Header from './landing-components/Header';
+import Hero from './landing-components/Hero';
+import StatsSection from './landing-components/StatsSection';
+import TimelineSection from './landing-components/TimelineSection';
+import Graph from './landing-components/Graph';
+import DemoSection from './landing-components/DemoSection';
 
 export default function Welcome({
     canRegister = true,
@@ -45,9 +47,12 @@ export default function Welcome({
 
                 <TimelineSection />
 
+
                 <CarouselSection />
 
                 <StatsSection />
+
+                <Graph />
 
                 <CTASection />
 

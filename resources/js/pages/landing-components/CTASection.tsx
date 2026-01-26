@@ -1,6 +1,6 @@
 export default function CTASection() {
     return (
-        <section className="border-t border-slate-100 py-32">
+        <section className=" py-32">
             <div className="mx-auto max-w-7xl px-6 md:px-12">
                 <div className="flex flex-col justify-between gap-16 lg:flex-row lg:items-end">
                     {/* Left Side */}
