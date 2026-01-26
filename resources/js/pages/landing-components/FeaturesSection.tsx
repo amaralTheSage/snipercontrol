@@ -2,11 +2,11 @@ import { ArrowRight } from 'lucide-react';
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="h-full overflow-hidden">
-            <div className="mx-auto px-6 md:px-6">
+        <section id="features" className="h-full min-h-screen overflow-hidden">
+            <div className="mx-auto px-4 py-8 md:px-6">
                 {/* White Card Wrapper */}
-                <div className="relative overflow-hidden rounded-[3rem] bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12 lg:px-20 lg:py-16">
-                    <div className="relative z-10 grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
+                <div className="relative overflow-hidden rounded-3xl bg-white p-6 shadow-xl shadow-slate-200/50 md:rounded-[3rem] md:p-12 lg:px-20 lg:py-16">
+                    <div className="relative z-10 grid grid-cols-1 items-center gap-8 md:gap-12 lg:grid-cols-2 lg:gap-16">
                         {/* Left Column - Content */}
                         <div>
                             <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
@@ -89,10 +89,8 @@ export default function FeaturesSection() {
                             </button>
                         </div>
 
-                        {/* Right Column - Visual Card */}
-
                         {/* Right Column - The High-Tech Card */}
-                        <div className="relative h-full">
+                        <div className="relative h-full min-h-[600px]">
                             <div className="group relative h-full overflow-hidden rounded-[2rem] border bg-card-dark p-4 shadow-2xl">
                                 {/* Background Image inside Card (Map) */}
                                 <div className="absolute inset-0">
