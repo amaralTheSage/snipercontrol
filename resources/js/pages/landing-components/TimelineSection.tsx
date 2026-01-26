@@ -25,12 +25,12 @@ export default function TimelineSection() {
                         {/* Left Content (Title) */}
                         <div className="order-1 pl-12 md:pl-0 md:text-right">
                             <span className="mb-3 block text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                Stage 01
+                                Etapa 01
                             </span>
                             <h3 className="text-3xl leading-tight text-slate-900 md:text-4xl">
                                 Captura de <br />
                                 <span className="font-light text-slate-600">
-                                    Hardware
+                                    Dados
                                 </span>
                             </h3>
                         </div>
@@ -43,7 +43,7 @@ export default function TimelineSection() {
                                 consumo e telemetria do motor.
                             </p>
                             <div className="mt-6 text-[10px] font-bold tracking-widest text-primary uppercase">
-                                Monitoramento Bruto
+                                Captura
                             </div>
                         </div>
                     </div>
@@ -59,22 +59,22 @@ export default function TimelineSection() {
                                 Quando o veículo entra em área com conexão Wi-Fi
                                 ou Dados Móveis, o sistema transmite
                                 automaticamente o pacote de dados criptografado
-                                para nossa API.
+                                ao nosso servidor.
                             </p>
                             <div className="mt-6 text-[10px] font-bold tracking-widest text-primary uppercase">
-                                Transmissão Segura
+                                Transmissão
                             </div>
                         </div>
 
                         {/* Right Content (Title) - Swapped for Stage 2 */}
                         <div className="order-1 pl-12 md:order-2 md:pl-0">
                             <span className="mb-3 block text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                Stage 02
+                                Etapa 02
                             </span>
                             <h3 className="text-3xl leading-tight text-slate-900 md:text-4xl">
                                 Conexão & <br />
                                 <span className="font-light text-slate-600">
-                                    Envio API
+                                    Envio
                                 </span>
                             </h3>
                         </div>
@@ -88,7 +88,7 @@ export default function TimelineSection() {
                         {/* Left Content (Title) */}
                         <div className="order-1 pl-12 md:pl-0 md:text-right">
                             <span className="mb-3 block text-[10px] font-bold tracking-widest text-slate-400 uppercase">
-                                Stage 03
+                                Etapa 03
                             </span>
                             <h3 className="text-3xl leading-tight text-slate-900 md:text-4xl">
                                 Visualização <br />
@@ -106,7 +106,7 @@ export default function TimelineSection() {
                                 frota, permitindo decisões rápidas e assertivas.
                             </p>
                             <div className="mt-6 text-[10px] font-bold tracking-widest text-primary uppercase">
-                                Controle Total
+                                Análise
                             </div>
                         </div>
                     </div>

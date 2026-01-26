@@ -5,12 +5,11 @@ import CarouselSection from './landing-components/CarouselSection';
 import CTASection from './landing-components/CTASection';
 import FeaturesSection from './landing-components/FeaturesSection';
 import Footer from './landing-components/Footer';
+import Graph from './landing-components/Graph';
 import Header from './landing-components/Header';
 import Hero from './landing-components/Hero';
 import StatsSection from './landing-components/StatsSection';
 import TimelineSection from './landing-components/TimelineSection';
-import Graph from './landing-components/Graph';
-import DemoSection from './landing-components/DemoSection';
 
 export default function Welcome({
     canRegister = true,
@@ -24,7 +23,7 @@ export default function Welcome({
 
     return (
         <>
-            <Head title="Welcome">
+            <Head>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link rel="stylesheet" />
             </Head>
@@ -46,7 +45,6 @@ export default function Welcome({
                 <FeaturesSection />
 
                 <TimelineSection />
-
 
                 <CarouselSection />
 

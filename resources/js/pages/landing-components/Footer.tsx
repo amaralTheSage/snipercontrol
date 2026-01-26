@@ -1,16 +1,9 @@
 export default function Footer() {
     return (
-        <footer className="border-t border-slate-100 py-24">
+        <footer className="py-24">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
                 {/* Logo / Brand Name */}
-                <div className="mb-12 flex items-center gap-2 select-none">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-xs font-bold tracking-tighter text-white">
-                        SC
-                    </div>
-                    <span className="text-xl font-bold tracking-tight text-slate-900">
-                        SniperControl
-                    </span>
-                </div>
+                <img src="/assets/logo.svg" alt="" className="w-44" />
 
                 {/* Pyramid Navigation */}
                 <nav className="flex w-full flex-col items-end gap-4">
@@ -66,7 +59,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <div className="text-center text-xs font-medium text-slate-400">
-                © 2024 SniperControl Systems.
+                © {new Date().getFullYear()} SniperControl Systems.
             </div>
         </footer>
     );

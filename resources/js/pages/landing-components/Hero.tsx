@@ -1,4 +1,4 @@
-import { ArrowDown, ArrowRight, Battery, Navigation, Wifi } from 'lucide-react';
+import { ArrowDown, ArrowRight, Battery, Wifi } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 
 export default function Hero() {
@@ -35,7 +35,7 @@ export default function Hero() {
                     </h1>
 
                     <p className="max-w-lg animate-in text-lg leading-relaxed font-medium text-slate-600 delay-200 duration-700 fade-in slide-in-from-bottom-8">
-                        Integração completa de hardware e software para
+                        Integração completa de nosso hardware e software para
                         minimizar furtos, monitorar trajetos e economizar
                         combustível. A inteligência que seu transporte precisa.
                     </p>
@@ -79,7 +79,10 @@ export default function Hero() {
                             Começar Agora <ArrowRight size={18} />
                         </button>
 
-                        <a href='#demos' className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-8 py-4 font-bold text-slate-900 shadow-sm transition-colors hover:bg-slate-50">
+                        <a
+                            href="#demos"
+                            className="flex items-center gap-2 rounded-md border border-slate-200 bg-white px-8 py-4 font-bold text-slate-900 shadow-sm transition-colors hover:bg-slate-50"
+                        >
                             Demonstração <ArrowDown size={18} />
                         </a>
                     </div>
@@ -88,7 +91,7 @@ export default function Hero() {
                     <div className="group relative w-full max-w-sm overflow-hidden rounded-[2rem] bg-card-dark p-8 shadow-2xl">
                         <div className="mb-2 flex items-center gap-3 opacity-50">
                             <span className="text-[10px] tracking-widest text-white uppercase">
-                                03
+                                Segurança
                             </span>
                             <div className="h-[1px] w-6 bg-white/30"></div>
                         </div>

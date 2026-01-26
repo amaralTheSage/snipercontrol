@@ -2,18 +2,18 @@ import { ArrowRight } from 'lucide-react';
 
 export default function FeaturesSection() {
     return (
-        <section id="features" className="overflow-hidden py-24">
+        <section id="features" className="h-full overflow-hidden">
             <div className="mx-auto px-6 md:px-6">
                 {/* White Card Wrapper */}
-                <div className="relative overflow-hidden rounded-[3rem] bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12 lg:p-20">
+                <div className="relative overflow-hidden rounded-[3rem] bg-white p-8 shadow-xl shadow-slate-200/50 md:p-12 lg:px-20 lg:py-16">
                     <div className="relative z-10 grid grid-cols-1 items-center gap-16 lg:grid-cols-2">
                         {/* Left Column - Content */}
                         <div>
-                            <h2 className="text-4xl leading-[1.1] font-bold tracking-tight text-slate-900 md:text-5xl">
+                            <h2 className="text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
                                 Transforme a Realidade <br />
                                 em{' '}
                                 <span className="text-slate-900">
-                                    Resultados Espaciais
+                                    Resultados
                                 </span>{' '}
                                 <br />
                                 de Alto Impacto
@@ -30,63 +30,56 @@ export default function FeaturesSection() {
                                 {/* Feature 1 */}
                                 <div className="group">
                                     <div className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
-                                        {/* <Map className="h-5 w-5 text-emerald-600" />
-                                         */}
-
                                         <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(45,212,191,0.8)]"></div>
-                                        <h3>Rastreamento de Âncora</h3>
+                                        <h3>Rastreamento em Tempo Real</h3>
                                     </div>
                                     <p className="text-sm leading-relaxed text-slate-500">
-                                        Trave ativos digitais a coordenadas
-                                        físicas com precisão sub-milimétrica
-                                        automaticamente.
+                                        Monitoramento contínuo de localização,
+                                        velocidade e trajeto dos veículos,
+                                        garantindo total visibilidade da
+                                        operação da frota.
                                     </p>
                                 </div>
 
                                 {/* Feature 2 */}
                                 <div className="group">
                                     <div className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
-                                        {/* <Zap className="h-5 w-5 text-emerald-600" />
-                                         */}
-
                                         <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(45,212,191,0.8)]"></div>
-
-                                        <h3>Renderização Neural</h3>
+                                        <h3>Controle de Combustível</h3>
                                     </div>
                                     <p className="text-sm leading-relaxed text-slate-500">
-                                        Gere texturas fotorealistas e iluminação
-                                        dinâmica instantaneamente adaptadas à
-                                        cena.
+                                        Medição precisa do consumo de
+                                        combustível com detecção automática de
+                                        possíveis furtos e anomalias
+                                        operacionais.
                                     </p>
                                 </div>
 
                                 {/* Feature 3 */}
                                 <div className="group">
                                     <div className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
-                                        {/* <Activity className="h-5 w-5 text-emerald-600" /> */}
-
                                         <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(45,212,191,0.8)]"></div>
-                                        <h3>Métricas de Atenção</h3>
+                                        <h3>Segurança Total</h3>
                                     </div>
                                     <p className="text-sm leading-relaxed text-slate-500">
-                                        Rastreie mapas de calor de atenção e
-                                        durações de engajamento dentro do espaço
-                                        3D.
+                                        Identificação de desvios de rota,
+                                        paradas suspeitas e eventos críticos,
+                                        com registros claros como data, hora e
+                                        veículo afetado.
                                     </p>
                                 </div>
 
                                 {/* Feature 4 */}
                                 <div className="group">
                                     <div className="mb-3 flex items-center gap-2 text-lg font-bold text-slate-900">
-                                        {/* <LayoutGrid className="h-5 w-5 text-emerald-600" /> */}
-
                                         <div className="h-2 w-2 rounded-full bg-primary shadow-[0_0_10px_rgba(45,212,191,0.8)]"></div>
-                                        <h3>Grid Unificado</h3>
+                                        <h3>Ação Remota e Gravação</h3>
                                     </div>
                                     <p className="text-sm leading-relaxed text-slate-500">
-                                        Gerencie todos os seus deployments AR a
-                                        partir de uma interface espacial única e
-                                        intuitiva.
+                                        Relé integrado para bloqueio remoto do
+                                        veículo e câmeras embarcadas que enviam
+                                        registros da cabine automaticamente ao
+                                        servidor.
                                     </p>
                                 </div>
                             </div>
@@ -100,7 +93,7 @@ export default function FeaturesSection() {
 
                         {/* Right Column - The High-Tech Card */}
                         <div className="relative h-full">
-                            <div className="group relative h-full min-h-[600px] overflow-hidden rounded-[2rem] border bg-card-dark p-4 shadow-2xl">
+                            <div className="group relative h-full overflow-hidden rounded-[2rem] border bg-card-dark p-4 shadow-2xl">
                                 {/* Background Image inside Card (Map) */}
                                 <div className="absolute inset-0">
                                     {/* Close up city map styled to look like dark mode interface */}

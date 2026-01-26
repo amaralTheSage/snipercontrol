@@ -4,8 +4,7 @@ import React, { useState } from 'react';
 export default function Header(): React.ReactElement {
     const [isOpen, setIsOpen] = useState(false);
 
-    const navItems: NavItem[] = [
-        { label: 'Recursos', href: '#features' },
+    const navItems = [
         { label: 'Hardware', href: '#hardware' },
         { label: 'Planos', href: '#pricing' },
         { label: 'Contato', href: '#contact' },
@@ -15,14 +14,7 @@ export default function Header(): React.ReactElement {
         <nav className="absolute top-0 right-0 left-0 z-50 bg-transparent px-6 py-8 md:px-12">
             <div className="relative mx-auto flex max-w-7xl items-center justify-between">
                 {/* Left: Logo */}
-                <div className="group flex cursor-pointer items-center gap-3 select-none">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-black text-sm font-bold tracking-tighter text-white shadow-sm transition-transform group-hover:scale-105">
-                        SC
-                    </div>
-                    <span className="text-lg font-bold tracking-tight text-slate-900 transition-colors group-hover:text-black">
-                        SniperControl
-                    </span>
-                </div>
+                <img src="/assets/logo.svg" alt="" className="w-32" />
 
                 {/* Center: Nav Items (Desktop) */}
                 {/* Using absolute centering to ensure it's dead center regardless of logo/button widths */}
