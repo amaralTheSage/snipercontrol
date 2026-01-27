@@ -11,7 +11,6 @@ class Driver extends Model
         'cpf',
         'phone',
         'status',
-        'current_vehicle_id',
     ];
 
     public function currentVehicle()

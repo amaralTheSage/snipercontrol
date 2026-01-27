@@ -210,6 +210,26 @@ body {
     }
 }
 
+* {
+    @apply border-border;
+}
+
+.fi-table {
+    @apply overflow-hidden;
+}
+
+.fi-ta-table {
+    @apply overflow-hidden bg-card;
+}
+
+.fi-ta-header-toolbar {
+    @apply rounded-t-2xl border-t bg-card;
+}
+
+.fi-ta-empty-state {
+    @apply rounded-b-2xl bg-card;
+}
+
 .fi-sidebar {
     @apply bg-card text-sidebar-foreground;
 }
@@ -236,6 +256,10 @@ body {
 
 .fi-sidebar-item-label {
     @apply text-primary-foreground;
+}
+
+.fi-pagination {
+    @apply rounded-b-2xl bg-card;
 }
 
 .fi-icon.fi-size-lg.fi-sidebar-item-icon {

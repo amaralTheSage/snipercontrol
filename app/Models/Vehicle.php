@@ -12,7 +12,6 @@ class Vehicle extends Model
         'year',
         'type',
         'status',
-        'device_id',
         'current_driver_id',
         'current_speed',
         'fuel_level',
@@ -31,7 +30,7 @@ class Vehicle extends Model
 
     public function device()
     {
-        return $this->belongsTo(Device::class);
+        return $this->hasOne(Device::class);
     }
 
     public function currentDriver()
