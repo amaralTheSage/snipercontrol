@@ -17,12 +17,11 @@ class DriversTable
     {
         return $table
             ->columns([ 
-                ImageColumn::make('avatar_url')
-                    ->label(' ')
-                    ->searchable(),
+             ImageColumn::make('avatar_url')->circular()->label('Motorista')->width('4%'),
+                
 
                 TextColumn::make('name')
-                    ->label('Nome')
+                    ->label(' ')
                     ->searchable(),
 
                 TextColumn::make('cpf')

@@ -13,7 +13,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-class User extends Authenticatable implements FilamentUser, HasAvatar
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
@@ -39,25 +39,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
         protected $appends = ['avatar_url']; // Makes it accessible in react
 
-    // --------------------------
-    //  Filament Stuff
-    // --------------------------
 
-    public function getFilamentAvatarUrl(): ?string
-    {
-        return $this->avatar
-            ? asset('storage/'.$this->avatar)
-            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
-    }
-
-    public function getAvatarUrlAttribute(): ?string
-    {
-        if (! $this->avatar) {
-            return null;
-        }
-
-        return asset('storage/'.$this->avatar);
-    }
+public function getAvatarUrlAttribute(): string
+{
+    return $this->avatar
+        ? asset('storage/' . $this->avatar)
+        : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+}
 
 
     /**
