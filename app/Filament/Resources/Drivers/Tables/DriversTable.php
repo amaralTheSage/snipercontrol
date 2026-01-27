@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -15,7 +16,11 @@ class DriversTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->columns([
+            ->columns([ 
+                ImageColumn::make('avatar_url')
+                    ->label(' ')
+                    ->searchable(),
+
                 TextColumn::make('name')
                     ->label('Nome')
                     ->searchable(),

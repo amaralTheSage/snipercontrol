@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('drivers', function (Blueprint $table) {
             $table->id();
 
+            $table->longText('avatar')->nullable();
             $table->string('name');
             $table->string('cpf')->unique();
             $table->string('phone')->nullable();

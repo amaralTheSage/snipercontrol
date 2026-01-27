@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Device;
 use App\Models\Driver;
 use App\Models\User;
@@ -23,16 +24,11 @@ class DatabaseSeeder extends Seeder
 
         User::factory()->create([
             'name' => 'teste',
-            'email' => 'teste@gmail.com',
-            'password' => Hash::make('senha123'),
+            'email' => 't@t',
+            'role' => UserRole::ADMIN,
+            'password' => Hash::make('t'),
         ]);
 
-
-        User::factory()->create([
-            'name' => 'gabriel',
-            'email' => 'gabriel@g',
-            'password' => Hash::make('senha123'),
-        ]);
 
         /*
         |--------------------------------------------------------------------------

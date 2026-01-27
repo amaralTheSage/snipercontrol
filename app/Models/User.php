@@ -6,13 +6,14 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 
-class User extends Authenticatable implements FilamentUser
+class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
@@ -24,6 +25,7 @@ class User extends Authenticatable implements FilamentUser
      */
     protected $fillable = [
         'name',
+        'avatar',
         'email',
         'password',
         'role'
@@ -34,6 +36,29 @@ class User extends Authenticatable implements FilamentUser
     {
         return true;
     }
+
+        protected $appends = ['avatar_url']; // Makes it accessible in react
+
+    // --------------------------
+    //  Filament Stuff
+    // --------------------------
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar
+            ? asset('storage/'.$this->avatar)
+            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        if (! $this->avatar) {
+            return null;
+        }
+
+        return asset('storage/'.$this->avatar);
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.

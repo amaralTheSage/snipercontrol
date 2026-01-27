@@ -21,7 +21,7 @@ class DriverResource extends Resource
 {
     protected static ?string $model = Driver::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
     protected static ?string $modelLabel = 'Motorista';
 
