@@ -273,3 +273,7 @@ body {
 .fi-sidebar-item-btn {
     @apply bg-inherit;
 }
+
+.fi-simple-main {
+    @apply bg-card;
+}

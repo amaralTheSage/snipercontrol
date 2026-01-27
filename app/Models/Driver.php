@@ -15,6 +15,6 @@ class Driver extends Model
 
     public function currentVehicle()
     {
-        return $this->hasOne(Vehicle::class, 'current_vehicle_id');
+        return $this->hasOne(Vehicle::class, 'current_driver_id');
     }
 }
