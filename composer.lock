@@ -9147,9 +9147,7 @@
             "type": "library",
             "extra": {
                 "laravel": {
-                    "providers": [
-                        "Laravel\\Boost\\BoostServiceProvider"
-                    ]
+                    "providers": []
                 },
                 "branch-alias": {
                     "dev-master": "1.x-dev"
