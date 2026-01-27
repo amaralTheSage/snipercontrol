@@ -84,9 +84,12 @@ export default function FeaturesSection() {
                                 </div>
                             </div>
 
-                            <button className="mt-10 flex items-center gap-2 rounded-full bg-card-dark px-6 py-3 font-medium text-white shadow-lg transition-all hover:bg-card-dark/80 hover:shadow-xl">
+                            <a
+                                href="/dash/register"
+                                className="mt-10 flex w-fit items-center gap-2 rounded-full bg-card-dark px-6 py-3 font-medium text-white shadow-lg transition-all hover:bg-card-dark/80 hover:shadow-xl"
+                            >
                                 Explorar a Plataforma <ArrowRight size={18} />
-                            </button>
+                            </a>
                         </div>
 
                         {/* Right Column - The High-Tech Card */}

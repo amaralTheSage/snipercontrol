@@ -75,9 +75,12 @@ export default function Hero() {
 
                     {/* Buttons */}
                     <div className="mt-2 flex animate-in flex-wrap items-center gap-4 delay-400 duration-700 fade-in slide-in-from-bottom-8">
-                        <button className="group relative flex cursor-pointer items-center gap-2 rounded-full bg-gradient-to-tl from-primary/80 to-primary/10 px-8 py-4 font-bold text-slate-900 shadow-md transition-all hover:to-primary/40 hover:shadow-[0_10px_25px_rgba(52,211,153,0.4)]">
+                        <a
+                            href="/dash/register"
+                            className="group relative flex cursor-pointer items-center gap-2 rounded-full bg-gradient-to-tl from-primary/80 to-primary/10 px-8 py-4 font-bold text-slate-900 shadow-md transition-all hover:to-primary/40 hover:shadow-[0_10px_25px_rgba(52,211,153,0.4)]"
+                        >
                             Começar Agora <ArrowRight size={18} />
-                        </button>
+                        </a>
 
                         <a
                             href="#demos"

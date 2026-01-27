@@ -33,11 +33,11 @@ export default function Welcome({
 
                 {/* Grid Lines Background - Light Mode */}
                 <div className="pointer-events-none absolute inset-0 z-0 flex h-full justify-between px-6 opacity-30 select-none md:px-12">
-                    <div className="h-full w-px bg-slate-300"></div>
-                    <div className="hidden h-full w-px bg-slate-300 md:block"></div>
-                    <div className="hidden h-full w-px bg-slate-300 lg:block"></div>
-                    <div className="hidden h-full w-px bg-slate-300 xl:block"></div>
-                    <div className="h-full w-px bg-slate-300"></div>
+                    <div className="h-full w-px bg-teal-200"></div>
+                    <div className="hidden h-full w-px bg-teal-200 md:block"></div>
+                    <div className="hidden h-full w-px bg-teal-200 lg:block"></div>
+                    <div className="hidden h-full w-px bg-teal-200 xl:block"></div>
+                    <div className="h-full w-px bg-teal-200"></div>
                 </div>
 
                 <Hero />

@@ -33,7 +33,7 @@ export default function Header(): React.ReactElement {
                 {/* Right: CTA & Mobile Toggle */}
                 <div className="flex items-center gap-4">
                     <a
-                        href="#login"
+                        href="/dash/register"
                         className="hidden items-center gap-2 rounded-full bg-black px-6 py-3 text-sm font-bold text-white shadow-lg shadow-zinc-200 transition-all hover:scale-105 hover:bg-zinc-800 active:scale-95 md:flex"
                     >
                         Começar Agora <ArrowRight size={16} />
@@ -62,9 +62,12 @@ export default function Header(): React.ReactElement {
                         </a>
                     ))}
                     <div className="h-px bg-slate-100" />
-                    <button className="flex w-full items-center justify-center gap-2 rounded-full bg-black py-4 font-bold text-white shadow-lg transition-transform active:scale-95">
+                    <a
+                        href="/dash/register"
+                        className="flex w-full items-center justify-center gap-2 rounded-full bg-black py-4 font-bold text-white shadow-lg transition-transform active:scale-95"
+                    >
                         Começar Agora <ArrowRight size={16} />
-                    </button>
+                    </a>
                 </div>
             )}
         </nav>
