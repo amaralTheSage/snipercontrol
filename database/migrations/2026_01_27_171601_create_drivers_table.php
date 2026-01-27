@@ -11,12 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notifications', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('type');
-            $table->morphs('notifiable');
-            $table->jsonb('data');
-            $table->timestamp('read_at')->nullable();
+        Schema::create('drivers', function (Blueprint $table) {
+            $table->id();
+
+            $table->string('name');
+            $table->string('cpf')->unique();
+            $table->string('phone')->nullable();
+
+            $table->enum('status', ['active', 'inactive'])->default('active');
+
             $table->timestamps();
         });
     }
@@ -26,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notifications');
+        Schema::dropIfExists('drivers');
     }
 };

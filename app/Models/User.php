@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -24,7 +26,9 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
+        'role'
     ];
+
 
     public function canAccessPanel(Panel $panel): bool
     {
@@ -51,6 +55,7 @@ class User extends Authenticatable implements FilamentUser
     protected function casts(): array
     {
         return [
+            'role' => UserRole::class,
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
