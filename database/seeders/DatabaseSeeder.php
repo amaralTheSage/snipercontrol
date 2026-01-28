@@ -11,6 +11,7 @@ use Carbon\Carbon;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
@@ -22,9 +23,20 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        $createAvatar = function () {
+            $filename = Str::random(10) . '.jpg';
+            $url = 'https://picsum.photos/300/300?random=' . Str::random(10);
+            $imageData = file_get_contents($url);
+            Storage::disk('public')->put("avatars/{$filename}", $imageData);
+
+            return "avatars/{$filename}";
+        };
+
+
         User::factory()->create([
             'name' => 'teste',
             'email' => 't@t',
+            'avatar' => $createAvatar(),
             'role' => UserRole::ADMIN,
             'password' => Hash::make('t'),
         ]);
@@ -55,7 +67,7 @@ class DatabaseSeeder extends Seeder
             ['model' => 'Fiat Fiorino',    'type' => 'car'],
         ];
 
-        collect($driversData)->each(function ($data) use ($vehicleTemplates) {
+        collect($driversData)->each(function ($data) use ($vehicleTemplates, $createAvatar) {
 
             /*
             |--------------------------------------------------------------------------
@@ -68,6 +80,7 @@ class DatabaseSeeder extends Seeder
                 [
                     'name' => $data['name'],
                     'phone' => $data['phone'],
+                    'avatar' => $createAvatar(),
                     'status' => 'active',
                 ]
             );

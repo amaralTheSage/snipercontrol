@@ -7,6 +7,7 @@ use EduardoRibeiroDev\FilamentLeaflet\Support\Markers\Marker;
 
 class DriverMapWidget extends MapWidget
 {
+
     // Map heading
     protected static ?string $heading = 'Store Locations';
 

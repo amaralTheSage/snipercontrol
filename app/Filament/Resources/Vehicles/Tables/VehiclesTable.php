@@ -19,15 +19,19 @@ class VehiclesTable
             ->columns([
                 TextColumn::make('plate')
                     ->label('Placa')
+                    ->toggleable()
                     ->searchable(),
 
                 TextColumn::make('model')
                     ->label('Modelo')
+                    ->toggleable()
                     ->searchable(),
 
                 TextColumn::make('year')
                     ->label('Ano')
                     ->numeric()
+                    ->toggleable()
+                    ->toggledHiddenByDefault(condition: true)
                     ->sortable(),
 
                 TextColumn::make('type')
@@ -40,11 +44,13 @@ class VehiclesTable
                         'pickup' => 'Caminhonete',
                         default => $state,
                     })
+                    ->toggleable()
                     ->searchable(),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
+                    ->toggleable()
                     ->color(fn(string $state) => match ($state) {
                         'active'      => 'success',
                         'maintenance' => 'warning',
@@ -62,11 +68,11 @@ class VehiclesTable
                     ->label('Motorista')
                     ->circular()
                     ->imageSize(36)
-                    ->defaultImageUrl(fn() => '')
-                    ->toggleable(),
+                    ->width('4%')
+                    ->defaultImageUrl(fn() => ''),
 
                 TextColumn::make('currentDriver.name')
-                    ->label('Motorista')
+                    ->label(' ')
                     ->searchable()
                     ->sortable(),
 
@@ -122,8 +128,8 @@ class VehiclesTable
                 //
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()->hiddenLabel(),
+                EditAction::make()->hiddenLabel(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

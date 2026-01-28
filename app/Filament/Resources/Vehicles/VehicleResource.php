@@ -25,6 +25,8 @@ class VehicleResource extends Resource
 
     protected static ?string $modelLabel = 'Veículo';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Schema $schema): Schema
     {
         return VehicleForm::configure($schema);

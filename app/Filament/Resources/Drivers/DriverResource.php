@@ -25,6 +25,8 @@ class DriverResource extends Resource
 
     protected static ?string $modelLabel = 'Motorista';
 
+    protected static ?int $navigationSort = 3;
+
     public static function form(Schema $schema): Schema
     {
         return DriverForm::configure($schema);

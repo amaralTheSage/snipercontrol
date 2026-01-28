@@ -1,3 +1,4 @@
+@import '../../../../vendor/eduardoribeirodev/filament-leaflet/resources/css/leaflet.css';
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
 @import 'tw-animate-css';
 
@@ -93,7 +94,7 @@
     --input: oklch(0.2603 0 0);
     --ring: oklch(0.8003 0.1821 151.711);
     --chart-1: oklch(0.8003 0.1821 151.711);
-    --chart-2: oklch(0.7137 0.1434 254.624);
+    --chart-2: oclch(0.7137 0.1434 254.624);
     --chart-3: oklch(0.709 0.1592 293.5412);
     --chart-4: oklch(0.8369 0.1644 84.4286);
     --chart-5: oklch(0.7845 0.1325 181.912);
