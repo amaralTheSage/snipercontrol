@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Devices\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -13,13 +14,29 @@ class DeviceForm
         return $schema
             ->components([
                 TextInput::make('serial')
-                    ->required(),
-                TextInput::make('vehicle_id')
-                    ->numeric(),
-                TextInput::make('status')
+                    ->label('Número de Série')
                     ->required()
-                    ->default('offline'),
-                DateTimePicker::make('last_communication_at'),
+                    ->unique(ignoreRecord: true)
+                    ->maxLength(255),
+
+                Select::make('vehicle_id')
+                    ->label('Veículo')
+                    ->relationship('vehicle', 'plate')
+                    ->searchable()
+                    ->preload()
+                    ->nullable()
+                    ->getOptionLabelFromRecordUsing(fn($record) => $record->plate . ' - ' . $record->model)
+                    ->placeholder('Nenhum veículo'),
+
+                Select::make('status')
+                    ->label('Status')
+                    ->options([
+                        'online' => 'Online',
+                        'offline' => 'Offline',
+                    ])
+                    ->default('offline')
+                    ->required(),
+
             ]);
     }
 }
