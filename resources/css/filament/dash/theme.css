@@ -285,3 +285,13 @@ body {
 .fi-simple-main {
     @apply bg-card;
 }
+
+.fi-header-heading {
+    @apply mt-8;
+}
+
+/* LEAFLET */
+
+.leaflet-control-attribution.leaflet-control {
+    @apply hidden;
+}
