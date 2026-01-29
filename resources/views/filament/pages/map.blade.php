@@ -68,9 +68,7 @@
                                     <h4 class="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Veículo</h4>
                                     @if($driver['vehicle']['ignition_on'] ?? false)
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-primary text-primary-foreground">
-                                            <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                                <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"></path>
-                                            </svg>
+                                      
                                             Em movimento
                                         </span>
                                     @else
@@ -122,9 +120,7 @@
                             <div class="px-6 py-4 bg-card border-t border-border">
                                 <div class="flex items-center justify-between text-xs">
                                     <span class="text-muted-foreground flex items-center gap-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
-                                        </svg>
+                             
                                         Dispositivo:
                                     </span>
                                     <span class="font-mono font-medium text-card-foreground">{{ $driver['device']['serial'] ?? 'N/A' }}</span>
