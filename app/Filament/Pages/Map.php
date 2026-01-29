@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\Driver;
 use BackedEnum;
 use Filament\Pages\Page;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 
 class Map extends Page
@@ -15,6 +16,8 @@ class Map extends Page
     protected static ?string $navigationLabel = 'Frota';
 
     protected static ?int $navigationSort = 2;
+
+    protected Width|string|null $maxContentWidth = 'full';
 
     public $drivers = [];
 

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Drivers\Schemas;
 
+use App\Filament\Widgets\RouteWidget;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Split;
@@ -14,6 +15,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
@@ -28,6 +30,12 @@ class DriverInfolist
         return $schema
             ->components([
                 // Driver Profile Section
+
+                Livewire::make(RouteWidget::class, fn($record) => [
+                    'vehicleId' => $record->currentVehicle?->id,
+                ])
+                    ->columnSpanFull(),
+
                 Section::make('Perfil do Motorista')
                     ->icon('heroicon-o-user-circle')
                     ->columns(4)

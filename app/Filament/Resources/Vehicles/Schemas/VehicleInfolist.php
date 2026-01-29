@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vehicles\Schemas;
 
+use App\Filament\Widgets\RouteWidget;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
@@ -13,7 +14,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
@@ -25,6 +28,12 @@ class VehicleInfolist
     {
         return $schema
             ->components([
+
+                Livewire::make(RouteWidget::class, fn($record) => [
+                    'vehicleId' =>  $record->id,
+                ])->lazy()
+                    ->columnSpanFull(),
+
                 // Vehicle Information Section
                 Section::make('Informações do Veículo')
                     ->icon('heroicon-o-truck')

@@ -1,4 +1,4 @@
-<div>
+<div class="p-0 m-0 w-full h-screen">
     <div class="relative">
         <div wire:ignore x-data="driverMap(@js($drivers))" class="w-full">
             <div x-ref="map" style="height: 100vh; width: 100%;" class="z-0"></div>
@@ -11,12 +11,15 @@
         /* Base map container */
         .leaflet-container {
             font-family: var(--font-sans);
+            border-radius: var(--radius-lg);
+
         }
 
         /* Zoom controls - using card colors */
         .leaflet-control-zoom {
             border: none !important;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+
         }
 
         .leaflet-control-zoom a {
@@ -51,7 +54,7 @@
             width: 56px;
             height: 56px;
             border-radius: 50%;
-            border: 1px solid var(--primary);
+            border: 2px solid gainsboro;
             box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent),
                 0 8px 24px rgba(0, 0, 0, 0.3);
             object-fit: cover;
@@ -71,7 +74,6 @@
         }
 
         .driver-marker.inactive {
-            border-color: var(--muted-foreground);
             opacity: 0.7;
         }
 
@@ -89,15 +91,15 @@
             }
         }
 
-        /* Popup - using card colors */
+        /* Popup - using card colors (SMALLER SIZE) */
         .leaflet-popup-content-wrapper {
             background: var(--card) !important;
             color: var(--card-foreground) !important;
             border-radius: var(--radius-lg) !important;
             border: 1px solid var(--border) !important;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
-            padding: 8px !important;
-            min-width: 280px !important;
+            padding: 4px !important;
+            min-width: 240px !important;
         }
 
         .dark .leaflet-popup-content-wrapper {
@@ -111,33 +113,35 @@
 
         .leaflet-popup-close-button {
             color: var(--muted-foreground) !important;
-            font-size: 20px !important;
-            padding: 8px 12px !important;
+            font-size: 18px !important;
             transition: color 0.2s;
+            padding-top: 8px !important;
+            margin-right: 8px !important;
         }
 
         .leaflet-popup-close-button:hover {
             color: var(--card-foreground) !important;
         }
 
-        /* Popup content styling */
+        /* Popup content styling (SMALLER) */
         .driver-popup {
             font-family: var(--font-sans);
+            padding: 8px;
         }
 
         .driver-popup .avatar {
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            margin: 0 auto 16px;
+            margin: 0 auto 10px;
             display: block;
-            border: 3px solid var(--primary);
-            box-shadow: 0 4px 12px color-mix(in srgb, var(--primary) 40%, transparent);
+            border: 2px solid var(--primary);
+            box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
         }
 
         .driver-popup h3 {
-            margin: 0 0 12px 0;
-            font-size: 18px;
+            margin: 0 0 8px 0;
+            font-size: 15px;
             font-weight: 700;
             text-align: center;
             color: var(--card-foreground);
@@ -146,10 +150,10 @@
         .driver-popup .info-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 12px;
-            font-size: 14px;
+            padding: 6px 10px;
+            font-size: 12px;
             border-radius: var(--radius-md);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             background: var(--accent);
             transition: background 0.2s;
         }
@@ -170,9 +174,9 @@
 
         .driver-popup .status-badge {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: var(--radius-lg);
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -191,7 +195,7 @@
         }
 
         .driver-popup hr {
-            margin: 12px 0;
+            margin: 8px 0;
             border: none;
             border-top: 1px solid var(--border);
         }
@@ -229,7 +233,14 @@
                     (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
 
                 // Initialize map
-                this.map = L.map(this.$refs.map).setView([-23.5505, -46.6333], 12);
+                this.map = L.map(this.$refs.map, {
+                    zoomControl: false
+                }).setView([-23.5505, -46.6333], 12);
+
+                L.control.zoom({
+                    position: 'bottomright'
+                }).addTo(this.map);
+
 
                 // Add appropriate tile layer based on theme
                 this.setTileLayer(this.currentTheme);

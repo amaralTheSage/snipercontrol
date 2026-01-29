@@ -214,6 +214,14 @@ body {
     @apply border-border;
 }
 
+.fi-main.fi-width-full {
+    @apply relative m-0 w-full p-0;
+}
+
+.fi-layout-sidebar-toggle-btn-ctn {
+    @apply absolute z-10;
+}
+
 .fi-table {
     @apply overflow-hidden;
 }

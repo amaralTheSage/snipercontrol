@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Devices\Schemas;
 
+use App\Filament\Widgets\RouteWidget;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\IconSize;
@@ -26,6 +28,10 @@ class DeviceInfolist
         return $schema
             ->components([
                 // Device Information Section
+                Livewire::make(RouteWidget::class, fn($record) => [
+                    'vehicleId' => $record->vehicle_id,
+                ])->columnSpanFull(),
+
                 Section::make('Informações do Dispositivo')
                     ->icon('heroicon-o-cpu-chip')
                     ->columns(2)
