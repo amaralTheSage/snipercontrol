@@ -18,38 +18,38 @@ class UsersTable
                 ImageColumn::make('avatar_url')->circular()->label('Usuário')->width('4%'),
                 TextColumn::make('name')->label(' ')
                     ->searchable(),
-        
-        TextColumn::make('email')
-            ->label('E-mail')
-            ->searchable(),
 
-        TextColumn::make('email_verified_at')
-            ->label('E-mail verificado em')
-            ->dateTime()
-            ->sortable(),
+                TextColumn::make('email')
+                    ->label('E-mail')
+                    ->searchable(),
 
-        TextColumn::make('two_factor_confirmed_at')
-            ->label('2FA confirmado em')
-            ->dateTime()
-            ->sortable(),
+                TextColumn::make('email_verified_at')
+                    ->label('E-mail verificado em')
+                    ->dateTime()
+                    ->sortable(),
 
-        TextColumn::make('created_at')
-            ->label('Criado em')
-            ->dateTime()
-            ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('two_factor_confirmed_at')
+                    ->label('2FA confirmado em')
+                    ->dateTime()
+                    ->sortable(),
 
-        TextColumn::make('updated_at')
-            ->label('Atualizado em')
-            ->dateTime()
-            ->sortable()
-            ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('created_at')
+                    ->label('Criado em')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('updated_at')
+                    ->label('Atualizado em')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()->hiddenLabel(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

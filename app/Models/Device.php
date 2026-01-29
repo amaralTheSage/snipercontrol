@@ -21,4 +21,16 @@ class Device extends Model
     {
         return $this->belongsTo(Vehicle::class);
     }
+
+    public function currentVehicleDriver()
+    {
+        return $this->hasOneThrough(
+            Driver::class,   // Modelo final
+            Vehicle::class,  // Modelo intermediário
+            'id',            // PK em vehicles
+            'id',            // PK em drivers
+            'vehicle_id',    // FK em devices
+            'current_driver_id' // FK em vehicles
+        );
+    }
 }

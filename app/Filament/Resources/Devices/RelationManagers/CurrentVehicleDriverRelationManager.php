@@ -1,21 +1,28 @@
 <?php
 
-namespace App\Filament\Resources\Drivers\Tables;
+namespace App\Filament\Resources\Devices\RelationManagers;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use App\Filament\Resources\Drivers\DriverResource;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class DriversTable
+class CurrentVehicleDriverRelationManager extends RelationManager
 {
-    public static function configure(Table $table): Table
+    protected static string $relationship = 'currentVehicleDriver';
+
+    protected static ?string $relatedResource = DriverResource::class;
+
+    protected static ?string $title = "Motorista";
+
+    public function table(Table $table): Table
     {
         return $table
+
             ->columns([
                 ImageColumn::make('avatar_url')->circular()->label('Motorista')->width('4%'),
 
@@ -47,17 +54,12 @@ class DriversTable
                     }),
 
                 TextColumn::make('currentVehicle.plate')
-                    ->label('Placa')
+                    ->label('Veículo')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('currentVehicle.model')
-                    ->label('Veículo')
-                    ->sortable(),
 
-                IconColumn::make('currentVehicle.ignition_on')
-                    ->label('Veículo Ligado')
-                    ->boolean(),
+
 
                 TextColumn::make('created_at')
                     ->label('Criado em')
@@ -71,17 +73,21 @@ class DriversTable
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                ViewAction::make()->hiddenLabel(),
-                EditAction::make()->hiddenLabel(),
-            ])
+            ->heading(null)
+            ->recordTitleAttribute('name')
+            ->paginated(false)
+            ->selectable(false)
+            ->searchable(false)
+
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+                Action::make('info')
+                    ->label('Motorista')
+                    ->disabled()
+                    ->color('inherit')
+                    ->extraAttributes([
+                        'class' => 'cursor-default px-0 py-2 font-semibold text-foreground',
+                    ]),
+            ])
+            ->headerActions([]);
     }
 }

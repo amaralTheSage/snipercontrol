@@ -1,33 +1,35 @@
 <?php
 
-namespace App\Filament\Resources\Devices\Tables;
+namespace App\Filament\Resources\Drivers\RelationManagers;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
+use App\Filament\Resources\Devices\DeviceResource;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class DevicesTable
+class CurrentVehicleDeviceRelationManager extends RelationManager
 {
-    public static function configure(Table $table): Table
+    protected static string $relationship = 'currentVehicleDevice';
+
+    protected static ?string $relatedResource = DeviceResource::class;
+
+    protected static ?string $title = 'Dispositivo';
+
+    public function table(Table $table): Table
     {
         return $table
             ->columns([
-
                 TextColumn::make('serial')
                     ->label('Serial')
                     ->searchable(),
 
                 TextColumn::make('vehicle.plate')
-                    ->label('Placa')
+                    ->label('Veículo')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('vehicle.model')
-                    ->label('Veículo')
-                    ->sortable(),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -60,19 +62,22 @@ class DevicesTable
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                ViewAction::make()->hiddenLabel(),
-                EditAction::make()->hiddenLabel(),
-            ])
+            ->heading(null)
+            ->recordTitleAttribute('serial')
+            ->paginated(false)
+            ->searchable(false)
+            ->selectable(false)
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+                Action::make('info')
+                    ->label('Dispositivo')
+                    ->disabled()
+                    ->color('inherit')
+                    ->extraAttributes([
+                        'class' => 'cursor-default px-0 py-2 font-semibold text-foreground',
+                    ]),
+            ])
+
+            ->headerActions([]);;
     }
 }

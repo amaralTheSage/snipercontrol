@@ -6,6 +6,8 @@ use App\Filament\Resources\Drivers\Pages\CreateDriver;
 use App\Filament\Resources\Drivers\Pages\EditDriver;
 use App\Filament\Resources\Drivers\Pages\ListDrivers;
 use App\Filament\Resources\Drivers\Pages\ViewDriver;
+use App\Filament\Resources\Drivers\RelationManagers\CurrentVehicleDeviceRelationManager;
+use App\Filament\Resources\Drivers\RelationManagers\CurrentVehicleRelationManager;
 use App\Filament\Resources\Drivers\Schemas\DriverForm;
 use App\Filament\Resources\Drivers\Schemas\DriverInfolist;
 use App\Filament\Resources\Drivers\Tables\DriversTable;
@@ -45,7 +47,8 @@ class DriverResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            CurrentVehicleRelationManager::class,
+            CurrentVehicleDeviceRelationManager::class
         ];
     }
 

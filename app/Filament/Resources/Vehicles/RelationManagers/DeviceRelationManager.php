@@ -1,33 +1,38 @@
 <?php
 
-namespace App\Filament\Resources\Devices\Tables;
+namespace App\Filament\Resources\Vehicles\RelationManagers;
 
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\Devices\DeviceResource;
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Text;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
-class DevicesTable
+class DeviceRelationManager extends RelationManager
 {
-    public static function configure(Table $table): Table
+    protected static string $relationship = 'device';
+
+    protected static ?string $title = 'Dispositivo';
+
+    protected static ?string $relatedResource = DeviceResource::class;
+
+    public function table(Table $table): Table
     {
         return $table
+
             ->columns([
-
                 TextColumn::make('serial')
-                    ->label('Serial')
-                    ->searchable(),
-
-                TextColumn::make('vehicle.plate')
-                    ->label('Placa')
+                    ->label('Número de Série')
                     ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('vehicle.model')
-                    ->label('Veículo')
-                    ->sortable(),
+                    ->toggleable(),
 
                 TextColumn::make('status')
                     ->label('Status')
@@ -41,12 +46,12 @@ class DevicesTable
                         'online'  => 'Online',
                         'offline' => 'Offline',
                         default   => $state,
-                    })
+                    })->toggleable()
                     ->sortable(),
 
                 TextColumn::make('last_communication_at')
                     ->label('Última Comunicação')
-                    ->dateTime('d/m/Y H:i')
+                    ->dateTime('d/m/Y H:i')->toggleable()
                     ->sortable(),
 
                 TextColumn::make('created_at')
@@ -60,19 +65,23 @@ class DevicesTable
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
-
             ])
-            ->filters([
-                //
-            ])
-            ->recordActions([
-                ViewAction::make()->hiddenLabel(),
-                EditAction::make()->hiddenLabel(),
-            ])
+            ->heading(null)
+            ->recordTitleAttribute('serial')
+            ->paginated(false)
+            ->searchable(false)
+            ->selectable(false)
             ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ]);
+                Action::make('info')
+                    ->label('Dispositivo')
+                    ->disabled()
+                    ->color('inherit')
+                    ->extraAttributes([
+                        'class' => 'cursor-default px-0 py-2 font-semibold text-foreground',
+                    ]),
+            ])
+
+            ->headerActions([])
+        ;
     }
 }

@@ -254,10 +254,6 @@ body {
     @apply bg-card;
 }
 
-.fi-modal-header {
-    @apply pt-16;
-}
-
 .fi-sidebar-header {
     @apply py-12;
 }
@@ -286,8 +282,11 @@ body {
     @apply bg-card;
 }
 
-.fi-header-heading {
-    @apply mt-8;
+h1.fi-header-heading {
+    @apply max-lg:mt-8;
+}
+.fi-breadcrumbs {
+    @apply max-lg:mt-6;
 }
 
 /* LEAFLET */

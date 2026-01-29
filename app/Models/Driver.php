@@ -21,15 +21,20 @@ class Driver extends Model
     // --------------------------
 
 
-public function getAvatarUrlAttribute(): string
-{
-    return $this->avatar
-        ? asset('storage/' . $this->avatar)
-        : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
-}
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar
+            ? asset('storage/' . $this->avatar)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+    }
 
     public function currentVehicle()
     {
         return $this->hasOne(Vehicle::class, 'current_driver_id');
+    }
+
+    public function currentVehicleDevice()
+    {
+        return $this->hasOneThrough(Device::class, Vehicle::class, 'current_driver_id', 'vehicle_id');
     }
 }
