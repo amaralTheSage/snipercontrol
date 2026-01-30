@@ -1,11 +1,12 @@
-<x-filament-widgets::widget>
+<x-filament-widgets::widget wire:poll.5s="refreshData">
     @if($vehicleData)
-        <div class="relative">
+
+        <div class="relative" >
             <!-- Trip Selector Sidebar -->
             <div class="absolute top-2 right-2 z-10 flex gap-2">
                 <!-- Toggle Button -->
                 <button wire:click="toggleSidebar"
-                    class="bg-white dark:bg-gray-800 p-2 rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                    class="bg-card p-2 rounded-lg shadow-lg hover:bg-background transition-colors">
 
                     @if ($sidebarOpen)
 
@@ -26,7 +27,7 @@
 
                 <!-- Sidebar Panel -->
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden transition-all duration-300 {{ $sidebarOpen ? 'w-80' : 'w-0' }} h-[482px]">
+                    class="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 {{ $sidebarOpen ? 'w-80' : 'w-0' }} h-[482px]">
                     <div class="p-4 {{ $sidebarOpen ? '' : 'hidden' }}">
                         <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
                             Histórico de Viagens
@@ -35,8 +36,8 @@
                         <div class="space-y-2 overflow-y-auto" style="max-height: 420px;">
                             @forelse($availableTrips as $trip)
                                 <div wire:click="selectTrip({{ $trip['id'] }})"
-                                    class="p-3 rounded-lg cursor-pointer transition-all border-2 
-                                                                                                                                                                                                        {{ $selectedTripId === $trip['id'] ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-500' : 'bg-gray-50 dark:bg-gray-700 border-transparent hover:border-gray-300 dark:hover:border-gray-600' }}">
+                                    class="p-3 rounded-lg cursor-pointer transition-all 
+                                                                                                                                                                                                        {{ $selectedTripId === $trip['id'] ? '     bg-primary/20' : 'bg-background hover:bg-primary/10 ' }}">
 
                                     <div class="flex items-center justify-between mb-2">
                                         <span
@@ -90,6 +91,7 @@
 
             <!-- Map Container -->
             <div wire:ignore x-data="vehicleMap(@js($vehicleData))" class="w-full"
+             @vehicle-updated.window="console.log('Event received:', $event.detail); updateVehicle($event.detail.vehicleData)"
                 @trip-selected.window="updateTrip($event.detail.tripData)">
                 <div x-ref="map" style="height: 500px; width: 100%;" class="z-0 rounded-lg border-2 border-border">
                 </div>
@@ -349,9 +351,51 @@
                             this.drawRoute(this.data.trip);
                         }
                     }
-
+                 
                     this.watchThemeChanges();
                 },
+
+      updateVehicle(newData) {
+    console.log('updateVehicle called with:', newData);
+    
+    if (!newData) {
+        console.log('No data received!');
+        return;
+    }
+    
+    // Update the internal data
+    this.data = newData;
+    
+    // Update marker if it exists
+    if (this.marker) {
+        // Update position
+        this.marker.setLatLng([newData.lat, newData.lng]);
+        
+        // Update marker icon
+        const isActive = newData.vehicle?.ignition_on;
+        const activeClass = isActive ? 'active' : 'inactive';
+        const avatarUrl = newData.driver?.avatar || 
+            'https://ui-avatars.com/api/?name=' + encodeURIComponent(newData.vehicle.plate);
+        
+        const icon = L.divIcon({
+            html: `<img src="${avatarUrl}" class="driver-marker ${activeClass}" alt="${newData.vehicle.plate}">`,
+            className: 'custom-marker',
+            iconSize: [56, 56],
+            iconAnchor: [28, 28],
+            popupAnchor: [0, -28]
+        });
+        
+        this.marker.setIcon(icon);
+        
+        // Update popup content
+        const popupContent = this.createPopupContent(newData);
+        this.marker.setPopupContent(popupContent);
+        
+        console.log('Marker updated to:', newData.lat, newData.lng);
+    } else {
+        console.log('No marker found to update!');
+    }
+},
 
                 updateTrip(tripData) {
                     // Clear existing route and start marker

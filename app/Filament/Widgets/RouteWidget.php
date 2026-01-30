@@ -6,6 +6,7 @@ use App\Models\Trip;
 use App\Models\Vehicle;
 use App\Services\TripService;
 use Filament\Widgets\Widget;
+use Illuminate\Support\Facades\Log;
 
 class RouteWidget extends Widget
 {
@@ -79,6 +80,26 @@ class RouteWidget extends Widget
     {
         $this->sidebarOpen = ! $this->sidebarOpen;
     }
+
+    public function refreshData()
+    {
+
+        Log::info('refreshData called');
+
+        $this->loadTrips();
+        $this->vehicleData = $this->getVehicleData();
+
+        Log::info('Dispatching event', [
+            'lat' => $this->vehicleData['lat'],
+            'lng' => $this->vehicleData['lng'],
+        ]);
+
+        $this->dispatch(
+            'vehicle-updated',
+            vehicleData: $this->vehicleData,
+        );
+    }
+
 
     public function getVehicleData(): ?array
     {
