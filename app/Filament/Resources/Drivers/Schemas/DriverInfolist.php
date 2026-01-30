@@ -4,24 +4,12 @@ namespace App\Filament\Resources\Drivers\Schemas;
 
 use App\Filament\Widgets\RouteWidget;
 use Filament\Infolists\Components\ImageEntry;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Support\Enums\FontWeight;
-use Filament\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Enums\Width;
-
 
 class DriverInfolist
 {
@@ -31,7 +19,7 @@ class DriverInfolist
             ->components([
                 // Driver Profile Section
 
-                Livewire::make(RouteWidget::class, fn($record) => [
+                Livewire::make(RouteWidget::class, fn ($record) => [
                     'vehicleId' => $record->currentVehicle?->id,
                 ])
                     ->columnSpanFull(),
@@ -43,7 +31,7 @@ class DriverInfolist
                         ImageEntry::make('avatar_url')
                             ->hiddenLabel()
                             ->circular()
-                            ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name))
+                            ->defaultImageUrl(fn ($record) => 'https://ui-avatars.com/api/?name='.urlencode($record->name))
                             ->columnSpan(1)
                             ->imageSize(90),
 
@@ -54,22 +42,21 @@ class DriverInfolist
                             ->color('primary')
                             ->columnSpan(2),
 
-
                         TextEntry::make('status')
                             ->hiddenLabel()
                             ->badge()
                             ->size(TextSize::Large)
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'inactive' => 'Inativo',
                                 default => $state,
                             })
-                            ->color(fn(string $state): string => match ($state) {
+                            ->color(fn (string $state): string => match ($state) {
                                 'active' => 'success',
                                 'inactive' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(string $state): string => match ($state) {
+                            ->icon(fn (string $state): string => match ($state) {
                                 'active' => 'heroicon-o-check-circle',
                                 'inactive' => 'heroicon-o-x-circle',
                                 default => 'heroicon-o-question-mark-circle',
@@ -83,8 +70,7 @@ class DriverInfolist
                             ->weight(FontWeight::Medium)
                             ->columnSpan(2)
                             ->formatStateUsing(
-                                fn(string $state): string =>
-                                preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $state)
+                                fn (string $state): string => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $state)
                             ),
 
                         TextEntry::make('phone')
@@ -94,10 +80,9 @@ class DriverInfolist
                             ->placeholder('Não informado')
                             ->copyable()
                             ->copyMessage('Telefone copiado!')
-                            ->url(fn($state) => $state ? 'tel:' . $state : null)
+                            ->url(fn ($state) => $state ? 'tel:'.$state : null)
                             ->formatStateUsing(
-                                fn(?string $state): ?string =>
-                                $state ? preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)) : null
+                                fn (?string $state): ?string => $state ? preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)) : null
                             ),
 
                     ]),
@@ -125,7 +110,7 @@ class DriverInfolist
                             ->label('Tipo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'truck' => 'Caminhão',
                                 'van' => 'Van',
                                 'car' => 'Carro',
@@ -133,7 +118,7 @@ class DriverInfolist
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'truck' => 'info',
                                 'van' => 'success',
                                 'car' => 'warning',
@@ -145,21 +130,21 @@ class DriverInfolist
                             ->label('Status do Veículo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'maintenance' => 'Manutenção',
                                 'blocked' => 'Bloqueado',
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'active' => 'success',
                                 'maintenance' => 'warning',
                                 'blocked' => 'danger',
                                 default => 'gray',
                             }),
                     ])
-                    ->hidden(fn($record) => !$record->currentVehicle)
+                    ->hidden(fn ($record) => ! $record->currentVehicle)
                     ->collapsible(),
 
                 // Vehicle Details (if assigned)
@@ -172,7 +157,7 @@ class DriverInfolist
                             ->suffix(' km/h')
                             ->placeholder('0 km/h')
                             ->icon('heroicon-o-bolt')
-                            ->color(fn($state) => match (true) {
+                            ->color(fn ($state) => match (true) {
                                 $state > 80 => 'danger',
                                 $state > 60 => 'warning',
                                 default => 'success',
@@ -184,7 +169,7 @@ class DriverInfolist
                             ->suffix('%')
                             ->placeholder('0%')
                             ->icon('heroicon-o-bolt')
-                            ->color(fn($state) => match (true) {
+                            ->color(fn ($state) => match (true) {
                                 $state < 20 => 'danger',
                                 $state < 50 => 'warning',
                                 default => 'success',
@@ -194,17 +179,17 @@ class DriverInfolist
                         TextEntry::make('currentVehicle.ignition_on')
                             ->label('Ignição')
                             ->badge()
-                            ->formatStateUsing(fn(?bool $state): string => match ($state) {
+                            ->formatStateUsing(fn (?bool $state): string => match ($state) {
                                 true => 'Ligada',
                                 false => 'Desligada',
                                 null => '-',
                             })
-                            ->color(fn(?bool $state): string => match ($state) {
+                            ->color(fn (?bool $state): string => match ($state) {
                                 true => 'success',
                                 false => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(?bool $state): string => match ($state) {
+                            ->icon(fn (?bool $state): string => match ($state) {
                                 true => 'heroicon-o-check-circle',
                                 false => 'heroicon-o-x-circle',
                                 default => 'heroicon-o-question-mark-circle',
@@ -220,18 +205,18 @@ class DriverInfolist
                         TextEntry::make('currentVehicle.device.status')
                             ->label('Status do Dispositivo')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'online' => 'Online',
                                 'offline' => 'Offline',
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'online' => 'success',
                                 'offline' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(?string $state): string => match ($state) {
+                            ->icon(fn (?string $state): string => match ($state) {
                                 'online' => 'heroicon-o-signal',
                                 'offline' => 'heroicon-o-signal-slash',
                                 default => 'heroicon-o-question-mark-circle',
@@ -245,7 +230,7 @@ class DriverInfolist
                             ->since()
                             ->color('gray'),
                     ])
-                    ->hidden(fn($record) => !$record->currentVehicle)
+                    ->hidden(fn ($record) => ! $record->currentVehicle)
                     ->collapsed(),
 
                 // Timestamps Section

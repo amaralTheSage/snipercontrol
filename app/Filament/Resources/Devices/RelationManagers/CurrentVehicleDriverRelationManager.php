@@ -4,9 +4,7 @@ namespace App\Filament\Resources\Devices\RelationManagers;
 
 use App\Filament\Resources\Drivers\DriverResource;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -17,7 +15,7 @@ class CurrentVehicleDriverRelationManager extends RelationManager
 
     protected static ?string $relatedResource = DriverResource::class;
 
-    protected static ?string $title = "Motorista";
+    protected static ?string $title = 'Motorista';
 
     public function table(Table $table): Table
     {
@@ -25,7 +23,6 @@ class CurrentVehicleDriverRelationManager extends RelationManager
 
             ->columns([
                 ImageColumn::make('avatar_url')->circular()->label('Motorista')->width('4%'),
-
 
                 TextColumn::make('name')
                     ->label(' ')
@@ -42,24 +39,21 @@ class CurrentVehicleDriverRelationManager extends RelationManager
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state) => match ($state) {
-                        'active'   => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'active' => 'success',
                         'inactive' => 'gray',
-                        default    => 'gray',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'active'   => 'Ativo',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'active' => 'Ativo',
                         'inactive' => 'Inativo',
-                        default    => $state,
+                        default => $state,
                     }),
 
                 TextColumn::make('currentVehicle.plate')
                     ->label('Veículo')
                     ->searchable()
                     ->sortable(),
-
-
-
 
                 TextColumn::make('created_at')
                     ->label('Criado em')

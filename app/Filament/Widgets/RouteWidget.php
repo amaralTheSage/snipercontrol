@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Trip;
 use App\Models\Vehicle;
 use App\Services\TripService;
 use Filament\Widgets\Widget;
@@ -11,44 +12,107 @@ class RouteWidget extends Widget
     protected string $view = 'filament.widgets.route-widget';
 
     public ?int $vehicleId = null;
+
     public ?array $vehicleData = null;
+
+    public ?int $selectedTripId = null;
+
+    public array $availableTrips = [];
+
+    public bool $sidebarOpen = false;
 
     public function mount(?int $vehicleId = null): void
     {
-        if (!$vehicleId) {
+        if (! $vehicleId) {
             return;
         }
 
         $this->vehicleId = $vehicleId;
+        $this->loadTrips();
+
+        // Select current trip by default
+        $currentTrip = Trip::where('vehicle_id', $vehicleId)
+            ->where('status', 'ongoing')
+            ->latest('started_at')
+            ->first();
+
+        if ($currentTrip) {
+            $this->selectedTripId = $currentTrip->id;
+        } elseif (! empty($this->availableTrips)) {
+            // If no current trip, select the most recent finished trip
+            $this->selectedTripId = $this->availableTrips[0]['id'];
+        }
+
         $this->vehicleData = $this->getVehicleData();
+    }
+
+    public function loadTrips(): void
+    {
+        $trips = Trip::where('vehicle_id', $this->vehicleId)
+            ->orderBy('started_at', 'desc')
+            ->limit(50) // Load last 50 trips
+            ->get();
+
+        $this->availableTrips = $trips->map(function ($trip) {
+            return [
+                'id' => $trip->id,
+                'status' => $trip->status,
+                'started_at' => $trip->started_at->format('d/m/Y H:i'),
+                'ended_at' => $trip->ended_at?->format('d/m/Y H:i'),
+                'distance_km' => number_format($trip->distance_km, 2),
+                'duration_minutes' => $trip->duration ?? 0,
+                'is_current' => $trip->status === 'ongoing',
+            ];
+        })->toArray();
+    }
+
+    public function selectTrip(int $tripId): void
+    {
+        $this->selectedTripId = $tripId;
+        $this->vehicleData = $this->getVehicleData();
+
+        // Dispatch event to update the map
+        $this->dispatch('trip-selected', tripData: $this->vehicleData['trip'] ?? null);
+    }
+
+    public function toggleSidebar(): void
+    {
+        $this->sidebarOpen = ! $this->sidebarOpen;
     }
 
     public function getVehicleData(): ?array
     {
-        if (!$this->vehicleId) {
+        if (! $this->vehicleId) {
             return null;
         }
 
         $vehicle = Vehicle::with(['currentDriver', 'device'])
             ->find($this->vehicleId);
 
-        if (!$vehicle) {
+        if (! $vehicle) {
             return null;
         }
 
         $driver = $vehicle->currentDriver;
         $tripService = app(TripService::class);
-        $currentTrip = $tripService->getCurrentTripForVehicle($vehicle->id);
+
+        // Get the selected trip instead of current trip
+        $selectedTrip = null;
+        if ($this->selectedTripId) {
+            $selectedTrip = Trip::find($this->selectedTripId);
+        } else {
+            $selectedTrip = $tripService->getCurrentTripForVehicle($vehicle->id);
+        }
 
         $tripData = null;
-        if ($currentTrip) {
-            $tripData = $tripService->formatTripForMap($currentTrip);
+        if ($selectedTrip) {
+            $tripData = $tripService->formatTripForMap($selectedTrip);
         }
 
         $currentLat = $vehicle->last_latitude ?? fake()->latitude(-23.7, -23.4);
         $currentLng = $vehicle->last_longitude ?? fake()->longitude(-46.8, -46.4);
 
-        if ($tripData && !empty($tripData['current'])) {
+        if ($tripData && ! empty($tripData['current'])) {
             $currentLat = $tripData['current']['lat'];
             $currentLng = $tripData['current']['lng'];
         }

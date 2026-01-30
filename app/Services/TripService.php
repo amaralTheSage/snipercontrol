@@ -3,8 +3,6 @@
 namespace App\Services;
 
 use App\Models\Trip;
-use App\Models\Vehicle;
-use Illuminate\Support\Collection;
 
 class TripService
 {
@@ -78,6 +76,7 @@ class TripService
             'id' => $trip->id,
             'status' => $trip->status,
             'started_at' => $trip->started_at->format('d/m/Y H:i'),
+            'ended_at' => $trip->ended_at?->format('d/m/Y H:i'),
             'start' => [
                 'lat' => (float) $trip->start_lat,
                 'lng' => (float) $trip->start_lng,

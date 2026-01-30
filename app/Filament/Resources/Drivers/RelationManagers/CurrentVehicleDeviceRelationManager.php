@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Drivers\RelationManagers;
 
 use App\Filament\Resources\Devices\DeviceResource;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -30,19 +29,18 @@ class CurrentVehicleDeviceRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
 
-
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state) => match ($state) {
-                        'online'  => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'online' => 'success',
                         'offline' => 'danger',
-                        default   => 'gray',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'online'  => 'Online',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'online' => 'Online',
                         'offline' => 'Offline',
-                        default   => $state,
+                        default => $state,
                     })
                     ->sortable(),
 
@@ -78,6 +76,6 @@ class CurrentVehicleDeviceRelationManager extends RelationManager
                     ]),
             ])
 
-            ->headerActions([]);;
+            ->headerActions([]);
     }
 }

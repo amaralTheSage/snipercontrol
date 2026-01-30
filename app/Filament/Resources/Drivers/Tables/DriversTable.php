@@ -19,7 +19,6 @@ class DriversTable
             ->columns([
                 ImageColumn::make('avatar_url')->circular()->label('Motorista')->width('4%'),
 
-
                 TextColumn::make('name')
                     ->label(' ')
                     ->searchable(),
@@ -35,15 +34,15 @@ class DriversTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state) => match ($state) {
-                        'active'   => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'active' => 'success',
                         'inactive' => 'gray',
-                        default    => 'gray',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'active'   => 'Ativo',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'active' => 'Ativo',
                         'inactive' => 'Inativo',
-                        default    => $state,
+                        default => $state,
                     }),
 
                 TextColumn::make('currentVehicle.plate')

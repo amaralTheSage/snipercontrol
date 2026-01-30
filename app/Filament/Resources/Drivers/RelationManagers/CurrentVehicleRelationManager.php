@@ -4,26 +4,17 @@ namespace App\Filament\Resources\Drivers\RelationManagers;
 
 use App\Filament\Resources\Vehicles\VehicleResource;
 use Filament\Actions\Action;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 
 class CurrentVehicleRelationManager extends RelationManager
 {
     protected static string $relationship = 'currentVehicle';
 
     protected static ?string $title = 'Veículo';
+
     protected static ?string $relatedResource = VehicleResource::class;
 
     public function table(Table $table): Table
@@ -51,10 +42,10 @@ class CurrentVehicleRelationManager extends RelationManager
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn(string $state) => match ($state) {
+                    ->formatStateUsing(fn (string $state) => match ($state) {
                         'truck' => 'Caminhão',
-                        'van'   => 'Van',
-                        'car'   => 'Carro',
+                        'van' => 'Van',
+                        'car' => 'Carro',
                         'pickup' => 'Caminhonete',
                         default => $state,
                     })
@@ -65,19 +56,18 @@ class CurrentVehicleRelationManager extends RelationManager
                     ->label('Status')
                     ->badge()
                     ->toggleable()
-                    ->color(fn(string $state) => match ($state) {
-                        'active'      => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'active' => 'success',
                         'maintenance' => 'warning',
-                        'blocked'     => 'danger',
-                        default       => 'gray',
+                        'blocked' => 'danger',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'active'      => 'Ativo',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'active' => 'Ativo',
                         'maintenance' => 'Manutenção',
-                        'blocked'     => 'Bloqueado',
-                        default       => $state,
+                        'blocked' => 'Bloqueado',
+                        default => $state,
                     }),
-
 
                 TextColumn::make('current_speed')
                     ->label('Velocidade (km/h)')

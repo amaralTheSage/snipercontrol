@@ -4,23 +4,13 @@ namespace App\Filament\Resources\Vehicles\Schemas;
 
 use App\Filament\Widgets\RouteWidget;
 use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Support\Enums\FontWeight;
-use Filament\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Enums\Width;
 
 class VehicleInfolist
 {
@@ -29,8 +19,8 @@ class VehicleInfolist
         return $schema
             ->components([
 
-                Livewire::make(RouteWidget::class, fn($record) => [
-                    'vehicleId' =>  $record->id,
+                Livewire::make(RouteWidget::class, fn ($record) => [
+                    'vehicleId' => $record->id,
                 ])
                     ->columnSpanFull(),
 
@@ -59,21 +49,21 @@ class VehicleInfolist
                         TextEntry::make('type')
                             ->label('Tipo')
                             ->badge()
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'truck' => 'Caminhão',
                                 'van' => 'Van',
                                 'car' => 'Carro',
                                 'pickup' => 'Pickup',
                                 default => $state,
                             })
-                            ->color(fn(string $state): string => match ($state) {
+                            ->color(fn (string $state): string => match ($state) {
                                 'truck' => 'info',
                                 'van' => 'success',
                                 'car' => 'warning',
                                 'pickup' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(string $state): string => match ($state) {
+                            ->icon(fn (string $state): string => match ($state) {
                                 'truck' => 'heroicon-o-truck',
                                 'van' => 'heroicon-o-building-office',
                                 'car' => 'heroicon-m-home',
@@ -84,19 +74,19 @@ class VehicleInfolist
                         TextEntry::make('status')
                             ->label('Status')
                             ->badge()
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'maintenance' => 'Manutenção',
                                 'blocked' => 'Bloqueado',
                                 default => $state,
                             })
-                            ->color(fn(string $state): string => match ($state) {
+                            ->color(fn (string $state): string => match ($state) {
                                 'active' => 'success',
                                 'maintenance' => 'warning',
                                 'blocked' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(string $state): string => match ($state) {
+                            ->icon(fn (string $state): string => match ($state) {
                                 'active' => 'heroicon-o-check-circle',
                                 'maintenance' => 'heroicon-o-wrench-screwdriver',
                                 'blocked' => 'heroicon-o-x-circle',
@@ -121,7 +111,7 @@ class VehicleInfolist
                             ->suffix(' km/h')
                             ->icon('heroicon-o-bolt')
                             ->placeholder('0 km/h')
-                            ->color(fn($state) => match (true) {
+                            ->color(fn ($state) => match (true) {
                                 $state > 80 => 'danger',
                                 $state > 60 => 'warning',
                                 default => 'success',
@@ -133,7 +123,7 @@ class VehicleInfolist
                             ->suffix('%')
                             ->icon('heroicon-o-bolt')
                             ->placeholder('0%')
-                            ->color(fn($state) => match (true) {
+                            ->color(fn ($state) => match (true) {
                                 $state < 20 => 'danger',
                                 $state < 50 => 'warning',
                                 default => 'success',
@@ -170,7 +160,7 @@ class VehicleInfolist
                             ->placeholder('N/A')
                             ->copyable()
                             ->copyMessage('Latitude copiada!')
-                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
+                            ->formatStateUsing(fn ($state) => $state ? number_format($state, 7) : '-'),
 
                         TextEntry::make('last_longitude')
                             ->label('Longitude')
@@ -178,7 +168,7 @@ class VehicleInfolist
                             ->placeholder('N/A')
                             ->copyable()
                             ->copyMessage('Longitude copiada!')
-                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
+                            ->formatStateUsing(fn ($state) => $state ? number_format($state, 7) : '-'),
 
                         TextEntry::make('last_update_at')
                             ->label('Última Atualização')
@@ -204,17 +194,17 @@ class VehicleInfolist
                         TextEntry::make('device.status')
                             ->label('Status do Dispositivo')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'online' => 'Online',
                                 'offline' => 'Offline',
                                 default => 'Desconhecido',
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'online' => 'success',
                                 'offline' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(?string $state): string => match ($state) {
+                            ->icon(fn (?string $state): string => match ($state) {
                                 'online' => 'heroicon-o-signal',
                                 'offline' => 'heroicon-o-signal-slash',
                                 default => 'heroicon-o-question-mark-circle',

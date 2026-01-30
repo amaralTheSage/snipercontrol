@@ -3,23 +3,12 @@
 namespace App\Filament\Resources\Devices\Schemas;
 
 use App\Filament\Widgets\RouteWidget;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Support\Enums\FontWeight;
-use Filament\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\IconSize;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
-use Filament\Support\Enums\Width;
 
 class DeviceInfolist
 {
@@ -28,7 +17,7 @@ class DeviceInfolist
         return $schema
             ->components([
                 // Device Information Section
-                Livewire::make(RouteWidget::class, fn($record) => [
+                Livewire::make(RouteWidget::class, fn ($record) => [
                     'vehicleId' => $record->vehicle_id,
                 ])->columnSpanFull(),
 
@@ -50,17 +39,17 @@ class DeviceInfolist
                             ->label('Status')
                             ->badge()
                             ->size(TextSize::Large)
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                            ->formatStateUsing(fn (string $state): string => match ($state) {
                                 'online' => 'Online',
                                 'offline' => 'Offline',
                                 default => $state,
                             })
-                            ->color(fn(string $state): string => match ($state) {
+                            ->color(fn (string $state): string => match ($state) {
                                 'online' => 'success',
                                 'offline' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn(string $state): string => match ($state) {
+                            ->icon(fn (string $state): string => match ($state) {
                                 'online' => 'heroicon-o-signal',
                                 'offline' => 'heroicon-o-signal-slash',
                                 default => 'heroicon-o-question-mark-circle',
@@ -90,7 +79,7 @@ class DeviceInfolist
                             ->label('Tipo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'truck' => 'Caminhão',
                                 'van' => 'Van',
                                 'car' => 'Carro',
@@ -98,7 +87,7 @@ class DeviceInfolist
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'truck' => 'info',
                                 'van' => 'success',
                                 'car' => 'warning',
@@ -110,14 +99,14 @@ class DeviceInfolist
                             ->label('Status do Veículo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
+                            ->formatStateUsing(fn (?string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'maintenance' => 'Manutenção',
                                 'blocked' => 'Bloqueado',
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn(?string $state): string => match ($state) {
+                            ->color(fn (?string $state): string => match ($state) {
                                 'active' => 'success',
                                 'maintenance' => 'warning',
                                 'blocked' => 'danger',
@@ -131,7 +120,7 @@ class DeviceInfolist
                             ->color('primary')
                             ->weight(FontWeight::SemiBold),
                     ])
-                    ->hidden(fn($record) => !$record->vehicle_id)
+                    ->hidden(fn ($record) => ! $record->vehicle_id)
                     ->collapsible(),
 
                 // Communication Section
@@ -145,9 +134,8 @@ class DeviceInfolist
                             ->dateTime('d/m/Y H:i:s')
                             ->placeholder('Nunca se comunicou')
                             ->since()
-                            ->color(fn($state) => $state && $state->diffInHours(now()) > 24 ? 'danger' : 'success')
-                            ->weight(FontWeight::SemiBold)
-
+                            ->color(fn ($state) => $state && $state->diffInHours(now()) > 24 ? 'danger' : 'success')
+                            ->weight(FontWeight::SemiBold),
 
                         // TextEntry::make('connection_quality')
                         //     ->label('Qualidade da Conexão')

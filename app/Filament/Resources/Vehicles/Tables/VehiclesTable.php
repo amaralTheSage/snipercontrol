@@ -37,10 +37,10 @@ class VehiclesTable
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn(string $state) => match ($state) {
+                    ->formatStateUsing(fn (string $state) => match ($state) {
                         'truck' => 'Caminhão',
-                        'van'   => 'Van',
-                        'car'   => 'Carro',
+                        'van' => 'Van',
+                        'car' => 'Carro',
                         'pickup' => 'Caminhonete',
                         default => $state,
                     })
@@ -51,17 +51,17 @@ class VehiclesTable
                     ->label('Status')
                     ->badge()
                     ->toggleable()
-                    ->color(fn(string $state) => match ($state) {
-                        'active'      => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'active' => 'success',
                         'maintenance' => 'warning',
-                        'blocked'     => 'danger',
-                        default       => 'gray',
+                        'blocked' => 'danger',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'active'      => 'Ativo',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'active' => 'Ativo',
                         'maintenance' => 'Manutenção',
-                        'blocked'     => 'Bloqueado',
-                        default       => $state,
+                        'blocked' => 'Bloqueado',
+                        default => $state,
                     }),
 
                 ImageColumn::make('currentDriver.avatar_url')
@@ -69,7 +69,7 @@ class VehiclesTable
                     ->circular()
                     ->imageSize(36)
                     ->width('4%')
-                    ->defaultImageUrl(fn() => ''),
+                    ->defaultImageUrl(fn () => ''),
 
                 TextColumn::make('currentDriver.name')
                     ->label(' ')

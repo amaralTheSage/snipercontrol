@@ -9,9 +9,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
-use Filament\Widgets\FilamentInfoWidget;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -35,7 +33,7 @@ class DashPanelProvider extends PanelProvider
             ->profile()
             ->topbar(false)
             ->sidebarCollapsibleOnDesktop()
-            ->colors(['primary' => "oklch(0.8284 0.1584 161.5977)"])
+            ->colors(['primary' => 'oklch(0.8284 0.1584 161.5977)'])
             ->font('Figtree')
             ->brandLogo(asset('assets/logo.svg'))->brandLogoHeight('28px')
             ->brandName('HubInflu')

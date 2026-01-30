@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Filament\Models\Contracts\HasAvatar;
 use Illuminate\Database\Eloquent\Model;
 
 class Driver extends Model
@@ -15,17 +14,15 @@ class Driver extends Model
         'status',
     ];
 
-
     // --------------------------
     //  Filament Stuff
     // --------------------------
 
-
     public function getAvatarUrlAttribute(): string
     {
         return $this->avatar
-            ? asset('storage/' . $this->avatar)
-            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
+            ? asset('storage/'.$this->avatar)
+            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
     }
 
     public function currentVehicle()

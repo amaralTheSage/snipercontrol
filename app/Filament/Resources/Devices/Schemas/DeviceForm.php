@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Devices\Schemas;
 
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -25,7 +24,7 @@ class DeviceForm
                     ->searchable()
                     ->preload()
                     ->nullable()
-                    ->getOptionLabelFromRecordUsing(fn($record) => $record->plate . ' - ' . $record->model)
+                    ->getOptionLabelFromRecordUsing(fn ($record) => $record->plate.' - '.$record->model)
                     ->placeholder('Nenhum veículo'),
 
                 Select::make('status')

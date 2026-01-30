@@ -32,15 +32,15 @@ class DevicesTable
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn(string $state) => match ($state) {
-                        'online'  => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'online' => 'success',
                         'offline' => 'danger',
-                        default   => 'gray',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'online'  => 'Online',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'online' => 'Online',
                         'offline' => 'Offline',
-                        default   => $state,
+                        default => $state,
                     })
                     ->sortable(),
 

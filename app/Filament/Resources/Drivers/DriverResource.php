@@ -13,7 +13,6 @@ use App\Filament\Resources\Drivers\Schemas\DriverInfolist;
 use App\Filament\Resources\Drivers\Tables\DriversTable;
 use App\Models\Driver;
 use BackedEnum;
-use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -48,7 +47,7 @@ class DriverResource extends Resource
     {
         return [
             CurrentVehicleRelationManager::class,
-            CurrentVehicleDeviceRelationManager::class
+            CurrentVehicleDeviceRelationManager::class,
         ];
     }
 

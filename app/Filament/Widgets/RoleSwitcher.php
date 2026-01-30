@@ -17,7 +17,7 @@ class RoleSwitcher extends Widget implements HasForms
 
     protected string $view = 'filament.widgets.role-switcher';
 
-    protected int | string | array $columnSpan = '1';
+    protected int|string|array $columnSpan = '1';
 
     public ?array $data = [];
 
@@ -44,9 +44,9 @@ class RoleSwitcher extends Widget implements HasForms
                     ->live()
                     ->afterStateUpdated(function ($state) {
                         $user = Auth::user();
-                        
+
                         // Update the database column
-                        $user->update(['role' => $state]); 
+                        $user->update(['role' => $state]);
 
                         // Refresh the page to apply new permissions/UI changes
                         return redirect(request()->header('Referer'));

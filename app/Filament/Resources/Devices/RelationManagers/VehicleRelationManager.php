@@ -4,10 +4,8 @@ namespace App\Filament\Resources\Devices\RelationManagers;
 
 use App\Filament\Resources\Vehicles\VehicleResource;
 use Filament\Actions\Action;
-use Filament\Actions\CreateAction;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -43,10 +41,10 @@ class VehicleRelationManager extends RelationManager
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn(string $state) => match ($state) {
+                    ->formatStateUsing(fn (string $state) => match ($state) {
                         'truck' => 'Caminhão',
-                        'van'   => 'Van',
-                        'car'   => 'Carro',
+                        'van' => 'Van',
+                        'car' => 'Carro',
                         'pickup' => 'Caminhonete',
                         default => $state,
                     })
@@ -57,19 +55,18 @@ class VehicleRelationManager extends RelationManager
                     ->label('Status')
                     ->badge()
                     ->toggleable()
-                    ->color(fn(string $state) => match ($state) {
-                        'active'      => 'success',
+                    ->color(fn (string $state) => match ($state) {
+                        'active' => 'success',
                         'maintenance' => 'warning',
-                        'blocked'     => 'danger',
-                        default       => 'gray',
+                        'blocked' => 'danger',
+                        default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state) => match ($state) {
-                        'active'      => 'Ativo',
+                    ->formatStateUsing(fn (string $state) => match ($state) {
+                        'active' => 'Ativo',
                         'maintenance' => 'Manutenção',
-                        'blocked'     => 'Bloqueado',
-                        default       => $state,
+                        'blocked' => 'Bloqueado',
+                        default => $state,
                     }),
-
 
                 TextColumn::make('currentDriver.name')
                     ->label('Motorista')

@@ -3,11 +3,9 @@
 namespace App\Filament\Resources\Vehicles\Schemas;
 
 use Filament\Actions\Action;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -25,7 +23,6 @@ class VehicleForm
                         ->label('Placa')
                         ->required()
                         ->maxLength(255),
-
 
                     TextInput::make('model')
                         ->label('Modelo')
@@ -62,17 +59,13 @@ class VehicleForm
                                 ->modalWidth(Width::Medium);
                         }),
 
-
-
-
-
                     Select::make('current_driver_id')
                         ->label('Motorista Atual')
                         ->relationship('currentDriver', 'name')
                         ->searchable()
                         ->preload()
                         ->nullable()
-                        ->getOptionLabelFromRecordUsing(fn($record) => $record->name . ' - ' . $record->cpf)
+                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->name.' - '.$record->cpf)
                         ->createOptionForm([
                             FileUpload::make('avatar')
                                 ->hiddenLabel()
@@ -115,8 +108,6 @@ class VehicleForm
 
                 ]),
 
-
-
                 Select::make('type')
                     ->label('Tipo')
                     ->options([
@@ -143,7 +134,6 @@ class VehicleForm
                     ->suffix('%')
                     ->minValue(0)
                     ->maxValue(100),
-
 
             ]);
     }

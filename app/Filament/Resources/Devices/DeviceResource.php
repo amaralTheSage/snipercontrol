@@ -16,7 +16,6 @@ use BackedEnum;
 use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class DeviceResource extends Resource
@@ -48,7 +47,7 @@ class DeviceResource extends Resource
     {
         return [
             VehicleRelationManager::class,
-            CurrentVehicleDriverRelationManager::class
+            CurrentVehicleDriverRelationManager::class,
         ];
     }
 

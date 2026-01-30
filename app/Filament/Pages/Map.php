@@ -13,6 +13,7 @@ class Map extends Page
     protected string $view = 'filament.pages.map';
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMap;
+
     protected static ?string $navigationLabel = 'Frota';
 
     protected static ?int $navigationSort = 2;

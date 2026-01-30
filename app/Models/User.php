@@ -6,7 +6,6 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Filament\Models\Contracts\FilamentUser;
-use Filament\Models\Contracts\HasAvatar;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -28,25 +27,22 @@ class User extends Authenticatable implements FilamentUser
         'avatar',
         'email',
         'password',
-        'role'
+        'role',
     ];
-
 
     public function canAccessPanel(Panel $panel): bool
     {
         return true;
     }
 
-        protected $appends = ['avatar_url']; // Makes it accessible in react
+    protected $appends = ['avatar_url']; // Makes it accessible in react
 
-
-public function getAvatarUrlAttribute(): string
-{
-    return $this->avatar
-        ? asset('storage/' . $this->avatar)
-        : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
-}
-
+    public function getAvatarUrlAttribute(): string
+    {
+        return $this->avatar
+            ? asset('storage/'.$this->avatar)
+            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
+    }
 
     /**
      * The attributes that should be hidden for serialization.
