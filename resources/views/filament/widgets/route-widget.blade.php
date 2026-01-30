@@ -3,7 +3,7 @@
         <div>
             <div class="relative">
                 <div wire:ignore x-data="vehicleMap(@js($vehicleData))" class="w-full">
-                    <div x-ref="map" style="height: 500px; width: 100%;" class="z-0 rounded-lg border-2 border-border ">
+                    <div x-ref="map" style="height: 500px; width: 100%;" class="z-0 rounded-lg border-2 border-border">
                     </div>
                 </div>
             </div>
@@ -13,12 +13,10 @@
         <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <style>
-            /* Base map container */
             .leaflet-container {
                 font-family: var(--font-sans);
             }
 
-            /* Zoom controls - using card colors */
             .leaflet-control-zoom {
                 border: none !important;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
@@ -51,7 +49,6 @@
                 border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
             }
 
-            /* Driver markers - using primary color for border */
             .driver-marker {
                 width: 56px;
                 height: 56px;
@@ -93,7 +90,24 @@
                 }
             }
 
-            /* Popup - using card colors (SMALLER SIZE) */
+            .start-marker {
+                width: 32px;
+                height: 32px;
+                background: #22c55e;
+                border: 3px solid white;
+                border-radius: 50% 50% 50% 0;
+                transform: rotate(-45deg);
+                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
+            }
+
+            .trip-route {
+                stroke: var(--primary);
+                stroke-width: 4;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                fill: none;
+            }
+
             .leaflet-popup-content-wrapper {
                 background: var(--card) !important;
                 color: var(--card-foreground) !important;
@@ -125,7 +139,6 @@
                 color: var(--card-foreground) !important;
             }
 
-            /* Popup content styling (SMALLER) */
             .driver-popup {
                 font-family: var(--font-sans);
                 padding: 8px;
@@ -202,7 +215,6 @@
                 border-top: 1px solid var(--border);
             }
 
-            /* Attribution */
             .leaflet-control-attribution {
                 background: color-mix(in srgb, var(--card) 90%, transparent) !important;
                 color: var(--muted-foreground) !important;
@@ -226,6 +238,8 @@
             Alpine.data('vehicleMap', (data) => ({
                 map: null,
                 marker: null,
+                startMarker: null,
+                routeLine: null,
                 currentTileLayer: null,
                 currentTheme: null,
                 data: data,
@@ -242,11 +256,13 @@
 
                     if (this.data) {
                         this.addMarker(this.data);
+
+                        if (this.data.trip) {
+                            this.drawRoute(this.data.trip);
+                        }
                     }
 
-                    setInterval(() => {
-                        this.updatePosition();
-                    }, 5000);
+
 
                     this.watchThemeChanges();
                 },
@@ -269,6 +285,47 @@
                     }
 
                     this.currentTileLayer.addTo(this.map);
+                },
+
+                drawRoute(trip) {
+                    if (!trip.route || trip.route.length === 0) {
+                        return;
+                    }
+
+                    const startIcon = L.divIcon({
+                        html: '<div class="start-marker"></div>',
+                        className: 'custom-start-marker',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                    });
+
+                    this.startMarker = L.marker([trip.start.lat, trip.start.lng], { icon: startIcon })
+                        .addTo(this.map)
+                        .bindPopup(`
+                                        <div class="driver-popup">
+                                            <h3>Início da Viagem</h3>
+                                            <div class="info-row">
+                                                <span class="label">Horário:</span>
+                                                <span class="value">${trip.started_at}</span>
+                                            </div>
+                                        </div>
+                                    `);
+
+                    const routeCoordinates = trip.route.map(point => [point.lat, point.lng]);
+
+                    this.routeLine = L.polyline(routeCoordinates, {
+                        color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0aaa7f',
+                        weight: 4,
+                        opacity: 0.7,
+                        smoothFactor: 1
+                    }).addTo(this.map);
+
+                    const bounds = L.latLngBounds([
+                        [trip.start.lat, trip.start.lng],
+                        ...routeCoordinates
+                    ]);
+
+                    this.map.fitBounds(bounds, { padding: [50, 50] });
                 },
 
                 watchThemeChanges() {
@@ -305,6 +362,11 @@
                     this.currentTheme = newTheme;
                     this.setTileLayer(newTheme);
 
+                    if (this.routeLine) {
+                        const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0aaa7f';
+                        this.routeLine.setStyle({ color: primaryColor });
+                    }
+
                     if (this.marker && this.marker.getPopup().isOpen()) {
                         const popupContent = this.createPopupContent(this.data);
                         this.marker.setPopupContent(popupContent);
@@ -315,7 +377,6 @@
                     const isActive = data.vehicle?.ignition_on;
                     const activeClass = isActive ? 'active' : 'inactive';
 
-                    // Use driver avatar if available, otherwise use vehicle placeholder
                     const avatarUrl = data.driver?.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.vehicle.plate);
 
                     const icon = L.divIcon({
@@ -334,7 +395,6 @@
                         maxWidth: 300,
                         className: 'driver-popup'
                     });
-
                 },
 
                 createPopupContent(data) {
@@ -343,66 +403,69 @@
                         '<span class="status-badge status-inactive">Desligado</span>';
 
                     const driverInfo = data.driver ? `
-                                                                                            <img src="${data.driver.avatar}" class="avatar" alt="${data.driver.name}">
-                                                                                            <h3>${data.driver.name}</h3>
-                                                                                            <div class="info-row">
-                                                                                                <span class="label">Telefone:</span>
-                                                                                                <span class="value">${data.driver.phone || 'N/A'}</span>
-                                                                                            </div>
-                                                                                            <hr>
-                                                                                        ` : `
-                                                                                            <h3>${data.vehicle.plate}</h3>
-                                                                                            <p class="text-center text-sm text-gray-500 mb-3">Nenhum motorista atribuído</p>
-                                                                                            <hr>
-                                                                                        `;
+                                    <img src="${data.driver.avatar}" class="avatar" alt="${data.driver.name}">
+                                    <h3>${data.driver.name}</h3>
+                                    <div class="info-row">
+                                        <span class="label">Telefone:</span>
+                                        <span class="value">${data.driver.phone || 'N/A'}</span>
+                                    </div>
+                                    <hr>
+                                ` : `
+                                    <h3>${data.vehicle.plate}</h3>
+                                    <p class="text-center text-sm text-gray-500 mb-3">Nenhum motorista atribuído</p>
+                                    <hr>
+                                `;
+
+                    const tripInfo = data.trip ? `
+                                    <div class="info-row">
+                                        <span class="label">Distância:</span>
+                                        <span class="value">${data.trip.stats.distance_km} km</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">Duração:</span>
+                                        <span class="value">${data.trip.stats.duration_minutes} min</span>
+                                    </div>
+                                    <div class="info-row">
+                                        <span class="label">Vel. Máx:</span>
+                                        <span class="value">${data.trip.stats.max_speed} km/h</span>
+                                    </div>
+                                    <hr>
+                                ` : '';
 
                     return `
-                                                                                            <div class="driver-popup">
-                                                                                                ${driverInfo}
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Veículo:</span>
-                                                                                                    <span class="value">${data.vehicle?.model || 'N/A'}</span>
-                                                                                                </div>
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Placa:</span>
-                                                                                                    <span class="value">${data.vehicle?.plate || 'N/A'}</span>
-                                                                                                </div>
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Velocidade:</span>
-                                                                                                    <span class="value">${data.vehicle?.speed || 0} km/h</span>
-                                                                                                </div>
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Combustível:</span>
-                                                                                                    <span class="value">${data.vehicle?.fuel_level || 0}%</span>
-                                                                                                </div>
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Ignição:</span>
-                                                                                                    <span class="value">${ignitionStatus}</span>
-                                                                                                </div>
-                                                                                                <hr>
-                                                                                                <div class="info-row">
-                                                                                                    <span class="label">Dispositivo:</span>
-                                                                                                    <span class="value">${data.device?.serial || 'N/A'}</span>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                        `;
+                                    <div class="driver-popup">
+                                        ${driverInfo}
+                                        ${tripInfo}
+                                        <div class="info-row">
+                                            <span class="label">Veículo:</span>
+                                            <span class="value">${data.vehicle?.model || 'N/A'}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Placa:</span>
+                                            <span class="value">${data.vehicle?.plate || 'N/A'}</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Velocidade:</span>
+                                            <span class="value">${data.vehicle?.speed || 0} km/h</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Combustível:</span>
+                                            <span class="value">${data.vehicle?.fuel_level || 0}%</span>
+                                        </div>
+                                        <div class="info-row">
+                                            <span class="label">Ignição:</span>
+                                            <span class="value">${ignitionStatus}</span>
+                                        </div>
+                                        <hr>
+                                        <div class="info-row">
+                                            <span class="label">Dispositivo:</span>
+                                            <span class="value">${data.device?.serial || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                `;
                 },
 
-                updatePosition() {
-                    if (!this.marker || !this.data) return;
 
-                    const currentLatLng = this.marker.getLatLng();
-                    const newLat = currentLatLng.lat + (Math.random() - 0.5) * 0.001;
-                    const newLng = currentLatLng.lng + (Math.random() - 0.5) * 0.001;
-
-                    this.marker.setLatLng([newLat, newLng]);
-
-                    this.data.lat = newLat;
-                    this.data.lng = newLng;
-
-                    const popupContent = this.createPopupContent(this.data);
-                    this.marker.setPopupContent(popupContent);
-                }
             }));
         </script>
         @endscript

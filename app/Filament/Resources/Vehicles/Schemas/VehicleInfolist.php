@@ -31,7 +31,7 @@ class VehicleInfolist
 
                 Livewire::make(RouteWidget::class, fn($record) => [
                     'vehicleId' =>  $record->id,
-                ])->lazy()
+                ])
                     ->columnSpanFull(),
 
                 // Vehicle Information Section

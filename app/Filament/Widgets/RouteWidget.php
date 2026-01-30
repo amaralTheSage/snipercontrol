@@ -3,6 +3,7 @@
 namespace App\Filament\Widgets;
 
 use App\Models\Vehicle;
+use App\Services\TripService;
 use Filament\Widgets\Widget;
 
 class RouteWidget extends Widget
@@ -12,8 +13,13 @@ class RouteWidget extends Widget
     public ?int $vehicleId = null;
     public ?array $vehicleData = null;
 
-    public function mount(): void
+    public function mount(?int $vehicleId = null): void
     {
+        if (!$vehicleId) {
+            return;
+        }
+
+        $this->vehicleId = $vehicleId;
         $this->vehicleData = $this->getVehicleData();
     }
 
@@ -31,6 +37,21 @@ class RouteWidget extends Widget
         }
 
         $driver = $vehicle->currentDriver;
+        $tripService = app(TripService::class);
+        $currentTrip = $tripService->getCurrentTripForVehicle($vehicle->id);
+
+        $tripData = null;
+        if ($currentTrip) {
+            $tripData = $tripService->formatTripForMap($currentTrip);
+        }
+
+        $currentLat = $vehicle->last_latitude ?? fake()->latitude(-23.7, -23.4);
+        $currentLng = $vehicle->last_longitude ?? fake()->longitude(-46.8, -46.4);
+
+        if ($tripData && !empty($tripData['current'])) {
+            $currentLat = $tripData['current']['lat'];
+            $currentLng = $tripData['current']['lng'];
+        }
 
         return [
             'vehicle' => [
@@ -55,9 +76,10 @@ class RouteWidget extends Widget
                 'status' => $vehicle->device->status,
             ] : null,
 
-            // Coordinates
-            'lat' => $vehicle->last_latitude ?? fake()->latitude(-23.7, -23.4),
-            'lng' => $vehicle->last_longitude ?? fake()->longitude(-46.8, -46.4),
+            'trip' => $tripData,
+
+            'lat' => $currentLat,
+            'lng' => $currentLng,
         ];
     }
 }
