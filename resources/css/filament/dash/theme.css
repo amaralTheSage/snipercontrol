@@ -262,6 +262,17 @@ body {
     @apply text-primary-foreground;
 }
 
+.custom-warning-table table,
+.custom-warning-table thead,
+.custom-warning-table tbody,
+.custom-warning-table tr {
+    @apply bg-card!;
+}
+
+.fi-in-text-item.fi-in-text-has-badges.fi-wrapped.fi-in-text {
+    @apply bg-card!;
+}
+
 .fi-pagination {
     @apply rounded-b-2xl bg-card;
 }

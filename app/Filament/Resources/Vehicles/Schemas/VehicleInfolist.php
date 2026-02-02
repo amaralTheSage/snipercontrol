@@ -2,9 +2,14 @@
 
 namespace App\Filament\Resources\Vehicles\Schemas;
 
+use App\Filament\Resources\Warnings\WarningResource;
 use App\Filament\Widgets\RouteWidget;
+use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -146,6 +151,7 @@ class VehicleInfolist
                 Section::make('Localização')
                     ->icon('heroicon-o-map-pin')
                     ->columns(3)
+                    ->columnSpanFull()
                     ->schema([
                         TextEntry::make('last_latitude')
                             ->label('Latitude')
@@ -172,38 +178,107 @@ class VehicleInfolist
                             ->color('gray'),
                     ]),
 
-                // Device Information
-                Section::make('Dispositivo')
-                    ->icon('heroicon-o-cpu-chip')
-                    ->columns(2)
-                    ->schema([
-                        TextEntry::make('device.serial')
-                            ->label('Número de Série')
-                            ->placeholder('Nenhum dispositivo')
-                            ->icon('heroicon-o-hashtag')
-                            ->copyable()
-                            ->weight(FontWeight::Medium),
 
-                        TextEntry::make('device.status')
-                            ->label('Status do Dispositivo')
-                            ->badge()
-                            ->formatStateUsing(fn(?string $state): string => match ($state) {
-                                'online' => 'Online',
-                                'offline' => 'Offline',
-                                default => 'Desconhecido',
+
+                Group::make([
+
+                    Section::make('Avisos (últimos 5)')->schema([
+
+                        RepeatableEntry::make('warnings')
+                            ->hiddenLabel()
+                            ->state(fn($record) => $record->warnings()->latest('occurred_at')->limit(5)->get())
+                            ->table([
+                                TableColumn::make('Tipo'),
+                                TableColumn::make('Severidade'),
+                                TableColumn::make('Motorista'),
+
+                                TableColumn::make('Status'),
+                            ])->contained(false)->extraAttributes([
+                                'class' => 'bg-card',
+                            ])
+                            ->schema([
+                                TextEntry::make('type')->extraAttributes([
+                                    'class' => 'bg-card',
+                                ])
+                                    ->badge()
+                                    ->color(fn(string $state): string => match ($state) {
+                                        'route_diversion' => 'warning',
+                                        'cargo_theft' => 'danger',
+                                        'fuel_theft' => 'danger',
+                                        default => 'gray',
+                                    })->extraEntryWrapperAttributes(['class' => 'repeater'])
+                                    ->formatStateUsing(fn($record) => $record->getTypeLabel())
+                                    ->url(fn($record) => WarningResource::getUrl('view', ['record' => $record]))
+                                    ->openUrlInNewTab(false),
+
+                                TextEntry::make('severity')
+                                    ->badge()
+                                    ->color(fn(string $state): string => match ($state) {
+                                        'low' => 'success',
+                                        'medium' => 'warning',
+                                        'high' => 'danger',
+                                        default => 'gray',
+                                    })
+                                    ->formatStateUsing(fn($record) => $record->getSeverityLabel()),
+
+                                TextEntry::make('driver.name')
+                                    ->limit(50)
+                                    ->placeholder('Sem descrição'),
+
+
+
+                                TextEntry::make('resolved_at')
+                                    ->badge()
+                                    ->placeholder('Pendente')
+                                    ->color(fn($state) => $state ? 'success' : 'danger')
+                                    ->formatStateUsing(fn($state) => $state ? 'Resolvido' : 'Pendente'),
+                            ])->extraAttributes([
+                                'class' => 'custom-warning-table',
+                            ]),
+                    ])->headerActions([
+                        Action::make('viewAllWarnings')
+                            ->label('Ver Todos os Avisos')
+                            ->url(function ($record) {
+
+                                return WarningResource::getUrl('index', [
+                                    'search' => $record->plate,
+                                ]);
                             })
-                            ->color(fn(?string $state): string => match ($state) {
-                                'online' => 'success',
-                                'offline' => 'danger',
-                                default => 'gray',
-                            })
-                            ->icon(fn(?string $state): string => match ($state) {
-                                'online' => 'heroicon-o-signal',
-                                'offline' => 'heroicon-o-signal-slash',
-                                default => 'heroicon-o-question-mark-circle',
-                            }),
+                            ->openUrlInNewTab(false)
+                            ->color('gray')
                     ])
-                    ->collapsible(),
+                        ->collapsible()->columnSpan(4),
+
+                    // Device Information
+                    Section::make('Dispositivo')
+                        ->schema([
+                            TextEntry::make('device.serial')
+                                ->label('Número de Série')
+                                ->placeholder('Nenhum dispositivo')
+                                ->icon('heroicon-o-hashtag')
+                                ->copyable()
+                                ->weight(FontWeight::Medium),
+
+                            TextEntry::make('device.status')
+                                ->label('Status do Dispositivo')
+                                ->badge()
+                                ->formatStateUsing(fn(?string $state): string => match ($state) {
+                                    'online' => 'Online',
+                                    'offline' => 'Offline',
+                                    default => 'Desconhecido',
+                                })
+                                ->color(fn(?string $state): string => match ($state) {
+                                    'online' => 'success',
+                                    'offline' => 'danger',
+                                    default => 'gray',
+                                })
+                                ->icon(fn(?string $state): string => match ($state) {
+                                    'online' => 'heroicon-o-signal',
+                                    'offline' => 'heroicon-o-signal-slash',
+                                    default => 'heroicon-o-question-mark-circle',
+                                }),
+                        ])->columnSpan(1)
+                ])->columns(5)->columnSpanFull()
             ]);
     }
 }
