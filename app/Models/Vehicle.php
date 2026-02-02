@@ -17,7 +17,6 @@ class Vehicle extends Model
         'current_speed',
         'fuel_level',
         'ignition_on',
-        'relay_enabled',
         'last_latitude',
         'last_longitude',
         'last_update_at',
@@ -25,7 +24,6 @@ class Vehicle extends Model
 
     protected $casts = [
         'ignition_on' => 'boolean',
-        'relay_enabled' => 'boolean',
         'last_update_at' => 'datetime',
     ];
 
@@ -42,5 +40,10 @@ class Vehicle extends Model
     public function trips(): HasMany
     {
         return $this->hasMany(Trip::class);
+    }
+
+    public function warnings(): HasMany
+    {
+        return $this->hasMany(Warning::class);
     }
 }

@@ -12,6 +12,8 @@ class RouteWidget extends Widget
 {
     protected string $view = 'filament.widgets.route-widget';
 
+    protected static bool $isDiscovered = false;
+
     public ?int $vehicleId = null;
 
     public ?array $vehicleData = null;
@@ -21,10 +23,15 @@ class RouteWidget extends Widget
     public array $availableTrips = [];
 
     public bool $sidebarOpen = false;
+    public bool $isLoading = true;
 
-    public function mount(?int $vehicleId = null): void
+    public bool $viewingThroughWarning = false;
+    public ?array $warningData = null;
+
+    public function mount(?int $vehicleId = null, ?array $warningData = null): void
     {
-        if (! $vehicleId) {
+        if (!$vehicleId) {
+            $this->isLoading = false;
             return;
         }
 
@@ -39,12 +46,14 @@ class RouteWidget extends Widget
 
         if ($currentTrip) {
             $this->selectedTripId = $currentTrip->id;
-        } elseif (! empty($this->availableTrips)) {
-            // If no current trip, select the most recent finished trip
+        } elseif (!empty($this->availableTrips)) {
             $this->selectedTripId = $this->availableTrips[0]['id'];
         }
 
+
         $this->vehicleData = $this->getVehicleData();
+        $this->warningData = $warningData;
+        $this->isLoading = false;
     }
 
     public function loadTrips(): void
@@ -165,6 +174,8 @@ class RouteWidget extends Widget
 
             'lat' => $currentLat,
             'lng' => $currentLng,
+
+            'warning' => $this->warningData
         ];
     }
 }

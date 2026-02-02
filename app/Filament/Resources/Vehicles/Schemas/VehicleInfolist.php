@@ -19,7 +19,7 @@ class VehicleInfolist
         return $schema
             ->components([
 
-                Livewire::make(RouteWidget::class, fn ($record) => [
+                Livewire::make(RouteWidget::class, fn($record) => [
                     'vehicleId' => $record->id,
                 ])
                     ->columnSpanFull(),
@@ -49,21 +49,21 @@ class VehicleInfolist
                         TextEntry::make('type')
                             ->label('Tipo')
                             ->badge()
-                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
                                 'truck' => 'Caminhão',
                                 'van' => 'Van',
                                 'car' => 'Carro',
                                 'pickup' => 'Pickup',
                                 default => $state,
                             })
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn(string $state): string => match ($state) {
                                 'truck' => 'info',
                                 'van' => 'success',
                                 'car' => 'warning',
                                 'pickup' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn (string $state): string => match ($state) {
+                            ->icon(fn(string $state): string => match ($state) {
                                 'truck' => 'heroicon-o-truck',
                                 'van' => 'heroicon-o-building-office',
                                 'car' => 'heroicon-m-home',
@@ -74,19 +74,19 @@ class VehicleInfolist
                         TextEntry::make('status')
                             ->label('Status')
                             ->badge()
-                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'maintenance' => 'Manutenção',
                                 'blocked' => 'Bloqueado',
                                 default => $state,
                             })
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn(string $state): string => match ($state) {
                                 'active' => 'success',
                                 'maintenance' => 'warning',
                                 'blocked' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn (string $state): string => match ($state) {
+                            ->icon(fn(string $state): string => match ($state) {
                                 'active' => 'heroicon-o-check-circle',
                                 'maintenance' => 'heroicon-o-wrench-screwdriver',
                                 'blocked' => 'heroicon-o-x-circle',
@@ -104,14 +104,14 @@ class VehicleInfolist
                 // Current Status Section
                 Section::make('Status Atual')
                     ->icon('heroicon-o-signal')
-                    ->columns(4)
+                    ->columns(3)
                     ->schema([
                         TextEntry::make('current_speed')
                             ->label('Velocidade')
                             ->suffix(' km/h')
                             ->icon('heroicon-o-bolt')
                             ->placeholder('0 km/h')
-                            ->color(fn ($state) => match (true) {
+                            ->color(fn($state) => match (true) {
                                 $state > 80 => 'danger',
                                 $state > 60 => 'warning',
                                 default => 'success',
@@ -123,7 +123,7 @@ class VehicleInfolist
                             ->suffix('%')
                             ->icon('heroicon-o-bolt')
                             ->placeholder('0%')
-                            ->color(fn ($state) => match (true) {
+                            ->color(fn($state) => match (true) {
                                 $state < 20 => 'danger',
                                 $state < 50 => 'warning',
                                 default => 'success',
@@ -139,14 +139,7 @@ class VehicleInfolist
                             ->falseColor('danger')
                             ->size(IconSize::Large),
 
-                        IconEntry::make('relay_enabled')
-                            ->label('Relé')
-                            ->boolean()
-                            ->trueIcon('heroicon-o-check-circle')
-                            ->falseIcon('heroicon-o-x-circle')
-                            ->trueColor('success')
-                            ->falseColor('danger')
-                            ->size(IconSize::Large),
+
                     ]),
 
                 // Location Section
@@ -160,7 +153,7 @@ class VehicleInfolist
                             ->placeholder('N/A')
                             ->copyable()
                             ->copyMessage('Latitude copiada!')
-                            ->formatStateUsing(fn ($state) => $state ? number_format($state, 7) : '-'),
+                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
 
                         TextEntry::make('last_longitude')
                             ->label('Longitude')
@@ -168,7 +161,7 @@ class VehicleInfolist
                             ->placeholder('N/A')
                             ->copyable()
                             ->copyMessage('Longitude copiada!')
-                            ->formatStateUsing(fn ($state) => $state ? number_format($state, 7) : '-'),
+                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
 
                         TextEntry::make('last_update_at')
                             ->label('Última Atualização')
@@ -194,42 +187,23 @@ class VehicleInfolist
                         TextEntry::make('device.status')
                             ->label('Status do Dispositivo')
                             ->badge()
-                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                            ->formatStateUsing(fn(?string $state): string => match ($state) {
                                 'online' => 'Online',
                                 'offline' => 'Offline',
                                 default => 'Desconhecido',
                             })
-                            ->color(fn (?string $state): string => match ($state) {
+                            ->color(fn(?string $state): string => match ($state) {
                                 'online' => 'success',
                                 'offline' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn (?string $state): string => match ($state) {
+                            ->icon(fn(?string $state): string => match ($state) {
                                 'online' => 'heroicon-o-signal',
                                 'offline' => 'heroicon-o-signal-slash',
                                 default => 'heroicon-o-question-mark-circle',
                             }),
                     ])
                     ->collapsible(),
-
-                // Timestamps Section
-                Section::make('Registro')
-                    ->icon('heroicon-o-calendar-days')
-                    ->columns(2)
-                    ->schema([
-                        TextEntry::make('created_at')
-                            ->label('Criado em')
-                            ->dateTime('d/m/Y H:i:s')
-                            ->since()
-                            ->color('gray'),
-
-                        TextEntry::make('updated_at')
-                            ->label('Atualizado em')
-                            ->dateTime('d/m/Y H:i:s')
-                            ->since()
-                            ->color('gray'),
-                    ])
-                    ->collapsed(),
             ]);
     }
 }

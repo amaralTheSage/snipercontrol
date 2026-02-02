@@ -41,7 +41,7 @@ class VehicleRelationManager extends RelationManager
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
+                    ->formatStateUsing(fn(string $state) => match ($state) {
                         'truck' => 'Caminhão',
                         'van' => 'Van',
                         'car' => 'Carro',
@@ -55,13 +55,13 @@ class VehicleRelationManager extends RelationManager
                     ->label('Status')
                     ->badge()
                     ->toggleable()
-                    ->color(fn (string $state) => match ($state) {
+                    ->color(fn(string $state) => match ($state) {
                         'active' => 'success',
                         'maintenance' => 'warning',
                         'blocked' => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state) => match ($state) {
+                    ->formatStateUsing(fn(string $state) => match ($state) {
                         'active' => 'Ativo',
                         'maintenance' => 'Manutenção',
                         'blocked' => 'Bloqueado',
@@ -88,9 +88,7 @@ class VehicleRelationManager extends RelationManager
                     ->label('Ignição')
                     ->boolean(),
 
-                IconColumn::make('relay_enabled')
-                    ->label('Relé Ativo')
-                    ->boolean(),
+
 
                 TextColumn::make('last_latitude')
                     ->label('Latitude')

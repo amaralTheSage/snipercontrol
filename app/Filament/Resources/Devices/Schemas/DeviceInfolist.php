@@ -17,7 +17,7 @@ class DeviceInfolist
         return $schema
             ->components([
                 // Device Information Section
-                Livewire::make(RouteWidget::class, fn ($record) => [
+                Livewire::make(RouteWidget::class, fn($record) => [
                     'vehicleId' => $record->vehicle_id,
                 ])->columnSpanFull(),
 
@@ -39,17 +39,17 @@ class DeviceInfolist
                             ->label('Status')
                             ->badge()
                             ->size(TextSize::Large)
-                            ->formatStateUsing(fn (string $state): string => match ($state) {
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
                                 'online' => 'Online',
                                 'offline' => 'Offline',
                                 default => $state,
                             })
-                            ->color(fn (string $state): string => match ($state) {
+                            ->color(fn(string $state): string => match ($state) {
                                 'online' => 'success',
                                 'offline' => 'danger',
                                 default => 'gray',
                             })
-                            ->icon(fn (string $state): string => match ($state) {
+                            ->icon(fn(string $state): string => match ($state) {
                                 'online' => 'heroicon-o-signal',
                                 'offline' => 'heroicon-o-signal-slash',
                                 default => 'heroicon-o-question-mark-circle',
@@ -79,7 +79,7 @@ class DeviceInfolist
                             ->label('Tipo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                            ->formatStateUsing(fn(?string $state): string => match ($state) {
                                 'truck' => 'Caminhão',
                                 'van' => 'Van',
                                 'car' => 'Carro',
@@ -87,7 +87,7 @@ class DeviceInfolist
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn (?string $state): string => match ($state) {
+                            ->color(fn(?string $state): string => match ($state) {
                                 'truck' => 'info',
                                 'van' => 'success',
                                 'car' => 'warning',
@@ -99,14 +99,14 @@ class DeviceInfolist
                             ->label('Status do Veículo')
                             ->placeholder('-')
                             ->badge()
-                            ->formatStateUsing(fn (?string $state): string => match ($state) {
+                            ->formatStateUsing(fn(?string $state): string => match ($state) {
                                 'active' => 'Ativo',
                                 'maintenance' => 'Manutenção',
                                 'blocked' => 'Bloqueado',
                                 null => '-',
                                 default => $state,
                             })
-                            ->color(fn (?string $state): string => match ($state) {
+                            ->color(fn(?string $state): string => match ($state) {
                                 'active' => 'success',
                                 'maintenance' => 'warning',
                                 'blocked' => 'danger',
@@ -120,7 +120,7 @@ class DeviceInfolist
                             ->color('primary')
                             ->weight(FontWeight::SemiBold),
                     ])
-                    ->hidden(fn ($record) => ! $record->vehicle_id)
+                    ->hidden(fn($record) => ! $record->vehicle_id)
                     ->collapsible(),
 
                 // Communication Section
@@ -134,7 +134,7 @@ class DeviceInfolist
                             ->dateTime('d/m/Y H:i:s')
                             ->placeholder('Nunca se comunicou')
                             ->since()
-                            ->color(fn ($state) => $state && $state->diffInHours(now()) > 24 ? 'danger' : 'success')
+                            ->color(fn($state) => $state && $state->diffInHours(now()) > 24 ? 'danger' : 'success')
                             ->weight(FontWeight::SemiBold),
 
                         // TextEntry::make('connection_quality')
@@ -173,26 +173,7 @@ class DeviceInfolist
                         //     }),
                     ]),
 
-                // Timestamps Section
-                Section::make('Registro')
-                    ->icon('heroicon-o-calendar-days')
-                    ->columns(2)
-                    ->schema([
-                        TextEntry::make('created_at')
-                            ->label('Criado em')
-                            ->icon('heroicon-o-plus-circle')
-                            ->dateTime('d/m/Y H:i:s')
-                            ->since()
-                            ->color('gray'),
 
-                        TextEntry::make('updated_at')
-                            ->label('Atualizado em')
-                            ->icon('heroicon-o-arrow-path')
-                            ->dateTime('d/m/Y H:i:s')
-                            ->since()
-                            ->color('gray'),
-                    ])
-                    ->collapsed(),
             ]);
     }
 }

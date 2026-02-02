@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         $createAvatar = function () {
-            $filename = Str::random(10).'.jpg';
-            $url = 'https://picsum.photos/300/300?random='.Str::random(10);
+            $filename = Str::random(10) . '.jpg';
+            $url = 'https://picsum.photos/300/300?random=' . Str::random(10);
             $imageData = file_get_contents($url);
             Storage::disk('public')->put("avatars/{$filename}", $imageData);
 
@@ -98,7 +98,7 @@ class DatabaseSeeder extends Seeder
 
             $vehicle = Vehicle::firstOrCreate(
                 [
-                    'plate' => strtoupper(Str::random(3)).rand(1000, 9999),
+                    'plate' => strtoupper(Str::random(3)) . rand(1000, 9999),
                 ],
                 [
                     'model' => $template['model'],
@@ -109,7 +109,6 @@ class DatabaseSeeder extends Seeder
                     'current_speed' => rand(0, 110),
                     'fuel_level' => rand(20, 100),
                     'ignition_on' => (bool) rand(0, 1),
-                    'relay_enabled' => true,
                     'last_latitude' => -23.55 + rand(-500, 500) / 10000,
                     'last_longitude' => -46.63 + rand(-500, 500) / 10000,
                     'last_update_at' => now(),
@@ -125,11 +124,15 @@ class DatabaseSeeder extends Seeder
             Device::firstOrCreate(
                 ['vehicle_id' => $vehicle->id],
                 [
-                    'serial' => 'DEV-'.strtoupper(Str::random(10)),
+                    'serial' => 'DEV-' . strtoupper(Str::random(10)),
                     'status' => rand(0, 10) > 1 ? 'online' : 'offline',
                     'last_communication_at' => Carbon::now()->subMinutes(rand(1, 30)),
                 ]
             );
+
+            $this->call([
+                WarningSeeder::class,
+            ]);
         });
     }
 }

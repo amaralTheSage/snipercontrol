@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Driver extends Model
 {
@@ -21,8 +22,8 @@ class Driver extends Model
     public function getAvatarUrlAttribute(): string
     {
         return $this->avatar
-            ? asset('storage/'.$this->avatar)
-            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
+            ? asset('storage/' . $this->avatar)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
     }
 
     public function currentVehicle()
@@ -33,5 +34,10 @@ class Driver extends Model
     public function currentVehicleDevice()
     {
         return $this->hasOneThrough(Device::class, Vehicle::class, 'current_driver_id', 'vehicle_id');
+    }
+
+    public function warnings(): HasMany
+    {
+        return $this->hasMany(Warning::class);
     }
 }

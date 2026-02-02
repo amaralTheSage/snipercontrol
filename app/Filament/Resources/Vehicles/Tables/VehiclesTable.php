@@ -37,7 +37,7 @@ class VehiclesTable
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn (string $state) => match ($state) {
+                    ->formatStateUsing(fn(string $state) => match ($state) {
                         'truck' => 'Caminhão',
                         'van' => 'Van',
                         'car' => 'Carro',
@@ -51,13 +51,13 @@ class VehiclesTable
                     ->label('Status')
                     ->badge()
                     ->toggleable()
-                    ->color(fn (string $state) => match ($state) {
+                    ->color(fn(string $state) => match ($state) {
                         'active' => 'success',
                         'maintenance' => 'warning',
                         'blocked' => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state) => match ($state) {
+                    ->formatStateUsing(fn(string $state) => match ($state) {
                         'active' => 'Ativo',
                         'maintenance' => 'Manutenção',
                         'blocked' => 'Bloqueado',
@@ -69,17 +69,14 @@ class VehiclesTable
                     ->circular()
                     ->imageSize(36)
                     ->width('4%')
-                    ->defaultImageUrl(fn () => ''),
+                    ->defaultImageUrl(fn() => ''),
 
                 TextColumn::make('currentDriver.name')
                     ->label(' ')
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('current_speed')
-                    ->label('Velocidade (km/h)')
-                    ->numeric()
-                    ->sortable(),
+
 
                 TextColumn::make('fuel_level')
                     ->label('Combustível (%)')
@@ -91,9 +88,7 @@ class VehiclesTable
                     ->label('Ignição')
                     ->boolean(),
 
-                IconColumn::make('relay_enabled')
-                    ->label('Relé Ativo')
-                    ->boolean(),
+
 
                 TextColumn::make('last_latitude')
                     ->label('Latitude')

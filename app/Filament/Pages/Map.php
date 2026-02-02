@@ -41,12 +41,14 @@ class Map extends Page
                     'avatar' => $driver->avatar_url,
 
                     'vehicle' => $driver->currentVehicle ? [
+                        'id' => $driver->currentVehicle->id,
                         'plate' => $driver->currentVehicle->plate,
                         'model' => $driver->currentVehicle->model,
                     ] : null,
 
                     'device' => $driver->currentVehicle?->device ? [
                         'serial' => $driver->currentVehicle->device->serial,
+                        'status' => $driver->currentVehicleDevice->status
                     ] : null,
 
                     // TEMP simulated coordinates

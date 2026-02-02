@@ -37,7 +37,7 @@
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach($drivers as $driver)
-                    <div class="bg-card border border-border rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
+                <a href="{{ route('filament.dash.resources.vehicles.view', ['record'=> $driver['vehicle']['id']]) }}" wire:navigate class="bg-card border border-border rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-200">
                         <!-- Driver Header -->
                         <div class="p-6 border-b border-border">
                             <div class="flex items-center gap-4">
@@ -123,11 +123,11 @@
                              
                                         Dispositivo:
                                     </span>
-                                    <span class="font-mono font-medium text-card-foreground">{{ $driver['device']['serial'] ?? 'N/A' }}</span>
+                                    <span class=" font-medium text-card-foreground capitalize {{ $driver['device']['status'] === 'online' ? 'text-green-400' : 'text-red-400' }}">{{ $driver['device']['status'] ?? 'N/A' }}</span>
                                 </div>
                             </div>
                         @endif
-                    </div>
+                    </a>
                 @endforeach
             </div>
 
@@ -509,7 +509,7 @@
                         <hr>
                         <div class="info-row">
                             <span class="label">Dispositivo:</span>
-                            <span class="value">${driver.device?.serial || 'N/A'}</span>
+                            <span class=" capitalize ${driver.device.status === 'online' ? 'text-green-400' : 'text-red-400'}">${driver.device.status || 'N/A'}</span>
                         </div>
                     </div>
                 `;

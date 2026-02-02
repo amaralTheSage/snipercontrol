@@ -1,97 +1,110 @@
 <x-filament-widgets::widget wire:poll.5s="refreshData">
-    @if($vehicleData)
+    @if($isLoading)   
+   <div class="text-gray-500">
+                {{-- Show spinner while loading --}}
+                <svg class="animate-spin mx-auto h-12 w-12 text-primary-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-lg font-medium">Carregando mapa...</p>
+            </div>
+    @elseif($this->vehicleData)
 
         <div class="relative" >
+            
             <!-- Trip Selector Sidebar -->
-            <div class="absolute top-2 right-2 z-10 flex gap-2">
-                <!-- Toggle Button -->
-                <button wire:click="toggleSidebar"
-                    class="bg-card p-2 rounded-lg shadow-lg hover:bg-background transition-colors">
+            @if(!$this->vehicleData['warning'])
+                <div class="absolute top-2 right-2 z-10 flex gap-2">
+                    <!-- Toggle Button -->
+                    <button wire:click="toggleSidebar"
+                        class="bg-card p-2 rounded-lg shadow-lg hover:bg-background transition-colors">
 
-                    @if ($sidebarOpen)
+                        @if ($sidebarOpen)
 
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="size-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                        </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
 
-                    @else
-                        <svg class="w-6 h-6 text-gray-700  dark:text-gray-300" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
-                            </path>
-                        </svg>
+                        @else
+                            <svg class="w-6 h-6 text-gray-700  dark:text-gray-300" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16">
+                                </path>
+                            </svg>
 
-                    @endif
-                </button>
+                        @endif
+                    </button>
 
-                <!-- Sidebar Panel -->
-                <div
-                    class="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 {{ $sidebarOpen ? 'w-80' : 'w-0' }} h-[482px]">
-                    <div class="p-4 {{ $sidebarOpen ? '' : 'hidden' }}">
-                        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                            Histórico de Viagens
-                        </h3>
+                    <!-- Sidebar Panel -->
+    
+        
+                    <div
+                        class="bg-card rounded-lg shadow-lg overflow-hidden transition-all duration-300 {{ $sidebarOpen ? 'w-80' : 'w-0' }} h-[482px]">
+                        <div class="p-4 {{ $sidebarOpen ? '' : 'hidden' }}">
+                            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                                Histórico de Viagens
+                            </h3>
 
-                        <div class="space-y-2 overflow-y-auto" style="max-height: 420px;">
-                            @forelse($availableTrips as $trip)
-                                <div wire:click="selectTrip({{ $trip['id'] }})"
-                                    class="p-3 rounded-lg cursor-pointer transition-all 
-                                                                                                                                                                                                        {{ $selectedTripId === $trip['id'] ? '     bg-primary/20' : 'bg-background hover:bg-primary/10 ' }}">
+                            <div class="space-y-2 overflow-y-auto" style="max-height: 420px;">
+                                @forelse($availableTrips as $trip)
+                                    <div wire:click="selectTrip({{ $trip['id'] }})"
+                                        class="p-3 rounded-lg cursor-pointer transition-all 
+                                                                                                                                                                                                            {{ $selectedTripId === $trip['id'] ? '     bg-primary/20' : 'bg-background hover:bg-primary/10 ' }}">
 
-                                    <div class="flex items-center justify-between mb-2">
-                                        <span
-                                            class="text-xs font-medium px-2 py-1 rounded-full 
-                                                                                                                                                                                                            {{ $trip['is_current'] ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300' }}">
-                                            {{ $trip['is_current'] ? 'Em Andamento' : 'Finalizada' }}
-                                        </span>
-                                        <span class="text-xs text-gray-500 dark:text-gray-400">
-                                            {{ $trip['distance_km'] }} km
-                                        </span>
-                                    </div>
-
-                                    <div class="text-sm space-y-1">
-                                        <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            <span>{{ $trip['started_at'] }}</span>
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span
+                                                class="text-xs font-medium px-2 py-1 rounded-full 
+                                                                                                                                                                                                                {{ $trip['is_current'] ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300' }}">
+                                                {{ $trip['is_current'] ? 'Em Andamento' : 'Finalizada' }}
+                                            </span>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $trip['distance_km'] }} km
+                                            </span>
                                         </div>
 
-                                        @if(!$trip['is_current'] && $trip['ended_at'])
-                                            <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-xs">
+                                        <div class="text-sm space-y-1">
+                                            <div class="flex items-center gap-2 text-gray-700 dark:text-gray-300">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                        d="M5 13l4 4L19 7"></path>
+                                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                                 </svg>
-                                                <span>{{ $trip['ended_at'] }}</span>
+                                                <span>{{ $trip['started_at'] }}</span>
                                             </div>
 
-                                            <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                                             Duração: {{ \Carbon\Carbon::createFromFormat('d/m/Y H:i', $trip['started_at'])->diffInMinutes(\Carbon\Carbon::createFromFormat('d/m/Y H:i', $trip['ended_at'])) }} min
-                                            </div>
-                                        @endif
+                                            @if(!$trip['is_current'] && $trip['ended_at'])
+                                                <div class="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-xs">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M5 13l4 4L19 7"></path>
+                                                    </svg>
+                                                    <span>{{ $trip['ended_at'] }}</span>
+                                                </div>
+
+                                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                                Duração: {{ \Carbon\Carbon::createFromFormat('d/m/Y H:i', $trip['started_at'])->diffInMinutes(\Carbon\Carbon::createFromFormat('d/m/Y H:i', $trip['ended_at'])) }} min
+                                                </div>
+                                            @endif
+                                        </div>
                                     </div>
-                                </div>
-                            @empty
-                                <div class="text-center py-8 text-gray-500 dark:text-gray-400">
-                                    <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
-                                        </path>
-                                    </svg>
-                                    <p class="text-sm">Nenhuma viagem encontrada</p>
-                                </div>
-                            @endforelse
+                                @empty
+                                    <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                        <svg class="mx-auto h-12 w-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                            </path>
+                                        </svg>
+                                        <p class="text-sm">Nenhuma viagem encontrada</p>
+                                    </div>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
+            @endif
             <!-- Map Container -->
-            <div wire:ignore x-data="vehicleMap(@js($vehicleData))" class="w-full"
-             @vehicle-updated.window="console.log('Event received:', $event.detail); updateVehicle($event.detail.vehicleData)"
+            <div wire:ignore x-data="vehicleMap(@js($this->vehicleData))" class="w-full focus:outline-none ring-0"
+                @vehicle-updated.window="console.log('Event received:', $event.detail); updateVehicle($event.detail.vehicleData)"
                 @trip-selected.window="updateTrip($event.detail.tripData)">
                 <div x-ref="map" style="height: 500px; width: 100%;" class="z-0 rounded-lg border-2 border-border">
                 </div>
@@ -101,226 +114,7 @@
         @assets
         <link href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" rel="stylesheet" />
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-        <style>
-            .leaflet-container {
-                font-family: var(--font-sans);
-            }
-
-            .leaflet-control-zoom {
-                border: none !important;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-            }
-
-            .leaflet-control-zoom a {
-                background: var(--card) !important;
-                color: var(--card-foreground) !important;
-                border: 1px solid var(--border) !important;
-                width: 36px !important;
-                height: 36px !important;
-                line-height: 36px !important;
-                transition: all 0.2s ease !important;
-            }
-
-            .dark .leaflet-control-zoom {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
-            }
-
-            .leaflet-control-zoom a:hover {
-                background: var(--accent) !important;
-                color: var(--accent-foreground) !important;
-            }
-
-            .leaflet-control-zoom-in {
-                border-radius: var(--radius-lg) var(--radius-lg) 0 0 !important;
-            }
-
-            .leaflet-control-zoom-out {
-                border-radius: 0 0 var(--radius-lg) var(--radius-lg) !important;
-            }
-
-            .driver-marker {
-                width: 56px;
-                height: 56px;
-                border-radius: 50%;
-                border: 2px solid gainsboro;
-                box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 20%, transparent),
-                    0 8px 24px rgba(0, 0, 0, 0.3);
-                object-fit: cover;
-                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                cursor: pointer;
-            }
-
-            .driver-marker:hover {
-                transform: scale(1.15) translateY(-2px);
-                box-shadow: 0 0 0 6px color-mix(in srgb, var(--primary) 30%, transparent),
-                    0 12px 32px rgba(0, 0, 0, 0.4);
-            }
-
-            .driver-marker.active {
-                border-color: var(--primary);
-                animation: pulseActive 2s ease-in-out infinite;
-            }
-
-            .driver-marker.inactive {
-                opacity: 0.7;
-            }
-
-            @keyframes pulseActive {
-
-                0%,
-                100% {
-                    box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 30%, transparent),
-                        0 8px 24px rgba(0, 0, 0, 0.3);
-                }
-
-                50% {
-                    box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 20%, transparent),
-                        0 12px 32px rgba(0, 0, 0, 0.4);
-                }
-            }
-
-            .start-marker {
-                width: 32px;
-                height: 32px;
-                background: #22c55e;
-                border: 3px solid white;
-                border-radius: 50% 50% 50% 0;
-                transform: rotate(-45deg);
-                box-shadow: 0 4px 12px rgba(34, 197, 94, 0.5);
-            }
-
-            .trip-route {
-                stroke: var(--primary);
-                stroke-width: 4;
-                stroke-linecap: round;
-                stroke-linejoin: round;
-                fill: none;
-            }
-
-            .leaflet-popup-content-wrapper {
-                background: var(--card) !important;
-                color: var(--card-foreground) !important;
-                border-radius: var(--radius-lg) !important;
-                border: 1px solid var(--border) !important;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
-                padding: 4px !important;
-                min-width: 240px !important;
-            }
-
-            .dark .leaflet-popup-content-wrapper {
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6) !important;
-            }
-
-            .leaflet-popup-tip {
-                background: var(--card) !important;
-                border: 1px solid var(--border) !important;
-            }
-
-            .leaflet-popup-close-button {
-                color: var(--muted-foreground) !important;
-                font-size: 18px !important;
-                transition: color 0.2s;
-                padding-top: 8px !important;
-                margin-right: 8px !important;
-            }
-
-            .leaflet-popup-close-button:hover {
-                color: var(--card-foreground) !important;
-            }
-
-            .driver-popup {
-                font-family: var(--font-sans);
-                padding: 8px;
-            }
-
-            .driver-popup .avatar {
-                width: 60px;
-                height: 60px;
-                border-radius: 50%;
-                margin: 0 auto 10px;
-                display: block;
-                border: 2px solid var(--primary);
-                box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
-            }
-
-            .driver-popup h3 {
-                margin: 0 0 8px 0;
-                font-size: 15px;
-                font-weight: 700;
-                text-align: center;
-                color: var(--card-foreground);
-            }
-
-            .driver-popup .info-row {
-                display: flex;
-                justify-content: space-between;
-                padding: 6px 10px;
-                font-size: 12px;
-                border-radius: var(--radius-md);
-                margin-bottom: 3px;
-                background: var(--accent);
-                transition: background 0.2s;
-            }
-
-            .driver-popup .info-row:hover {
-                background: var(--muted);
-            }
-
-            .driver-popup .label {
-                font-weight: 500;
-                color: var(--muted-foreground);
-            }
-
-            .driver-popup .value {
-                font-weight: 600;
-                color: var(--card-foreground);
-            }
-
-            .driver-popup .status-badge {
-                display: inline-block;
-                padding: 3px 10px;
-                border-radius: var(--radius-lg);
-                font-size: 10px;
-                font-weight: 700;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-            }
-
-            .driver-popup .status-active {
-                background: var(--primary);
-                color: var(--primary-foreground);
-                box-shadow: 0 2px 8px color-mix(in srgb, var(--primary) 40%, transparent);
-            }
-
-            .driver-popup .status-inactive {
-                background: var(--muted);
-                color: var(--muted-foreground);
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            }
-
-            .driver-popup hr {
-                margin: 8px 0;
-                border: none;
-                border-top: 1px solid var(--border);
-            }
-
-            .leaflet-control-attribution {
-                background: color-mix(in srgb, var(--card) 90%, transparent) !important;
-                color: var(--muted-foreground) !important;
-                backdrop-filter: blur(10px);
-                border-radius: var(--radius-md) 0 0 0 !important;
-                padding: 4px 8px !important;
-                font-size: 11px !important;
-                border: 1px solid var(--border) !important;
-                border-right: none !important;
-                border-bottom: none !important;
-            }
-
-            .leaflet-control-attribution a {
-                color: var(--primary) !important;
-            }
-        </style>
+       
         @endassets
 
         @script
@@ -335,6 +129,9 @@
                 data: data,
 
                 init() {
+ console.log('Init called with warningData:', this.warningData); // Add this
+        console.log('Data:', this.data); // Add this too
+
                     this.currentTheme = localStorage.getItem('theme') ||
                         (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
 
@@ -343,6 +140,12 @@
                     this.map = L.map(this.$refs.map).setView([lat, lng], 15);
 
                     this.setTileLayer(this.currentTheme);
+
+                 if (this.data?.warning && this.data.warning.latitude && this.data.warning.longitude) {
+            console.log('Adding warning marker at:', this.data.warning.latitude, this.data.warning.longitude);
+            this.addWarningMarker(this.data.warning);
+        }
+
 
                     if (this.data) {
                         this.addMarker(this.data);
@@ -540,6 +343,79 @@
                         this.marker.setPopupContent(popupContent);
                     }
                 },
+
+addWarningMarker(warning) {
+    const severityColors = {
+        'high': '#ef4444',
+        'medium': '#f59e0b',
+        'low': '#eab308',
+    };
+    
+    const color = severityColors[warning.severity] || '#6b7280';
+    
+    const warningIcon = L.divIcon({
+        html: `<div class="warning-marker" style="background-color: ${color};"></div>`,
+        className: 'custom-warning-marker',
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+
+    this.warningMarker = L.marker(
+        [parseFloat(warning.latitude), parseFloat(warning.longitude)], 
+        { icon: warningIcon }
+    )
+    .addTo(this.map)
+    .bindPopup(this.createWarningPopupContent(warning), {
+        maxWidth: 300,
+        className: 'warning-popup'
+    });
+    
+    // Auto-open the warning popup
+    this.warningMarker.openPopup();
+},
+
+createWarningPopupContent(warning) {
+    const typeLabels = {
+        'route_diversion': 'Desvio de Rota',
+        'cargo_theft': 'Roubo de Carga',
+        'fuel_theft': 'Roubo de Combustível',
+    };
+    
+    const severityLabels = {
+        'high': 'Alta',
+        'medium': 'Média',
+        'low': 'Baixa',
+    };
+    
+    const severityColors = {
+        'high': '#ef4444',
+        'medium': '#f59e0b',
+        'low': '#eab308',
+    };
+    
+    return `
+        <div class="driver-popup">
+            <h3>⚠️ ${typeLabels[warning.type] || warning.type}</h3>
+            <div class="info-row">
+                <span class="label">Gravidade:</span>
+                <span class="status-badge" style="background-color: ${severityColors[warning.severity]}20; color: ${severityColors[warning.severity]};">
+                    ${severityLabels[warning.severity] || warning.severity}
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="label">Data:</span>
+                <span class="value">${warning.occurred_at}</span>
+            </div>
+            ${warning.description ? `
+                <hr>
+                <div class="info-row">
+                    <span class="value">${warning.description}</span>
+                </div>
+            ` : ''}
+        </div>
+    `;
+},
 
                 addMarker(data) {
                     const isActive = data.vehicle?.ignition_on;
