@@ -43,4 +43,11 @@ Route::get('/test-ffmpeg', function () {
     }
 });
 
+
+
+Route::get('/test-publish/{device}', function ($device) {
+    return view('test-publish', ['device' => $device]);
+});
+
+
 require __DIR__ . '/settings.php';

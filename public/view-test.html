@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Test Viewer</title>
+        <script
+            src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+            defer
+        ></script>
+        <script src="https://unpkg.com/livekit-client/dist/livekit-client.umd.js"></script>
+    </head>
+    <body>
+        <div style="padding: 20px">
+            <h2>Test Livestream Viewer</h2>
+            <input
+                type="text"
+                id="deviceId"
+                value="123"
+                placeholder="Device ID"
+            />
+            <button onclick="openViewer()">Open Viewer</button>
+        </div>
+
+        <script>
+            async function openViewer() {
+                const deviceId = document.getElementById('deviceId').value;
+
+                try {
+                    const res = await fetch('/api/livekit/viewer-token', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ device_id: deviceId }),
+                    });
+
+                    if (!res.ok) {
+                        const error = await res.json();
+                        alert('Error: ' + (error.message || res.statusText));
+                        return;
+                    }
+
+                    const { token, url } = await res.json();
+
+                    const LiveKit =
+                        window.LivekitClient || window.livekitClient;
+                    const room = new LiveKit.Room();
+
+                    await room.connect(url, token);
+                    console.log('Connected to room!');
+
+                    room.on('trackSubscribed', (track) => {
+                        console.log('Track subscribed:', track);
+                        const videoEl = track.attach();
+                        videoEl.style.width = '100%';
+                        videoEl.style.maxWidth = '800px';
+                        document.body.appendChild(videoEl);
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Error: ' + error.message);
+                }
+            }
+        </script>
+    </body>
+</html>

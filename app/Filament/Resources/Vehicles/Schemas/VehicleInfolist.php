@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vehicles\Schemas;
 
+use App\Filament\Actions\ViewLivestreamAction;
 use App\Filament\Infolists\Components\VideoCarousel;
 use App\Filament\Resources\Warnings\WarningResource;
 use App\Filament\Widgets\RouteWidget;
@@ -189,36 +190,37 @@ class VehicleInfolist
 
 
                             ]),
-                        Section::make('Gravações de Vídeo')
-                            ->schema([
-                                VideoCarousel::make('videos')
-                                    ->state(function ($record) {
-                                        return $record->videoRecordings()
-                                            ->with(['driver', 'vehicle'])
-                                            ->latest()
-                                            ->get()
-                                            ->map(function ($video) {
-                                                return [
-                                                    'id' => $video->id,
-                                                    'title' => $video->filename,
-                                                    'url' => route('videos.show', $video->id),
-                                                    'thumbnail_url' => $video->getThumbnailUrl(),
-                                                    'duration' => $video->duration_human,
-                                                    'size' => $video->file_size_human,
-                                                    'date' => $video->created_at->format('d/m/Y H:i'),
-                                                    'driver' => $video->driver?->name,
-                                                    'vehicle' => $video->vehicle?->plate,
-                                                    'status' => $video->status,
 
-                                                ];
-                                            })
-                                            ->toArray();
-                                    }),
-                            ])
-                            ->collapsible()
-                    ])
-                ])->columns(2)->columnSpanFull(),
+                    ])->columns(2)->columnSpanFull(),
 
+
+                    VideoCarousel::make('videos')
+                        ->state(function ($record) {
+                            return $record->videoRecordings()
+                                ->with(['driver', 'vehicle'])
+                                ->latest()
+                                ->get()
+                                ->map(function ($video) {
+                                    return [
+                                        'id' => $video->id,
+                                        'title' => $video->filename,
+                                        'url' => route('videos.show', $video->id),
+                                        'thumbnail_url' => $video->getThumbnailUrl(),
+                                        'duration' => $video->duration_human,
+                                        'size' => $video->file_size_human,
+                                        'date' => $video->created_at->format('d/m/Y H:i'),
+                                        'driver' => $video->driver?->name,
+                                        'vehicle' => $video->vehicle?->plate,
+                                        'status' => $video->status,
+
+                                    ];
+                                })
+                                ->toArray();
+                        }),
+                ])->columnSpanFull(),
+
+                #VehicleInfolist
+                ViewLivestreamAction::make(),
 
                 Group::make([
 
