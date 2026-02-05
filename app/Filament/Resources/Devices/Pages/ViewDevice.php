@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Devices\Pages;
 
 use App\Filament\Resources\Devices\DeviceResource;
+use App\Filament\Widgets\RouteWidget;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -14,6 +15,15 @@ class ViewDevice extends ViewRecord
     {
         return [
             EditAction::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            RouteWidget::make([
+                'vehicleId' => $this->record->vehicle_id,
+            ]),
         ];
     }
 }

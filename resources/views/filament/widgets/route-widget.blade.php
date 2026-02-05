@@ -1,4 +1,4 @@
-<x-filament-widgets::widget wire:poll.5s="refreshData">
+<x-filament-widgets::widget wire:poll.9s="refreshData">
     @if($isLoading)   
    <div class="text-gray-500">
                 {{-- Show spinner while loading --}}
@@ -193,6 +193,24 @@
         // Update popup content
         const popupContent = this.createPopupContent(newData);
         this.marker.setPopupContent(popupContent);
+
+         // UPDATE THE ROUTE LINE DYNAMICALLY
+        if (newData.trip && newData.trip.route && newData.trip.route.length > 0) {
+            const routeCoordinates = newData.trip.route.map(point => [point.lat, point.lng]);
+            
+            if (this.routeLine) {
+                // Update existing route line
+                this.routeLine.setLatLngs(routeCoordinates);
+            } else {
+                // Create route line if it doesn't exist
+                this.routeLine = L.polyline(routeCoordinates, {
+                    color: getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0aaa7f',
+                    weight: 4,
+                    opacity: 0.7,
+                    smoothFactor: 1
+                }).addTo(this.map);
+            }
+        }
         
         console.log('Marker updated to:', newData.lat, newData.lng);
     } else {

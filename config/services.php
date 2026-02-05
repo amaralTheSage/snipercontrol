@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'ffmpeg' => [
+        'binary' => env('FFMPEG_BINARY'),
+        'probe'  => env('FFPROBE_BINARY'),
+    ],
+
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

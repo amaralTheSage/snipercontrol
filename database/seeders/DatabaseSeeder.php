@@ -32,7 +32,7 @@ class DatabaseSeeder extends Seeder
             return "avatars/{$filename}";
         };
 
-        User::factory()->create([
+        $user = User::factory()->create([
             'name' => 'teste',
             'email' => 't@t',
             'avatar' => $createAvatar(),
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             ['model' => 'Fiat Fiorino',    'type' => 'car'],
         ];
 
-        collect($driversData)->each(function ($data) use ($vehicleTemplates, $createAvatar) {
+        collect($driversData)->each(function ($data) use ($vehicleTemplates, $createAvatar, $user) {
 
             /*
             |--------------------------------------------------------------------------
@@ -80,6 +80,7 @@ class DatabaseSeeder extends Seeder
                     'phone' => $data['phone'],
                     'avatar' => $createAvatar(),
                     'status' => 'active',
+                    'company_id' => $user->id,
                 ]
             );
 
@@ -112,6 +113,7 @@ class DatabaseSeeder extends Seeder
                     'last_latitude' => -23.55 + rand(-500, 500) / 10000,
                     'last_longitude' => -46.63 + rand(-500, 500) / 10000,
                     'last_update_at' => now(),
+                    'company_id' => $user->id,
                 ]
             );
 
@@ -127,11 +129,12 @@ class DatabaseSeeder extends Seeder
                     'serial' => 'DEV-' . strtoupper(Str::random(10)),
                     'status' => rand(0, 10) > 1 ? 'online' : 'offline',
                     'last_communication_at' => Carbon::now()->subMinutes(rand(1, 30)),
+                    'company_id' => $user->id,
                 ]
             );
 
             $this->call([
-                WarningSeeder::class,
+                // WarningSeeder::class,
             ]);
         });
     }

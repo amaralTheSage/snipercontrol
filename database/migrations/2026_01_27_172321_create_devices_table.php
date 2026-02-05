@@ -20,6 +20,9 @@ return new class extends Migration
             $table->enum('status', ['online', 'offline'])->default('offline');
             $table->timestamp('last_communication_at')->nullable();
 
+
+            $table->foreignId('company_id')->constrained('users')->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

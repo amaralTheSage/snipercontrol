@@ -28,6 +28,12 @@ class RouteWidget extends Widget
     public bool $viewingThroughWarning = false;
     public ?array $warningData = null;
 
+    public function getColumnSpan(): string | array | int
+    {
+        return $this->viewingThroughWarning ? 'default' : 'full';
+    }
+
+
     public function mount(?int $vehicleId = null, ?array $warningData = null): void
     {
         if (!$vehicleId) {

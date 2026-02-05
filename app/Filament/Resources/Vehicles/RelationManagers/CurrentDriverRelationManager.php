@@ -31,6 +31,12 @@ class CurrentDriverRelationManager extends RelationManager
                     ->label('Telefone')
                     ->searchable(),
                 TextColumn::make('status')
+                    ->badge()
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'active' => 'Ativo',
+                        'inactive' => 'Inativo',
+                        default => $state,
+                    })
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Criado em')

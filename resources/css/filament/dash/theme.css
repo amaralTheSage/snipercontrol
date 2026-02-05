@@ -310,6 +310,10 @@ h1.fi-header-heading {
 
 /* LEAFLET */
 
+.leaflet-container:focus {
+    outline: none !important;
+}
+
 .leaflet-control-attribution.leaflet-control {
     @apply hidden;
 }

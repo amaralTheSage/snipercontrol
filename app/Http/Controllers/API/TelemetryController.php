@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Device;
 use App\Models\Trip;
 use App\Models\TelemetryEvent;
+use App\Services\WarningDetectionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
@@ -13,6 +14,13 @@ use Carbon\Carbon;
 
 class TelemetryController extends Controller
 {
+    protected WarningDetectionService $warningService;
+
+    public function __construct(WarningDetectionService $warningService)
+    {
+        $this->warningService = $warningService;
+    }
+
     /**
      * Receive telemetry data from hardware device
      * 
@@ -77,7 +85,7 @@ class TelemetryController extends Controller
             // Update trip's end location and calculate distance
             $this->updateTrip($trip, $request);
 
-
+            // Update vehicle
             $device->vehicle->update([
                 'last_latitude' => $request->lat,
                 'last_longitude' => $request->lng,
@@ -86,6 +94,10 @@ class TelemetryController extends Controller
                 'ignition_on' => $request->ignition_on,
                 'last_update_at' => now(),
             ]);
+
+            // CHECK FOR SUSPICIOUS ACTIVITY
+            $this->warningService->checkForSuspiciousActivity($device, $telemetryEvent, $trip);
+            $this->warningService->checkUnexpectedStop($device, $telemetryEvent);
 
             return response()->json([
                 'success' => true,
@@ -155,7 +167,7 @@ class TelemetryController extends Controller
                 'ended_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
                 'end_lat' => $request->lat,
                 'end_lng' => $request->lng,
-                'status' => 'completed',
+                'status' => 'finished',
             ]);
 
             Log::info('Trip ended', [

@@ -19,10 +19,10 @@ class DriverInfolist
             ->components([
                 // Driver Profile Section
 
-                Livewire::make(RouteWidget::class, fn($record) => [
-                    'vehicleId' => $record->currentVehicle?->id,
-                ])
-                    ->columnSpanFull(),
+                // Livewire::make(RouteWidget::class, fn($record) => [
+                //     'vehicleId' => $record->currentVehicle?->id,
+                // ])
+                //     ->columnSpanFull(),
 
                 Section::make('Perfil do Motorista')
                     ->icon('heroicon-o-user-circle')

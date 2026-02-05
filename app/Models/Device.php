@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Device extends Model
 {
@@ -32,5 +33,10 @@ class Device extends Model
             'vehicle_id',    // FK em devices
             'current_driver_id' // FK em vehicles
         );
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'company_id', 'id');
     }
 }

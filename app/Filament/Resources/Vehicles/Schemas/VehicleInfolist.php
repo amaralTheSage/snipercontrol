@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Vehicles\Schemas;
 
+use App\Filament\Infolists\Components\VideoCarousel;
 use App\Filament\Resources\Warnings\WarningResource;
 use App\Filament\Widgets\RouteWidget;
 use Filament\Actions\Action;
@@ -24,160 +25,199 @@ class VehicleInfolist
         return $schema
             ->components([
 
-                Livewire::make(RouteWidget::class, fn($record) => [
-                    'vehicleId' => $record->id,
-                ])
-                    ->columnSpanFull(),
 
-                // Vehicle Information Section
-                Section::make('Informações do Veículo')
-                    ->icon('heroicon-o-truck')
-                    ->columns(3)
-                    ->schema([
-                        TextEntry::make('plate')
-                            ->label('Placa')
-                            ->badge()
-                            ->color('primary')
-                            ->size(TextSize::Large)
-                            ->weight(FontWeight::Bold),
+                // Livewire::make(RouteWidget::class, fn($record) => [
+                //     'vehicleId' => $record->id,
+                // ])
+                //     ->columnSpanFull(),
 
-                        TextEntry::make('model')
-                            ->label('Modelo')
-                            ->icon('heroicon-o-cube')
-                            ->weight(FontWeight::Bold),
 
-                        TextEntry::make('year')
-                            ->label('Ano')
-                            ->icon('heroicon-o-calendar')
-                            ->numeric(),
 
-                        TextEntry::make('type')
-                            ->label('Tipo')
-                            ->badge()
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
-                                'truck' => 'Caminhão',
-                                'van' => 'Van',
-                                'car' => 'Carro',
-                                'pickup' => 'Pickup',
-                                default => $state,
-                            })
-                            ->color(fn(string $state): string => match ($state) {
-                                'truck' => 'info',
-                                'van' => 'success',
-                                'car' => 'warning',
-                                'pickup' => 'danger',
-                                default => 'gray',
-                            })
-                            ->icon(fn(string $state): string => match ($state) {
-                                'truck' => 'heroicon-o-truck',
-                                'van' => 'heroicon-o-building-office',
-                                'car' => 'heroicon-m-home',
-                                'pickup' => 'heroicon-o-cube-transparent',
-                                default => 'heroicon-o-question-mark-circle',
-                            }),
 
-                        TextEntry::make('status')
-                            ->label('Status')
-                            ->badge()
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
-                                'active' => 'Ativo',
-                                'maintenance' => 'Manutenção',
-                                'blocked' => 'Bloqueado',
-                                default => $state,
-                            })
-                            ->color(fn(string $state): string => match ($state) {
-                                'active' => 'success',
-                                'maintenance' => 'warning',
-                                'blocked' => 'danger',
-                                default => 'gray',
-                            })
-                            ->icon(fn(string $state): string => match ($state) {
-                                'active' => 'heroicon-o-check-circle',
-                                'maintenance' => 'heroicon-o-wrench-screwdriver',
-                                'blocked' => 'heroicon-o-x-circle',
-                                default => 'heroicon-o-question-mark-circle',
-                            }),
 
-                        TextEntry::make('currentDriver.name')
-                            ->label('Motorista Atual')
-                            ->icon('heroicon-o-user')
-                            ->placeholder('Nenhum motorista')
-                            ->weight(FontWeight::SemiBold)
-                            ->color('primary'),
+
+                Group::make([
+
+                    Group::make([
+
+                        // Vehicle Information Section
+                        Section::make('Informações do Veículo')
+                            ->icon('heroicon-o-truck')
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('plate')
+                                    ->label('Placa')
+                                    ->badge()
+                                    ->color('primary')
+                                    ->size(TextSize::Large)
+                                    ->weight(FontWeight::Bold),
+
+                                TextEntry::make('model')
+                                    ->label('Modelo')
+                                    ->icon('heroicon-o-cube')
+                                    ->weight(FontWeight::Bold),
+
+                                TextEntry::make('year')
+                                    ->label('Ano')
+                                    ->icon('heroicon-o-calendar')
+                                    ->numeric(),
+
+                                TextEntry::make('type')
+                                    ->label('Tipo')
+                                    ->badge()
+                                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                                        'truck' => 'Caminhão',
+                                        'van' => 'Van',
+                                        'car' => 'Carro',
+                                        'pickup' => 'Pickup',
+                                        default => $state,
+                                    })
+                                    ->color(fn(string $state): string => match ($state) {
+                                        'truck' => 'info',
+                                        'van' => 'success',
+                                        'car' => 'warning',
+                                        'pickup' => 'danger',
+                                        default => 'gray',
+                                    })
+                                    ->icon(fn(string $state): string => match ($state) {
+                                        'truck' => 'heroicon-o-truck',
+                                        'van' => 'heroicon-o-building-office',
+                                        'car' => 'heroicon-m-home',
+                                        'pickup' => 'heroicon-o-cube-transparent',
+                                        default => 'heroicon-o-question-mark-circle',
+                                    }),
+
+                                TextEntry::make('status')
+                                    ->label('Status')
+                                    ->badge()
+                                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                                        'active' => 'Ativo',
+                                        'maintenance' => 'Manutenção',
+                                        'blocked' => 'Bloqueado',
+                                        default => $state,
+                                    })
+                                    ->color(fn(string $state): string => match ($state) {
+                                        'active' => 'success',
+                                        'maintenance' => 'warning',
+                                        'blocked' => 'danger',
+                                        default => 'gray',
+                                    })
+                                    ->icon(fn(string $state): string => match ($state) {
+                                        'active' => 'heroicon-o-check-circle',
+                                        'maintenance' => 'heroicon-o-wrench-screwdriver',
+                                        'blocked' => 'heroicon-o-x-circle',
+                                        default => 'heroicon-o-question-mark-circle',
+                                    }),
+
+                                TextEntry::make('currentDriver.name')
+                                    ->label('Motorista Atual')
+                                    ->icon('heroicon-o-user')
+                                    ->placeholder('Nenhum motorista')
+                                    ->weight(FontWeight::SemiBold)
+                                    ->color('primary'),
+                            ]),
+
+
+
+                        Section::make('Localização')
+                            ->icon('heroicon-o-map-pin')
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('last_latitude')
+                                    ->label('Latitude')
+                                    ->icon('heroicon-o-globe-alt')
+                                    ->placeholder('N/A')
+                                    ->copyable()
+                                    ->copyMessage('Latitude copiada!')
+                                    ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
+
+                                TextEntry::make('last_longitude')
+                                    ->label('Longitude')
+                                    ->icon('heroicon-o-globe-alt')
+                                    ->placeholder('N/A')
+                                    ->copyable()
+                                    ->copyMessage('Longitude copiada!')
+                                    ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
+
+                                TextEntry::make('last_update_at')
+                                    ->label('Última Atualização')
+                                    ->icon('heroicon-o-clock')
+                                    ->dateTime('d/m/Y H:i:s')
+                                    ->placeholder('Nunca atualizado')
+                                    ->since()
+                                    ->color('gray'),
+                            ])
                     ]),
 
-                // Current Status Section
-                Section::make('Status Atual')
-                    ->icon('heroicon-o-signal')
-                    ->columns(3)
-                    ->schema([
-                        TextEntry::make('current_speed')
-                            ->label('Velocidade')
-                            ->suffix(' km/h')
-                            ->icon('heroicon-o-bolt')
-                            ->placeholder('0 km/h')
-                            ->color(fn($state) => match (true) {
-                                $state > 80 => 'danger',
-                                $state > 60 => 'warning',
-                                default => 'success',
-                            })
-                            ->weight(FontWeight::Bold),
+                    Group::make([
+                        Section::make('Status Atual')
+                            ->icon('heroicon-o-signal')
+                            ->columns(3)
+                            ->schema([
+                                TextEntry::make('current_speed')
+                                    ->label('Velocidade')
+                                    ->suffix(' km/h')
+                                    ->icon('heroicon-o-bolt')
+                                    ->placeholder('0 km/h')
+                                    ->color(fn($state) => match (true) {
+                                        $state > 80 => 'danger',
+                                        $state > 60 => 'warning',
+                                        default => 'success',
+                                    })
+                                    ->weight(FontWeight::Bold),
 
-                        TextEntry::make('fuel_level')
-                            ->label('Combustível')
-                            ->suffix('%')
-                            ->icon('heroicon-o-bolt')
-                            ->placeholder('0%')
-                            ->color(fn($state) => match (true) {
-                                $state < 20 => 'danger',
-                                $state < 50 => 'warning',
-                                default => 'success',
-                            })
-                            ->weight(FontWeight::Bold),
+                                TextEntry::make('fuel_level')
+                                    ->label('Combustível')
+                                    ->suffix('%')
+                                    ->icon('heroicon-o-bolt')
+                                    ->placeholder('0%')
+                                    ->color(fn($state) => match (true) {
+                                        $state < 20 => 'danger',
+                                        $state < 50 => 'warning',
+                                        default => 'success',
+                                    })
+                                    ->weight(FontWeight::Bold),
 
-                        IconEntry::make('ignition_on')
-                            ->label('Ignição')
-                            ->boolean()
-                            ->trueIcon('heroicon-o-check-circle')
-                            ->falseIcon('heroicon-o-x-circle')
-                            ->trueColor('success')
-                            ->falseColor('danger')
-                            ->size(IconSize::Large),
+                                IconEntry::make('ignition_on')
+                                    ->label('Ignição')
+                                    ->boolean()
+                                    ->trueIcon('heroicon-o-check-circle')
+                                    ->falseIcon('heroicon-o-x-circle')
+                                    ->trueColor('success')
+                                    ->falseColor('danger')
+                                    ->size(IconSize::Large),
 
 
-                    ]),
+                            ]),
+                        Section::make('Gravações de Vídeo')
+                            ->schema([
+                                VideoCarousel::make('videos')
+                                    ->state(function ($record) {
+                                        return $record->videoRecordings()
+                                            ->with(['driver', 'vehicle'])
+                                            ->latest()
+                                            ->get()
+                                            ->map(function ($video) {
+                                                return [
+                                                    'id' => $video->id,
+                                                    'title' => $video->filename,
+                                                    'url' => route('videos.show', $video->id),
+                                                    'thumbnail_url' => $video->getThumbnailUrl(),
+                                                    'duration' => $video->duration_human,
+                                                    'size' => $video->file_size_human,
+                                                    'date' => $video->created_at->format('d/m/Y H:i'),
+                                                    'driver' => $video->driver?->name,
+                                                    'vehicle' => $video->vehicle?->plate,
+                                                    'status' => $video->status,
 
-                // Location Section
-                Section::make('Localização')
-                    ->icon('heroicon-o-map-pin')
-                    ->columns(3)
-                    ->columnSpanFull()
-                    ->schema([
-                        TextEntry::make('last_latitude')
-                            ->label('Latitude')
-                            ->icon('heroicon-o-globe-alt')
-                            ->placeholder('N/A')
-                            ->copyable()
-                            ->copyMessage('Latitude copiada!')
-                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
-
-                        TextEntry::make('last_longitude')
-                            ->label('Longitude')
-                            ->icon('heroicon-o-globe-alt')
-                            ->placeholder('N/A')
-                            ->copyable()
-                            ->copyMessage('Longitude copiada!')
-                            ->formatStateUsing(fn($state) => $state ? number_format($state, 7) : '-'),
-
-                        TextEntry::make('last_update_at')
-                            ->label('Última Atualização')
-                            ->icon('heroicon-o-clock')
-                            ->dateTime('d/m/Y H:i:s')
-                            ->placeholder('Nunca atualizado')
-                            ->since()
-                            ->color('gray'),
-                    ]),
-
+                                                ];
+                                            })
+                                            ->toArray();
+                                    }),
+                            ])
+                            ->collapsible()
+                    ])
+                ])->columns(2)->columnSpanFull(),
 
 
                 Group::make([
@@ -278,7 +318,9 @@ class VehicleInfolist
                                     default => 'heroicon-o-question-mark-circle',
                                 }),
                         ])->columnSpan(1)
-                ])->columns(5)->columnSpanFull()
+                ])->columns(5)->columnSpanFull(),
+
+
             ]);
     }
 }

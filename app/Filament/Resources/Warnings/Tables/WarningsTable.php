@@ -69,19 +69,19 @@ class WarningsTable
                     ->placeholder('N/A')
                     ->description(fn($record) => $record->vehicle?->model),
 
-                TextColumn::make('location')
-                    ->label('Local')
-                    ->searchable()
-                    ->limit(30)
-                    ->tooltip(function (TextColumn $column): ?string {
-                        $state = $column->getState();
-                        if (strlen($state) <= 30) {
-                            return null;
-                        }
-                        return $state;
-                    })
-                    ->icon('heroicon-o-map-pin')
-                    ->placeholder('N/A'),
+                // TextColumn::make('location')
+                //     ->label('Local')
+                //     ->searchable()
+                //     ->limit(30)
+                //     ->tooltip(function (TextColumn $column): ?string {
+                //         $state = $column->getState();
+                //         if (strlen($state) <= 30) {
+                //             return null;
+                //         }
+                //         return $state;
+                //     })
+                //     ->icon('heroicon-o-map-pin')
+                //     ->placeholder('N/A'),
 
                 IconColumn::make('resolved_at')
                     ->label('Resolvido')

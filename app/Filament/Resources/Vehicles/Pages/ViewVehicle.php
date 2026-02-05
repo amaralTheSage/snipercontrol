@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Vehicles\Pages;
 
 use App\Filament\Actions\TurnVehicleOffAction;
 use App\Filament\Resources\Vehicles\VehicleResource;
+use App\Filament\Widgets\RouteWidget;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\HtmlString;
@@ -38,6 +39,15 @@ class ViewVehicle extends ViewRecord
         return [
             TurnVehicleOffAction::make(),
             EditAction::make(),
+        ];
+    }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+            RouteWidget::make([
+                'vehicleId' => $this->record->id,
+            ]),
         ];
     }
 }

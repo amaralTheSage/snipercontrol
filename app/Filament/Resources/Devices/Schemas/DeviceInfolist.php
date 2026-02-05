@@ -17,9 +17,9 @@ class DeviceInfolist
         return $schema
             ->components([
                 // Device Information Section
-                Livewire::make(RouteWidget::class, fn($record) => [
-                    'vehicleId' => $record->vehicle_id,
-                ])->columnSpanFull(),
+                // Livewire::make(RouteWidget::class, fn($record) => [
+                //     'vehicleId' => $record->vehicle_id,
+                // ])->columnSpanFull(),
 
                 Section::make('Informações do Dispositivo')
                     ->icon('heroicon-o-cpu-chip')

@@ -42,11 +42,10 @@ class Trip extends Model
         return $this->belongsTo(Device::class);
     }
 
-    public function trips()
+    public function videoRecordings(): HasMany
     {
-        return $this->hasMany(Trip::class);
+        return $this->hasMany(VideoRecording::class);
     }
-
     public function telemetryEvents(): HasMany
     {
         return $this->hasMany(TelemetryEvent::class);

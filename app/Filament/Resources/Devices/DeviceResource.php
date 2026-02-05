@@ -17,6 +17,7 @@ use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DeviceResource extends Resource
 {
@@ -43,6 +44,11 @@ class DeviceResource extends Resource
         return DevicesTable::configure($table);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('company_id', auth()->id());
+    }
     public static function getRelations(): array
     {
         return [

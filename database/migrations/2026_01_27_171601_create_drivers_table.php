@@ -21,6 +21,9 @@ return new class extends Migration
 
             $table->enum('status', ['active', 'inactive'])->default('active');
 
+
+            $table->foreignId('company_id')->constrained('users')->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DriverResource extends Resource
 {
@@ -42,6 +43,13 @@ class DriverResource extends Resource
     {
         return DriversTable::configure($table);
     }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('company_id', auth()->id());
+    }
+
 
     public static function getRelations(): array
     {

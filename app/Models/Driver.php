@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Driver extends Model
@@ -39,5 +40,10 @@ class Driver extends Model
     public function warnings(): HasMany
     {
         return $this->hasMany(Warning::class);
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'company_id', 'id');
     }
 }

@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('warnings', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['route_diversion', 'cargo_theft', 'fuel_theft']);
+            $table->enum('type', ['route_diversion', 'cargo_theft', 'fuel_theft', 'unexpected_stop']);
             $table->foreignId('driver_id')->nullable()->constrained()->nullOnDelete();
             $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
             $table->text('description')->nullable();
