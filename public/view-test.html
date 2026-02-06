@@ -71,7 +71,6 @@
                     console.log('Connected to room!');
 
                     room.on('trackSubscribed', (track) => {
-                        console.log('Track subscribed:', track);
                         const videoEl = track.attach();
                         videoEl.style.width = '100%';
                         videoEl.style.maxWidth = '800px';

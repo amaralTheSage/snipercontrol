@@ -237,7 +237,8 @@
 
                             // Attempt to rotate to landscape on mobile
                             if (screen.orientation && screen.orientation.lock) {
-                                await screen.orientation.lock('landscape').catch(e => console.log('Rotation lock blocked or unsupported'));
+                                await screen.orientation.lock('landscape')
+                                    .catch(e => console.log('Rotation lock blocked or unsupported'));
                             }
                         } catch (err) {
                             console.error(`Error attempting to enable full-screen mode: ${err.message}`);
@@ -292,20 +293,31 @@
                 },
 
                 closePlayer() {
-                    if (document.fullscreenElement) document.exitFullscreen();
                     this.showPlayer = false;
+                    this.loading = false;
 
                     if (this.room) {
-                        try { this.room.disconnect(); } catch (e) {/* ignore */ }
+                        console.log('Disconnecting LiveKit...');
+
+                        this.room.remoteParticipants.forEach(participant => {
+                            participant.trackPublications.forEach(pub => {
+                                if (pub.track) {
+                                    pub.track.detach().forEach(el => el.remove());
+                                }
+                            });
+                        });
+
+                        this.room.disconnect();
                         this.room = null;
                     }
 
-                    if (this.$refs.livestreamPlayer) {
-                        try { this.$refs.livestreamPlayer.pause(); this.$refs.livestreamPlayer.currentTime = 0; } catch (e) { }
-                    }
                     if (this.$refs.videoContainer) {
                         this.$refs.videoContainer.innerHTML = '';
                     }
+
+                    document.querySelectorAll('audio').forEach(el => el.remove());
+
+                    this.deviceId = null;
                 },
 
                 updateViewers() {
