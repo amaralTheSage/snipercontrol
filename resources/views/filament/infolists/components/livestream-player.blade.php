@@ -3,8 +3,7 @@
 
 
     <div x-show="showPlayer" x-cloak @close-livestream.window="closePlayer()"
-        class="fixed inset-0 z-50 flex items-center justify-center bg-card/90 backdrop-blur-sm p-4"
-        style="display: none;">
+        class="fixed inset-0 z-50 flex items-center justify-center  backdrop-blur-xs p-4" style="display: none;">
         <div class="relative w-full max-w-6xl max-h-[95vh] flex flex-col">
             <!-- Close Button -->
             <button @click="closePlayer()"
@@ -27,8 +26,7 @@
                 </div>
 
                 <!-- Video Stream -->
-                <div class="bg-black rounded-lg overflow-hidden shadow-2xl flex flex-col max-h-full"
-                    x-ref="playerWrapper">
+                <div class="bg-black  overflow-hidden shadow-2xl flex flex-col max-h-full" x-ref="playerWrapper">
 
                     <div class="flex-shrink-0 relative bg-black flex items-center justify-center overflow-hidden"
                         style="height: 80vh; width: 100%; aspect-ratio: 16/9;">
@@ -51,7 +49,7 @@
                             </svg>
                         </button>
 
-                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-card">
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-black">
                             <div class="text-center">
                                 <svg class="w-12 h-12 text-card-foreground animate-spin mx-auto" fill="none"
                                     viewBox="0 0 24 24">
@@ -65,6 +63,8 @@
                                 <p class="text-card-foreground mt-2 text-sm">Conectando à transmissão...</p>
                             </div>
                         </div>
+
+
                     </div>
                 </div>
 
@@ -338,7 +338,6 @@
             width: 100vw !important;
             height: 100vh !important;
             max-height: 100vh !important;
-            background-color: black;
             display: flex;
             align-items: center;
             justify-content: center;

@@ -26,17 +26,6 @@ class VehicleInfolist
         return $schema
             ->components([
 
-
-                // Livewire::make(RouteWidget::class, fn($record) => [
-                //     'vehicleId' => $record->id,
-                // ])
-                //     ->columnSpanFull(),
-
-
-
-
-
-
                 Group::make([
 
                     Group::make([
