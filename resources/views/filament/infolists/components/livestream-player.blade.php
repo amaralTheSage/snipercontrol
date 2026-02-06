@@ -154,73 +154,54 @@
                 // join LiveKit viewer (tries to use UMD globals). If LiveKit not present, logs and returns.
                 async joinViewer(deviceId) {
                     try {
-
                         const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
-
-                        console.log(csrfToken);
-
-                        if (!csrfToken) {
-                            console.error('CSRF token not found in page');
-                        }
-
-                        // fetch token from your Laravel endpoint
                         const res = await fetch('/livekit/viewer-token', {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken
-                            },
-                            credentials: 'same-origin',
+                            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
                             body: JSON.stringify({ device_id: deviceId })
-
                         });
-                        console.log(res)
-
 
                         if (!res.ok) throw new Error('token endpoint error');
                         const { token, url } = await res.json();
 
-                        console.log('Token:', token)
+                        const LK = window.LivekitClient || window.LiveKitClient;
+                        this.room = new LK.Room();
 
-                        const LK = window.LivekitClient || window.livekitClient || window.LiveKit || window.LiveKitClient; const RoomCtor = LK && (LK.Room || LK.Room);
-                        if (!RoomCtor) {
-                            console.error('LiveKit UMD not found. Include the UMD script or use module import.');
-                            return;
-                        }
-
-                        this.room = new RoomCtor();
+                        // 1. Handle tracks from participants ALREADY in the room
+                        this.room.on('trackSubscribed', (track, publication) => {
+                            this.handleTrackSubscribed(track);
+                        });
 
                         await this.room.connect(url, token);
 
-                        this.room.on('trackSubscribed', (track, publication, participant) => {
-                            const el = track.attach();
-                            el.classList.add('w-full', 'h-full', 'object-cover');
-
-                            // Check if it's video or audio
-                            if (track.kind === 'video') {
-                                // Clear only if you want to replace a placeholder
-                                if (this.$refs.videoContainer) {
-                                    // Find any existing video and replace it, or just append
-                                    const existingVideo = this.$refs.videoContainer.querySelector('video');
-                                    if (existingVideo) existingVideo.remove();
-                                    this.$refs.videoContainer.appendChild(el);
-                                }
-                            } else {
-                                // Audio tracks don't need to be visible, but MUST be in the DOM to play
-                                document.body.appendChild(el);
-                            }
-                            this.loading = false;
-                        });
-
-                        this.room.on('disconnected', () => {
-                            if (this.$refs.videoContainer) this.$refs.videoContainer.innerHTML = '';
+                        // 2. Check for participants already publishing when we joined
+                        this.room.remoteParticipants.forEach(participant => {
+                            participant.trackPublications.forEach(publication => {
+                                if (publication.track) this.handleTrackSubscribed(publication.track);
+                            });
                         });
 
                     } catch (err) {
                         console.error('joinViewer error', err);
                         this.loading = false;
                     }
+                },
+
+                // Helper to keep logic clean
+                handleTrackSubscribed(track) {
+                    const el = track.attach();
+                    el.classList.add('w-full', 'h-full', 'object-cover');
+
+                    if (track.kind === 'video') {
+                        el.muted = true; // Crucial for autoplay
+                        if (this.$refs.videoContainer) {
+                            this.$refs.videoContainer.innerHTML = '';
+                            this.$refs.videoContainer.appendChild(el);
+                        }
+                    } else {
+                        document.body.appendChild(el);
+                    }
+                    this.loading = false;
                 },
 
                 // openStream accepts different shapes (Livewire sends array, custom event might send object)

@@ -53,39 +53,43 @@ Route::get('/test-stream/{device}', function ($device) {
     return view('test-publish', ['device' => $device]);
 });
 
-
 Route::post('/livekit/viewer-token', function (Request $request) {
     $request->validate([
         'device_id' => 'required',
     ]);
 
-    $device = Device::where('id', $request->input('device_id'))->firstOrFail();
+    $device = Device::where('id', $request->device_id)->firstOrFail();
 
     if ($device->company_id !== Auth::id()) {
-        abort(403, 'Unauthorized access to this device.');
+        abort(403);
     }
 
     $apiKey = config('livekit.key');
     $apiSecret = config('livekit.secret');
     $now = time();
-    $room = 'device-' . $request->input('device_id');
+    $roomName = 'device-' . $request->device_id;
 
     $payload = [
         'iss' => $apiKey,
-        'sub' => 'viewer-' . $request->user()->id,
+        'sub' => 'viewer-' . Auth::id() . '-' . uniqid(),
+        'iat' => $now,
         'nbf' => $now,
         'exp' => $now + 3600,
         'video' => [
-            'room' => $room,
+            'room' => $roomName,
             'roomJoin' => true,
             'canPublish' => false,
+            'canPublishData' => false,
             'canSubscribe' => true,
         ],
     ];
 
-    $jwt = JWT::encode($payload, $apiSecret, 'HS256');
+    $jwt = Firebase\JWT\JWT::encode($payload, $apiSecret, 'HS256');
 
-    return response()->json(['token' => $jwt, 'url' => config('livekit.url')]);
+    return response()->json([
+        'token' => $jwt,
+        'url' => config('livekit.url')
+    ]);
 });
 
 
