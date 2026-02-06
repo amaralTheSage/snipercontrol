@@ -27,22 +27,43 @@
                 </div>
 
                 <!-- Video Stream -->
-                <div class="flex-shrink-0 relative bg-black flex items-center justify-center overflow-hidden"
-                    style="height: 80vh;">
-                    <div x-ref="videoContainer" class="w-full h-full aspect-video flex items-center justify-center">
-                    </div>
+                <div class="bg-black rounded-lg overflow-hidden shadow-2xl flex flex-col max-h-full"
+                    x-ref="playerWrapper">
 
-                    <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-card">
-                        <div class="text-center">
-                            <svg class="w-12 h-12 text-card-foreground animate-spin mx-auto" fill="none"
+                    <div class="flex-shrink-0 relative bg-black flex items-center justify-center overflow-hidden"
+                        style="height: 80vh; width: 100%; aspect-ratio: 16/9;">
+
+                        <div x-ref="videoContainer" class="w-full h-full flex items-center justify-center"></div>
+
+                        <button @click="toggleFullscreen()"
+                            class="absolute bottom-4 right-4 z-20 bg-black/50 hover:bg-black/80 text-white p-2 rounded-full transition-all">
+                            <svg x-show="!isFullscreen" class="w-6 h-6" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
                                 </path>
                             </svg>
-                            <p class="text-card-foreground mt-2 text-sm">Conectando à transmissão...</p>
+                            <svg x-show="isFullscreen" class="w-6 h-6" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 9L4 4m0 0h4M4 4v4m11 1l5-5m0 0h-4m4 0v4m-11 7l-5 5m0 0v-4m0 4h4m11-1l5 5m0 0v-4m0 4h-4">
+                                </path>
+                            </svg>
+                        </button>
+
+                        <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-card">
+                            <div class="text-center">
+                                <svg class="w-12 h-12 text-card-foreground animate-spin mx-auto" fill="none"
+                                    viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4">
+                                    </circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
+                                </svg>
+                                <p class="text-card-foreground mt-2 text-sm">Conectando à transmissão...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -124,6 +145,7 @@
                 vehicle: '',
                 startedAt: '',
                 viewers: 0,
+                isFullscreen: false,
 
                 // Player state
                 room: null,
@@ -191,7 +213,7 @@
                 // Helper to keep logic clean
                 handleTrackSubscribed(track) {
                     const el = track.attach();
-                    el.classList.add('max-w-full', 'max-h-full', 'object-contain');
+                    el.classList.add('w-full', 'h-full', 'object-contain');
 
                     if (track.kind === 'video') {
                         el.muted = true; // Crucial for autoplay
@@ -203,6 +225,31 @@
                         document.body.appendChild(el);
                     }
                     this.loading = false;
+                },
+
+                async toggleFullscreen() {
+                    const container = this.$refs.playerWrapper;
+
+                    if (!document.fullscreenElement) {
+                        try {
+                            await container.requestFullscreen();
+                            this.isFullscreen = true;
+
+                            // Attempt to rotate to landscape on mobile
+                            if (screen.orientation && screen.orientation.lock) {
+                                await screen.orientation.lock('landscape').catch(e => console.log('Rotation lock blocked or unsupported'));
+                            }
+                        } catch (err) {
+                            console.error(`Error attempting to enable full-screen mode: ${err.message}`);
+                        }
+                    } else {
+                        await document.exitFullscreen();
+                        this.isFullscreen = false;
+
+                        if (screen.orientation && screen.orientation.unlock) {
+                            screen.orientation.unlock();
+                        }
+                    }
                 },
 
                 // openStream accepts different shapes (Livewire sends array, custom event might send object)
@@ -245,6 +292,7 @@
                 },
 
                 closePlayer() {
+                    if (document.fullscreenElement) document.exitFullscreen();
                     this.showPlayer = false;
 
                     if (this.room) {
