@@ -28,34 +28,6 @@ Route::group([], function () {
 // );
 
 
-Route::post('/livekit/viewer-token', function (Request $request) {
-    // require authenticated viewer (adjust middleware if needed)
-    // if (! $request->user()) {
-    //     return response()->json(['message' => 'Unauthenticated'], 401);
-    // }
-
-    $apiKey = config('livekit.key');
-    $apiSecret = config('livekit.secret');
-    $now = time();
-    $room = 'device-' . $request->input('device_id');
-
-    $payload = [
-        'iss' => $apiKey,
-        'sub' => 'viewer-' . $request->user()->id,
-        'nbf' => $now,
-        'exp' => $now + 3600,
-        'video' => [
-            'room' => $room,
-            'roomJoin' => true,
-            'canPublish' => false,
-            'canSubscribe' => true,
-        ],
-    ];
-
-    $jwt = JWT::encode($payload, $apiSecret, 'HS256');
-
-    return response()->json(['token' => $jwt, 'url' => config('livekit.url')]);
-});
 
 /*
  * Generate a device token (device authenticates with device_token or device_id for dev)

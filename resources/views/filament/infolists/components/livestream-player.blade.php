@@ -107,7 +107,7 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/livekit-client/dist/livekit-client.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.5.9/dist/livekit-client.umd.min.js"></script>
     <script>
         /**
          * Make livestreamPlayer globally available for Alpine: x-data="livestreamPlayer()"
@@ -154,18 +154,32 @@
                 // join LiveKit viewer (tries to use UMD globals). If LiveKit not present, logs and returns.
                 async joinViewer(deviceId) {
                     try {
+
+                        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
+
+                        console.log(csrfToken);
+
+                        if (!csrfToken) {
+                            console.error('CSRF token not found in page');
+                        }
+
                         // fetch token from your Laravel endpoint
-                        const res = await fetch('/api/livekit/viewer-token', {
+                        const res = await fetch('/livekit/viewer-token', {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': csrfToken
+                            },
+                            credentials: 'same-origin',
                             body: JSON.stringify({ device_id: deviceId })
+
                         });
+                        console.log(res)
                         if (!res.ok) throw new Error('token endpoint error');
                         const { token, url } = await res.json();
 
-                        // resolve Room constructor from possible UMD globals
-                        const LK = window.livekitClient || window.LiveKit || window.livekit || window.LiveKitClient;
-                        const RoomCtor = LK && (LK.Room || LK.Room);
+                        const LK = window.LivekitClient || window.livekitClient || window.LiveKit || window.LiveKitClient; const RoomCtor = LK && (LK.Room || LK.Room);
                         if (!RoomCtor) {
                             console.error('LiveKit UMD not found. Include the UMD script or use module import.');
                             return;

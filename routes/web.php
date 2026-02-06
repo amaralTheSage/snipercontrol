@@ -2,6 +2,10 @@
 
 use App\Http\Controllers\API\VideoController;
 use App\Http\Controllers\VideoThumbnailController;
+use App\Models\Device;
+use Firebase\JWT\JWT;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
@@ -45,9 +49,45 @@ Route::get('/test-ffmpeg', function () {
 
 
 
-Route::get('/test-publish/{device}', function ($device) {
+Route::get('/test-stream/{device}', function ($device) {
     return view('test-publish', ['device' => $device]);
 });
+
+
+Route::post('/livekit/viewer-token', function (Request $request) {
+    $request->validate([
+        'device_id' => 'required',
+    ]);
+
+    $device = Device::where('id', $request->input('device_id'))->firstOrFail();
+
+    if ($device->company_id !== Auth::id()) {
+        abort(403, 'Unauthorized access to this device.');
+    }
+
+    $apiKey = config('livekit.key');
+    $apiSecret = config('livekit.secret');
+    $now = time();
+    $room = 'device-' . $request->input('device_id');
+
+    $payload = [
+        'iss' => $apiKey,
+        'sub' => 'viewer-' . $request->user()->id,
+        'nbf' => $now,
+        'exp' => $now + 3600,
+        'video' => [
+            'room' => $room,
+            'roomJoin' => true,
+            'canPublish' => false,
+            'canSubscribe' => true,
+        ],
+    ];
+
+    $jwt = JWT::encode($payload, $apiSecret, 'HS256');
+
+    return response()->json(['token' => $jwt, 'url' => config('livekit.url')]);
+});
+
 
 
 require __DIR__ . '/settings.php';
