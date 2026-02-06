@@ -27,10 +27,11 @@
                 </div>
 
                 <!-- Video Stream -->
-                <div class="flex-shrink-0 relative bg-card">
-                    <div x-ref="videoContainer" class="bg-background w-full"></div>
+                <div class="flex-shrink-0 relative bg-black flex items-center justify-center overflow-hidden"
+                    style="height: 80vh;">
+                    <div x-ref="videoContainer" class="w-full h-full aspect-video flex items-center justify-center">
+                    </div>
 
-                    <!-- Loading Overlay -->
                     <div x-show="loading" class="absolute inset-0 flex items-center justify-center bg-card">
                         <div class="text-center">
                             <svg class="w-12 h-12 text-card-foreground animate-spin mx-auto" fill="none"
@@ -190,7 +191,7 @@
                 // Helper to keep logic clean
                 handleTrackSubscribed(track) {
                     const el = track.attach();
-                    el.classList.add('w-full', 'h-full', 'object-cover');
+                    el.classList.add('max-w-full', 'max-h-full', 'object-contain');
 
                     if (track.kind === 'video') {
                         el.muted = true; // Crucial for autoplay
