@@ -176,8 +176,12 @@
 
                         });
                         console.log(res)
+
+
                         if (!res.ok) throw new Error('token endpoint error');
                         const { token, url } = await res.json();
+
+                        console.log('Token:', token)
 
                         const LK = window.LivekitClient || window.livekitClient || window.LiveKit || window.LiveKitClient; const RoomCtor = LK && (LK.Room || LK.Room);
                         if (!RoomCtor) {
@@ -189,13 +193,22 @@
 
                         await this.room.connect(url, token);
 
-                        this.room.on('trackSubscribed', (track) => {
+                        this.room.on('trackSubscribed', (track, publication, participant) => {
                             const el = track.attach();
-                            el.classList.add('w-full');
-                            // mount into your container ref (create x-ref="videoContainer")
-                            if (this.$refs.videoContainer) {
-                                this.$refs.videoContainer.innerHTML = '';
-                                this.$refs.videoContainer.appendChild(el);
+                            el.classList.add('w-full', 'h-full', 'object-cover');
+
+                            // Check if it's video or audio
+                            if (track.kind === 'video') {
+                                // Clear only if you want to replace a placeholder
+                                if (this.$refs.videoContainer) {
+                                    // Find any existing video and replace it, or just append
+                                    const existingVideo = this.$refs.videoContainer.querySelector('video');
+                                    if (existingVideo) existingVideo.remove();
+                                    this.$refs.videoContainer.appendChild(el);
+                                }
+                            } else {
+                                // Audio tracks don't need to be visible, but MUST be in the DOM to play
+                                document.body.appendChild(el);
                             }
                             this.loading = false;
                         });

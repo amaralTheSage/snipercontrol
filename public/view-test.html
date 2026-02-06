@@ -6,7 +6,7 @@
             src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
             defer
         ></script>
-        <script src="https://unpkg.com/livekit-client/dist/livekit-client.umd.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/livekit-client@2.5.9/dist/livekit-client.umd.min.js"></script>
     </head>
     <body>
         <div style="padding: 20px">
@@ -14,7 +14,7 @@
             <input
                 type="text"
                 id="deviceId"
-                value="123"
+                value="1"
                 placeholder="Device ID"
             />
             <button onclick="openViewer()">Open Viewer</button>
@@ -25,19 +25,43 @@
                 const deviceId = document.getElementById('deviceId').value;
 
                 try {
-                    const res = await fetch('/api/livekit/viewer-token', {
+                    const res = await fetch('/livekit/viewer-token', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ device_id: deviceId }),
                     });
 
+                    const contentType = (
+                        res.headers.get('content-type') || ''
+                    ).toLowerCase();
+                    const isJson = contentType.includes('application/json');
+
+                    // Safely parse JSON or fall back to text to avoid "Unexpected token '<'" errors
+                    let payload = null;
+                    if (isJson) {
+                        payload = await res.json().catch(() => null);
+                    } else {
+                        payload = await res.text().catch(() => null);
+                    }
+
                     if (!res.ok) {
-                        const error = await res.json();
-                        alert('Error: ' + (error.message || res.statusText));
+                        const message =
+                            isJson && payload && payload.message
+                                ? payload.message
+                                : typeof payload === 'string' &&
+                                    payload.trim().length
+                                  ? payload
+                                  : res.statusText;
+                        alert('Error: ' + message);
                         return;
                     }
 
-                    const { token, url } = await res.json();
+                    if (!isJson || !payload) {
+                        alert('Error: Server did not return valid JSON.');
+                        return;
+                    }
+
+                    const { token, url } = payload;
 
                     const LiveKit =
                         window.LivekitClient || window.livekitClient;

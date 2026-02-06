@@ -8,7 +8,7 @@
 
 <body style="margin: 0; padding: 20px; font-family: sans-serif;">
     <h2>Device Camera Stream</h2>
-    <input type="text" id="deviceId" placeholder="Device ID (e.g., 123)" value="123"
+    <input type="text" id="deviceId" placeholder="Device ID (e.g., 123)" value="1"
         style="width: 100%; padding: 10px; margin-bottom: 10px;">
     <button id="startBtn"
         style="width: 100%; padding: 15px; font-size: 16px; background: #10b981; color: white; border: none; border-radius: 5px;">
