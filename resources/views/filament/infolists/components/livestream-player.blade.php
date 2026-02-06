@@ -332,5 +332,22 @@
                 opacity: 0.5;
             }
         }
+
+        /* When the element is in fullscreen, force it to fill everything */
+        div[x-ref="playerWrapper"]:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-height: 100vh !important;
+            background-color: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        div[x-ref="playerWrapper"]:fullscreen .flex-shrink-0 {
+            height: 100vh !important;
+            /* Override the 80vh */
+            width: 100vw !important;
+        }
     </style>
 </div>

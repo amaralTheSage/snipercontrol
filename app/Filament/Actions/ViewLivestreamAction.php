@@ -18,8 +18,7 @@ class ViewLivestreamAction extends Action
         $this->label('Ver Transmissão ao Vivo')
             ->color('success')
             ->modal(false) // IMPORTANT — you're using your own modal
-            ->action(function () {}) // required but empty
-            ->after(function ($livewire, $arguments, $record) {
+            ->action(function ($livewire, $arguments, $record) {
 
                 $livewire->dispatch('open-livestream', [
                     'device_id' => $record->device->id,
