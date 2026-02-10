@@ -57,6 +57,7 @@ Route::post('/livekit/device-token', function (Request $request) {
     $payload = [
         'iss' => $apiKey,
         'sub' => 'device-' . $deviceId,
+        'identity' => 'device-' . $deviceId,
         'nbf' => $now,
         'exp' => $now + 3600,
         'video' => [
@@ -67,7 +68,11 @@ Route::post('/livekit/device-token', function (Request $request) {
         ],
     ];
 
+
+
     $jwt = JWT::encode($payload, $apiSecret, 'HS256');
+
+    Log::info('ROOM TOKEN: ' . $jwt);
 
     return response()->json(['token' => $jwt, 'url' => config('livekit.url')]);
 })->name('livekit.device-token');
