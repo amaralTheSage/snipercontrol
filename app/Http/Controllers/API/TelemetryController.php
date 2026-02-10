@@ -4,13 +4,13 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Models\Device;
-use App\Models\Trip;
 use App\Models\TelemetryEvent;
+use App\Models\Trip;
 use App\Services\WarningDetectionService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class TelemetryController extends Controller
 {
@@ -23,8 +23,7 @@ class TelemetryController extends Controller
 
     /**
      * Receive telemetry data from hardware device
-     * 
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function receiveTelemetry(Request $request)
@@ -44,7 +43,7 @@ class TelemetryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -54,20 +53,20 @@ class TelemetryController extends Controller
                 ->orWhere('id', $request->device_id)
                 ->first();
 
-            if (!$device) {
+            if (! $device) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Device not found'
+                    'message' => 'Device not found',
                 ], 404);
             }
 
             // Get or create trip based on ignition status
             $trip = $this->handleTrip($device, $request);
 
-            if (!$trip) {
+            if (! $trip) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'No active trip and ignition is off'
+                    'message' => 'No active trip and ignition is off',
                 ], 200);
             }
 
@@ -106,28 +105,24 @@ class TelemetryController extends Controller
                     'trip_id' => $trip->id,
                     'telemetry_event_id' => $telemetryEvent->id,
                     'status' => $trip->status,
-                ]
+                ],
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Telemetry receiving error: ' . $e->getMessage(), [
+            Log::error('Telemetry receiving error: '.$e->getMessage(), [
                 'device_id' => $request->device_id,
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing telemetry data',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
             ], 500);
         }
     }
 
     /**
      * Handle trip creation or retrieval based on ignition status
-     * 
-     * @param Device $device
-     * @param Request $request
-     * @return Trip|null
      */
     private function handleTrip(Device $device, Request $request): ?Trip
     {
@@ -140,7 +135,7 @@ class TelemetryController extends Controller
         // If ignition is on
         if ($request->ignition_on) {
             // If there's no ongoing trip, create a new one
-            if (!$currentTrip) {
+            if (! $currentTrip) {
                 $currentTrip = Trip::create([
                     'vehicle_id' => $device->vehicle_id,
                     'driver_id' => $device->driver_id ?? null,
@@ -154,7 +149,7 @@ class TelemetryController extends Controller
 
                 Log::info('New trip started', [
                     'trip_id' => $currentTrip->id,
-                    'device_id' => $device->id
+                    'device_id' => $device->id,
                 ]);
             }
 
@@ -162,7 +157,7 @@ class TelemetryController extends Controller
         }
 
         // If ignition is off and there's an ongoing trip, end it
-        if (!$request->ignition_on && $currentTrip) {
+        if (! $request->ignition_on && $currentTrip) {
             $currentTrip->update([
                 'ended_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
                 'end_lat' => $request->lat,
@@ -172,7 +167,7 @@ class TelemetryController extends Controller
 
             Log::info('Trip ended', [
                 'trip_id' => $currentTrip->id,
-                'device_id' => $device->id
+                'device_id' => $device->id,
             ]);
         }
 
@@ -181,10 +176,6 @@ class TelemetryController extends Controller
 
     /**
      * Update trip information with latest telemetry
-     * 
-     * @param Trip $trip
-     * @param Request $request
-     * @return void
      */
     private function updateTrip(Trip $trip, Request $request): void
     {
@@ -201,9 +192,6 @@ class TelemetryController extends Controller
 
     /**
      * Calculate total distance traveled in a trip
-     * 
-     * @param Trip $trip
-     * @return float
      */
     private function calculateTotalDistance(Trip $trip): float
     {
@@ -234,11 +222,7 @@ class TelemetryController extends Controller
 
     /**
      * Calculate distance between two GPS coordinates using Haversine formula
-     * 
-     * @param float $lat1
-     * @param float $lng1
-     * @param float $lat2
-     * @param float $lng2
+     *
      * @return float Distance in kilometers
      */
     private function haversineDistance(float $lat1, float $lng1, float $lat2, float $lng2): float
@@ -260,8 +244,7 @@ class TelemetryController extends Controller
     /**
      * Batch receive multiple telemetry events
      * Useful for devices that store data offline and send in batches
-     * 
-     * @param Request $request
+     *
      * @return \Illuminate\Http\JsonResponse
      */
     public function receiveBatchTelemetry(Request $request)
@@ -281,7 +264,7 @@ class TelemetryController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
@@ -311,11 +294,11 @@ class TelemetryController extends Controller
                         $successCount++;
                     } else {
                         $failedCount++;
-                        $errors[] = "Event {$index}: " . json_decode($response->getContent())->message;
+                        $errors[] = "Event {$index}: ".json_decode($response->getContent())->message;
                     }
                 } catch (\Exception $e) {
                     $failedCount++;
-                    $errors[] = "Event {$index}: " . $e->getMessage();
+                    $errors[] = "Event {$index}: ".$e->getMessage();
                 }
             }
 
@@ -326,16 +309,16 @@ class TelemetryController extends Controller
                     'total_events' => count($request->events),
                     'successful' => $successCount,
                     'failed' => $failedCount,
-                    'errors' => $errors
-                ]
+                    'errors' => $errors,
+                ],
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Batch telemetry receiving error: ' . $e->getMessage());
+            Log::error('Batch telemetry receiving error: '.$e->getMessage());
 
             return response()->json([
                 'success' => false,
                 'message' => 'An error occurred while processing batch telemetry data',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error'
+                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
             ], 500);
         }
     }

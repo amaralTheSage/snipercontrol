@@ -10,8 +10,6 @@ class ListDrivers extends ListRecords
 {
     protected static string $resource = DriverResource::class;
 
-
-
     protected function getHeaderActions(): array
     {
         return [

@@ -1,19 +1,24 @@
 <?php
 
-
 use App\Http\Controllers\Api\TelemetryController;
 use App\Http\Controllers\API\VideoController;
+use App\Http\Controllers\AudioController;
 use App\Http\Controllers\LivestreamController;
 use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
-# Implementar middleware de autenticação de dispositivo 
+// Implementar middleware de autenticação de dispositivo
 Route::group([], function () {
     Route::post('/telemetry', [TelemetryController::class, 'receiveTelemetry'])->name('telemetry.receive');
     Route::post('/telemetry/batch', [TelemetryController::class, 'receiveBatchTelemetry'])->name('telemetry.receiveBatch');
 
     Route::post('videos/upload', [VideoController::class, 'upload']);
+    Route::post('/audios/upload', [AudioController::class, 'upload'])->name('audios.upload');
+
+    // Streaming route
+    Route::get('/audios/{recording}', [AudioController::class, 'show'])->name('audios.show');
 });
 
 // # middleware('auth:sanctum')->   # set this up eventualçly
@@ -27,12 +32,15 @@ Route::group([], function () {
 //     [LivestreamController::class, 'deviceToken']
 // );
 
-
-
 /*
  * Generate a device token (device authenticates with device_token or device_id for dev)
  */
 Route::post('/livekit/device-token', function (Request $request) {
+    Log::info('Device video livestream route hit!');
+
+    Log::info('Request TRANSMISSÃO: ', $request->toArray());
+
+
     $apiKey = config('livekit.key');
     $apiSecret = config('livekit.secret');
     $now = time();
@@ -62,4 +70,4 @@ Route::post('/livekit/device-token', function (Request $request) {
     $jwt = JWT::encode($payload, $apiSecret, 'HS256');
 
     return response()->json(['token' => $jwt, 'url' => config('livekit.url')]);
-});
+})->name('livekit.device-token');

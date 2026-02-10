@@ -48,7 +48,7 @@ class Map extends Page
 
                     'device' => $driver->currentVehicle?->device ? [
                         'serial' => $driver->currentVehicle->device->serial,
-                        'status' => $driver->currentVehicleDevice->status
+                        'status' => $driver->currentVehicleDevice->status,
                     ] : null,
 
                     // TEMP simulated coordinates

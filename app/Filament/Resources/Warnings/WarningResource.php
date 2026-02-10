@@ -14,14 +14,13 @@ use BackedEnum;
 use CodeWithDennis\FilamentLucideIcons\Enums\LucideIcon;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
 class WarningResource extends Resource
 {
     protected static ?string $model = Warning::class;
 
-    protected static ?string $modelLabel = "Aviso";
+    protected static ?string $modelLabel = 'Aviso';
 
     protected static ?int $navigationSort = 7;
 

@@ -19,7 +19,7 @@ return new class extends Migration
             // Video file information
             $table->string('filename');
             $table->string('storage_path');
-            $table->string('storage_disk')->default('local');
+            $table->string('storage_disk')->default('minio');
             $table->enum('status', ['uploading', 'processing', 'ready', 'failed'])->default('uploading')->after('warning_id');
             $table->text('processing_error')->nullable()->after('status');
             $table->bigInteger('file_size')->nullable(); // in bytes

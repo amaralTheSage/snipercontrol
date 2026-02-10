@@ -3,11 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\VideoRecording;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Storage;
-use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class VideoThumbnailController extends Controller
 {
@@ -24,8 +23,6 @@ class VideoThumbnailController extends Controller
             );
         }
 
-
-
         // Generate thumbnail on-demand
         try {
             $this->generateThumbnail($recording);
@@ -39,7 +36,7 @@ class VideoThumbnailController extends Controller
         } catch (\Exception $e) {
             Log::error('Thumbnail generation failed', [
                 'recording_id' => $recording->id,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -53,10 +50,10 @@ class VideoThumbnailController extends Controller
         $ffprobeBinary = env('FFPROBE_BINARY', 'ffprobe');
 
         $ffmpeg = FFMpeg::create([
-            'ffmpeg.binaries'  => $ffmpegBinary,
+            'ffmpeg.binaries' => $ffmpegBinary,
             'ffprobe.binaries' => $ffprobeBinary,
-            'timeout'          => 60,
-            'ffmpeg.threads'   => 4,
+            'timeout' => 60,
+            'ffmpeg.threads' => 4,
         ]);
 
         $video = $ffmpeg->open($videoPath);

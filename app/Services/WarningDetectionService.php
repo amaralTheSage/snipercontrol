@@ -27,7 +27,7 @@ class WarningDetectionService
             ->orderBy('recorded_at', 'desc')
             ->first();
 
-        if (!$previousEvent) {
+        if (! $previousEvent) {
             return;
         }
 
@@ -39,6 +39,7 @@ class WarningDetectionService
     {
         if ($previousEvent->fuel === null || $currentEvent->fuel === null) {
             Log::warning('Fuel data missing', ['vehicle_id' => $device->vehicle_id]);
+
             return;
         }
 
@@ -55,7 +56,7 @@ class WarningDetectionService
                 ->where('occurred_at', '>=', now()->subMinutes(20))
                 ->first();
 
-            if (!$existingWarning) {
+            if (! $existingWarning) {
                 $warning = Warning::create([
                     'type' => 'fuel_theft',
                     'vehicle_id' => $device->vehicle_id,
@@ -85,6 +86,7 @@ class WarningDetectionService
             }
         }
     }
+
     public function checkUnexpectedStop(Device $device, TelemetryEvent $currentEvent): void
     {
         if ($currentEvent->lat === null || $currentEvent->lng === null) {
@@ -106,7 +108,7 @@ class WarningDetectionService
             ->where('occurred_at', '>=', now()->subMinutes(10))
             ->first();
 
-        if (!$existingWarning && $stoppedDuration > 20) { // Avisa se estiver parado por mais de 5 minutos (ajustar, no momento ta 20 segundos)
+        if (! $existingWarning && $stoppedDuration > 20) { // Avisa se estiver parado por mais de 5 minutos (ajustar, no momento ta 20 segundos)
             $warning = Warning::create([
                 'type' => 'unexpected_stop',
                 'vehicle_id' => $device->vehicle_id,

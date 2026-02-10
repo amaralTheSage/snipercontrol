@@ -41,6 +41,7 @@ class Warning extends Model
     {
         return $this->belongsTo(Vehicle::class);
     }
+
     public function videoRecordings(): HasMany
     {
         return $this->hasMany(VideoRecording::class);

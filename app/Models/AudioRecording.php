@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
-class VideoRecording extends Model
+class AudioRecording extends Model
 {
     use HasFactory;
 
@@ -113,44 +113,18 @@ class VideoRecording extends Model
         return sprintf('%02d:%02d', $minutes, $seconds);
     }
 
-    public function getVideoUrl(): string
+    public function getAudioUrl(): string
     {
         return Storage::disk($this->storage_disk)->url($this->storage_path);
     }
 
-    public function getThumbnailPath(): string
-    {
-        // Derive thumbnail path from video path
-        $pathInfo = pathinfo($this->storage_path);
-
-        return $pathInfo['dirname'].'/'.$pathInfo['filename'].'_thumb.jpg';
-    }
-
-    public function getThumbnailUrl(): string
-    {
-        // Return route that generates thumbnail on-demand
-        return route('video.thumbnail', ['recording' => $this->id]);
-    }
-
-    public function thumbnailExists(): bool
-    {
-        return Storage::disk($this->storage_disk)->exists($this->getThumbnailPath());
-    }
-
     public function deleteFile(): bool
     {
-        $deleted = true;
-
         if ($this->storage_path && Storage::disk($this->storage_disk)->exists($this->storage_path)) {
-            $deleted = Storage::disk($this->storage_disk)->delete($this->storage_path);
+            return Storage::disk($this->storage_disk)->delete($this->storage_path);
         }
 
-        $thumbnailPath = $this->getThumbnailPath();
-        if (Storage::disk($this->storage_disk)->exists($thumbnailPath)) {
-            Storage::disk($this->storage_disk)->delete($thumbnailPath);
-        }
-
-        return $deleted;
+        return true;
     }
 
     public function isReady(): bool

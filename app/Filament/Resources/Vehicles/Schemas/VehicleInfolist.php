@@ -5,19 +5,20 @@ namespace App\Filament\Resources\Vehicles\Schemas;
 use App\Filament\Actions\ViewLivestreamAction;
 use App\Filament\Infolists\Components\VideoCarousel;
 use App\Filament\Resources\Warnings\WarningResource;
-use App\Filament\Widgets\RouteWidget;
+use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconSize;
 use Filament\Support\Enums\TextSize;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleInfolist
 {
@@ -107,8 +108,6 @@ class VehicleInfolist
                                     ->color('primary'),
                             ]),
 
-
-
                         Section::make('Localização')
                             ->icon('heroicon-o-map-pin')
                             ->columns(3)
@@ -136,7 +135,7 @@ class VehicleInfolist
                                     ->placeholder('Nunca atualizado')
                                     ->since()
                                     ->color('gray'),
-                            ])
+                            ]),
                     ]),
 
                     Group::make([
@@ -176,39 +175,104 @@ class VehicleInfolist
                                     ->trueColor('success')
                                     ->falseColor('danger')
                                     ->size(IconSize::Large),
-
-
                             ]),
 
                     ])->columns(2)->columnSpanFull(),
 
-
-                    VideoCarousel::make('videos')
+                    VideoCarousel::make('media_carousel')
                         ->state(function ($record) {
-                            return $record->videoRecordings()
+                            $disk = Storage::disk('minio');
+
+                            // Get all files directly from MinIO
+                            $files = $disk->allFiles();
+
+
+                            // Process videos
+                            $videos = collect($files)
+                                ->filter(fn($path) => in_array(pathinfo($path, PATHINFO_EXTENSION), ['mp4', 'webm', 'mov']))
+                                ->map(function ($path) use ($disk) {
+                                    try {
+                                        $sizeInBytes = $disk->size($path);
+                                        $lastModified = $disk->lastModified($path);
+
+                                        // Extract timestamp from filename (e.g., vid_1769583417.mp4)
+                                        $filename = basename($path);
+                                        $timestamp = null;
+                                        if (preg_match('/vid_(\d+)/', $filename, $matches)) {
+                                            $timestamp = (int) $matches[1];
+                                        } else {
+                                            $timestamp = $lastModified; // fallback
+                                        }
+
+                                        // Create Carbon instance from timestamp
+                                        $dateTime = Carbon::createFromTimestamp($timestamp);
+
+                                        // Safely check for thumbnail
+                                        $thumbnailUrl = null;
+                                        try {
+                                            $thumbPath = str_replace('.mp4', '_thumb.jpg', $path);
+                                            if ($disk->exists($thumbPath)) {
+                                                $thumbnailUrl = $disk->temporaryUrl($thumbPath, now()->addMinutes(60));
+                                            }
+                                        } catch (\Exception $e) {
+                                            // Thumbnail doesn't exist, that's okay
+                                        }
+
+                                        return [
+                                            'id' => md5($path),
+                                            'type' => 'video',
+                                            'title' => $filename,
+                                            'url' => $disk->temporaryUrl($path, now()->addMinutes(60)),
+                                            'thumbnail_url' => $thumbnailUrl,
+                                            'duration' => 'N/A', // We don't have duration without processing
+                                            'size' => round($sizeInBytes / 1024 / 1024, 2) . ' MB',
+                                            'date' => $dateTime->format('d/m/Y H:i'), // e.g., "28/01/2026 06:57"
+                                            'driver' => 'Unknown',
+                                            'vehicle' => 'Unknown',
+                                            'status' => 'ready',
+                                        ];
+                                    } catch (\Exception $e) {
+                                        Log::warning("Failed to process MinIO file: {$path}", ['error' => $e->getMessage()]);
+
+                                        return null;
+                                    }
+                                })
+                                ->filter()
+                                ->sortByDesc('date')
+                                ->values()
+                                ->toArray();
+
+                            // Process audios from database
+                            $audios = $record->audioRecordings()
                                 ->with(['driver', 'vehicle'])
                                 ->latest()
                                 ->get()
-                                ->map(function ($video) {
+                                ->map(function ($audio) {
                                     return [
-                                        'id' => $video->id,
-                                        'title' => $video->filename,
-                                        'url' => route('videos.show', $video->id),
-                                        'thumbnail_url' => $video->getThumbnailUrl(),
-                                        'duration' => $video->duration_human,
-                                        'size' => $video->file_size_human,
-                                        'date' => $video->created_at->format('d/m/Y H:i'),
-                                        'driver' => $video->driver?->name,
-                                        'vehicle' => $video->vehicle?->plate,
-                                        'status' => $video->status,
-
+                                        'id' => $audio->id,
+                                        'type' => 'audio',
+                                        'title' => $audio->filename ?? 'Audio Recording',
+                                        'url' => route('audios.show', $audio->id),
+                                        'thumbnail_url' => null,
+                                        'duration' => $audio->duration_human,
+                                        'size' => $audio->file_size_human,
+                                        'date' => $audio->created_at->format('d/m/Y H:i'),
+                                        'driver' => $audio->driver?->name,
+                                        'vehicle' => $audio->vehicle?->plate,
+                                        'status' => 'ready',
                                     ];
                                 })
                                 ->toArray();
-                        }),
+
+                            return [
+                                'videos' => $videos,
+                                'audios' => $audios,
+                            ];
+                        })
+                        ->columnSpanFull(),
                 ])->columnSpanFull(),
 
-                #VehicleInfolist
+                // VehicleInfolist
                 ViewLivestreamAction::make(),
 
                 Group::make([
@@ -256,8 +320,6 @@ class VehicleInfolist
                                     ->limit(50)
                                     ->placeholder('Sem descrição'),
 
-
-
                                 TextEntry::make('resolved_at')
                                     ->badge()
                                     ->placeholder('Pendente')
@@ -276,7 +338,7 @@ class VehicleInfolist
                                 ]);
                             })
                             ->openUrlInNewTab(false)
-                            ->color('gray')
+                            ->color('gray'),
                     ])
                         ->collapsible()->columnSpan(4),
 
@@ -308,9 +370,8 @@ class VehicleInfolist
                                     'offline' => 'heroicon-o-signal-slash',
                                     default => 'heroicon-o-question-mark-circle',
                                 }),
-                        ])->columnSpan(1)
+                        ])->columnSpan(1),
                 ])->columns(5)->columnSpanFull(),
-
 
             ]);
     }

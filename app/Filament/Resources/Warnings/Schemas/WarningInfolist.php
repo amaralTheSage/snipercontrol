@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Warnings\Schemas;
 
-use App\Models\Vehicle;
 use App\Models\Warning;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -17,8 +16,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\Layout\Split;
-
 
 class WarningInfolist
 {
@@ -29,18 +26,17 @@ class WarningInfolist
 
                 Group::make([
 
-
                     Section::make()
                         ->schema([
                             Grid::make(3)
                                 ->schema([
                                     TextEntry::make('type')
                                         ->label('Tipo de Aviso')
-                                        ->formatStateUsing(fn($record) => $record->getTypeLabel())
+                                        ->formatStateUsing(fn ($record) => $record->getTypeLabel())
                                         ->badge()
                                         ->size(TextSize::Large)
                                         ->weight(FontWeight::Bold)
-                                        ->color(fn(string $state): string => match ($state) {
+                                        ->color(fn (string $state): string => match ($state) {
                                             'route_diversion' => 'warning',
                                             'cargo_theft' => 'danger',
                                             'fuel_theft' => 'danger',
@@ -49,11 +45,11 @@ class WarningInfolist
 
                                     TextEntry::make('severity')
                                         ->label('Gravidade')
-                                        ->formatStateUsing(fn($record) => $record->getSeverityLabel())
+                                        ->formatStateUsing(fn ($record) => $record->getSeverityLabel())
                                         ->badge()
                                         ->size(TextSize::Large)
                                         ->weight(FontWeight::Bold)
-                                        ->color(fn(string $state): string => match ($state) {
+                                        ->color(fn (string $state): string => match ($state) {
                                             'low' => 'success',
                                             'medium' => 'warning',
                                             'high' => 'danger',
@@ -64,8 +60,7 @@ class WarningInfolist
                                         ->label('Data e Hora')
                                         ->dateTime('d/m/Y • H:i')
                                         ->color('gray')
-                                        ->helperText(fn($record) => $record->occurred_at->diffForHumans()),
-
+                                        ->helperText(fn ($record) => $record->occurred_at->diffForHumans()),
 
                                     Section::make('Veículo')
                                         ->schema([
@@ -75,7 +70,7 @@ class WarningInfolist
                                                 ->size(TextSize::Large)
                                                 ->placeholder('Não atribuído')
                                                 ->color('primary')
-                                                ->url(fn($record) => $record->vehicle ? route('filament.dash.resources.vehicles.view', $record->vehicle) : null),
+                                                ->url(fn ($record) => $record->vehicle ? route('filament.dash.resources.vehicles.view', $record->vehicle) : null),
 
                                             TextEntry::make('vehicle.model')
                                                 ->label('Modelo')
@@ -131,7 +126,6 @@ class WarningInfolist
                     ->schema([
                         // Main Content Column (2/3 width)
                         Group::make([
-
 
                             Section::make('Localização do Incidente')
                                 ->schema([
@@ -192,7 +186,7 @@ class WarningInfolist
                                         ]),
                                 ])
                                 ->collapsible()
-                                ->collapsed(fn($record) => !$record->latitude && !$record->longitude)
+                                ->collapsed(fn ($record) => ! $record->latitude && ! $record->longitude)
                                 ->compact(),
 
                             Section::make('Resolução')
@@ -226,7 +220,7 @@ class WarningInfolist
                                         ->markdown()
                                         ->color('gray'),
                                 ])
-                                ->visible(fn($record) => $record->isResolved())
+                                ->visible(fn ($record) => $record->isResolved())
                                 ->compact(),
                         ])->columnSpan(2),
 
@@ -242,7 +236,7 @@ class WarningInfolist
                                             ->size(TextSize::Large)
                                             ->placeholder('Não atribuído')
                                             ->color('primary')
-                                            ->helperText(fn($record) => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', preg_replace('/\D/', '', $record->driver?->cpf ?? '')))
+                                            ->helperText(fn ($record) => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', preg_replace('/\D/', '', $record->driver?->cpf ?? '')))
                                             ->extraAttributes(['class' => 'pt-2']),
                                     ])->columns(4),
 
@@ -252,7 +246,7 @@ class WarningInfolist
                                         ->size(TextSize::Small)
                                         ->color('gray')
                                         ->placeholder('—')
-                                        ->formatStateUsing(fn($state) => preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)))
+                                        ->formatStateUsing(fn ($state) => preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)))
                                         ->copyable()
                                         ->copyMessage('✓ Copiado!'),
                                 ])
