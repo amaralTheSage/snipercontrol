@@ -23,12 +23,10 @@ return new class extends Migration
 
             $table->foreignId('current_driver_id')->nullable()->constrained('drivers')->nullOnDelete();
 
-
             $table->integer('current_speed')->nullable();
             $table->integer('fuel_level')->nullable(); // %
 
             $table->boolean('ignition_on')->default(false);
-
 
             $table->decimal('last_latitude', 10, 7)->nullable();
             $table->decimal('last_longitude', 10, 7)->nullable();

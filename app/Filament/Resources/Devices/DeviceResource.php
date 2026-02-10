@@ -49,6 +49,7 @@ class DeviceResource extends Resource
         return parent::getEloquentQuery()
             ->where('company_id', auth()->id());
     }
+
     public static function getRelations(): array
     {
         return [

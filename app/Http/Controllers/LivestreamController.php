@@ -1,11 +1,10 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Models\Device;
-use Illuminate\Http\Request;
 use App\Services\LiveKitTokenService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Livekit\AccessToken;
 

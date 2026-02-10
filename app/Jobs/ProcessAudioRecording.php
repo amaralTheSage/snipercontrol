@@ -2,8 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\VideoRecording;
-use FFMpeg\Coordinate\TimeCode;
+use App\Models\AudioRecording;
 use FFMpeg\FFMpeg;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,12 +11,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 
-class ProcessVideoRecording implements ShouldQueue
+class ProcessAudioRecording implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
-        public VideoRecording $recording
+        public AudioRecording $recording
     ) {}
 
     public function handle(): void
@@ -25,7 +24,7 @@ class ProcessVideoRecording implements ShouldQueue
         try {
             $this->recording->update(['status' => 'processing']);
 
-            $videoPath = Storage::disk($this->recording->storage_disk)->path($this->recording->storage_path);
+            $audioPath = Storage::disk($this->recording->storage_disk)->path($this->recording->storage_path);
 
             // Initialize FFMpeg
             $ffmpeg = FFMpeg::create([
@@ -35,19 +34,12 @@ class ProcessVideoRecording implements ShouldQueue
                 'ffmpeg.threads' => 12,
             ]);
 
-            $video = $ffmpeg->open($videoPath);
+            // Open the audio file
+            $audio = $ffmpeg->open($audioPath);
 
-            // Get video duration
-            $duration = (int) $video->getStreams()->videos()->first()->get('duration');
-
-            // Generate thumbnail at 2 seconds (or middle of video if shorter)
-            $thumbnailTime = min(2, floor($duration / 2));
-            $thumbnailFullPath = Storage::disk($this->recording->storage_disk)->path(
-                $this->recording->getThumbnailPath()
-            );
-
-            $frame = $video->frame(TimeCode::fromSeconds($thumbnailTime));
-            $frame->save($thumbnailFullPath);
+            // Get audio duration
+            // Note: getStreams()->audios() is used instead of videos()
+            $duration = (int) $audio->getStreams()->audios()->first()->get('duration');
 
             // Update recording with metadata
             $this->recording->update([
@@ -61,6 +53,8 @@ class ProcessVideoRecording implements ShouldQueue
                 'processing_error' => $e->getMessage(),
             ]);
 
+            // Don't re-throw in production if you want to avoid retry loops for corrupt files,
+            // but throwing allows the queue worker to handle retries.
             throw $e;
         }
     }

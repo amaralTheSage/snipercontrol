@@ -1,14 +1,11 @@
 <?php
 
 use App\Models\Device;
-use App\Models\Vehicle;
 use App\Models\Trip;
+use App\Models\Vehicle;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\postJson;
-
-
-
 
 beforeEach(function () {
     // Create a test vehicle with correct fillable fields

@@ -38,6 +38,11 @@ class Vehicle extends Model
         return $this->hasMany(VideoRecording::class);
     }
 
+    public function audioRecordings(): HasMany
+    {
+        return $this->hasMany(AudioRecording::class);
+    }
+
     public function currentDriver()
     {
         return $this->belongsTo(Driver::class, 'current_driver_id');

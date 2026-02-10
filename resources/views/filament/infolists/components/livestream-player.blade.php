@@ -297,7 +297,6 @@
                     this.loading = false;
 
                     if (this.room) {
-                        console.log('Disconnecting LiveKit...');
 
                         this.room.remoteParticipants.forEach(participant => {
                             participant.trackPublications.forEach(pub => {

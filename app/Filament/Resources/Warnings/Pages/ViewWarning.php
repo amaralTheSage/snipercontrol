@@ -10,7 +10,6 @@ class ViewWarning extends ViewRecord
 {
     protected static string $resource = WarningResource::class;
 
-
     protected function getHeaderActions(): array
     {
         return [

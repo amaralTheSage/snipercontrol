@@ -46,6 +46,7 @@ class Trip extends Model
     {
         return $this->hasMany(VideoRecording::class);
     }
+
     public function telemetryEvents(): HasMany
     {
         return $this->hasMany(TelemetryEvent::class);

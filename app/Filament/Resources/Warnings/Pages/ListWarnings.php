@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Warnings\Pages;
 
 use App\Filament\Resources\Warnings\WarningResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,14 +16,12 @@ class ListWarnings extends ListRecords
         return [
             'unresolved' => Tab::make('Unresolved')->label('Não Resolvidos')
                 ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->whereNull('resolved_at')
+                    fn (Builder $query) => $query->whereNull('resolved_at')
                 ),
 
             'resolved' => Tab::make('Resolved')->label('Resolvidos')
                 ->modifyQueryUsing(
-                    fn(Builder $query) =>
-                    $query->whereNotNull('resolved_at')
+                    fn (Builder $query) => $query->whereNotNull('resolved_at')
                 ),
 
         ];

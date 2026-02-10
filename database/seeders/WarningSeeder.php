@@ -18,6 +18,7 @@ class WarningSeeder extends Seeder
 
         if ($drivers->isEmpty() || $vehicles->isEmpty()) {
             $this->command->warn('Please seed Drivers and Vehicles first!');
+
             return;
         }
 
@@ -202,6 +203,6 @@ class WarningSeeder extends Seeder
             Warning::create($warning);
         }
 
-        $this->command->info('Created ' . count($warnings) . ' warnings successfully!');
+        $this->command->info('Created '.count($warnings).' warnings successfully!');
     }
 }

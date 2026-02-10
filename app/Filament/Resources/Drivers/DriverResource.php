@@ -50,7 +50,6 @@ class DriverResource extends Resource
             ->where('company_id', auth()->id());
     }
 
-
     public static function getRelations(): array
     {
         return [

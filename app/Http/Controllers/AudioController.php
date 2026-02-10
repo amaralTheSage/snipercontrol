@@ -1,53 +1,65 @@
 <?php
 
-namespace App\Http\Controllers\API;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Jobs\ProcessVideoRecording;
+use App\Jobs\ProcessAudioRecording;
+use App\Models\AudioRecording;
 use App\Models\Device;
-use App\Models\VideoRecording;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 
-class VideoController extends Controller
+class AudioController extends Controller
 {
     /**
-     * Upload video file from device
+     * Upload audio file from device
      */
     public function upload(Request $request)
     {
+        Log::info(('Upload Áudio: request chegou, device: '.$request->device_id));
         $rules = [
             'device_id' => 'required|exists:devices,id',
-            'video' => 'required|file|mimes:mp4,avi,mov,mkv|max:512000',
+            'audio' => 'required|file|mimetypes:audio/mpeg,audio/wav,audio/aac,audio/mp4,video/mp4,audio/x-m4a,audio/ogg,audio/webm',
             'trip_id' => 'nullable|exists:trips,id',
             'start_lat' => 'nullable|numeric',
             'start_lng' => 'nullable|numeric',
             'warning_id' => 'nullable|exists:warnings,id',
         ];
 
-        $request->validate($rules);
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            Log::error('Erro na validação do áudio:', $validator->errors()->toArray());
+
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        Log::info('Upload Áudio: passou da validação');
 
         try {
             $device = Device::findOrFail($request->device_id);
-            $file = $request->file('video');
+            $file = $request->file('audio');
 
             // Generate unique filename
             $filename = \sprintf(
-                'vehicle_%d_%s_%s.%s',
+                'audio_%d_%s_%s.%s',
                 $device->vehicle_id,
                 now()->format('YmdHis'),
                 Str::random(8),
                 $file->getClientOriginalExtension()
             );
 
+            Log::info('Upload Áudio: gerou filename');
+
             // Store file
             $path = $file->storeAs(
-                "videos/{$device->vehicle_id}/".now()->format('Y/m'),
+                "audios/{$device->vehicle_id}/".now()->format('Y/m'),
                 $filename,
-                'local',
-
+                'local'
             );
+
+            Log::info('Upload Áudio: guardou arquivo');
 
             // Get the vehicle's latest ongoing trip
             $trip = $device->vehicle->trips()
@@ -56,26 +68,29 @@ class VideoController extends Controller
                 ->first();
 
             // Create recording record
-            $recording = VideoRecording::create([
+            $recording = AudioRecording::create([
                 'vehicle_id' => $device->vehicle_id,
                 'driver_id' => $device->vehicle->currentDriver?->id,
                 'device_id' => $device->id,
                 'trip_id' => $trip?->id,
                 'filename' => $filename,
                 'storage_path' => $path,
-                'storage_disk' => 'minio',
+                'storage_disk' => 'local',
                 'file_size' => $file->getSize(),
                 'warning_id' => $request->warning_id,
                 'start_latitude' => $request->start_lat,
                 'start_longitude' => $request->start_lng,
+                'status' => 'pending', // Explicitly set pending
             ]);
+            Log::info('Upload Áudio: criou audio');
 
-            // TODO: Queue video processing job (extract metadata, generate thumbnail, etc.)
-            ProcessVideoRecording::dispatch($recording);
+            // Queue audio processing job (extract metadata)
+            ProcessAudioRecording::dispatch($recording);
+            Log::info('Upload Áudio: processou audio ');
 
             return response()->json([
                 'success' => true,
-                'message' => 'Video uploaded successfully',
+                'message' => 'Audio uploaded successfully',
                 'data' => [
                     'recording_id' => $recording->id,
                     'status' => $recording->status,
@@ -90,46 +105,20 @@ class VideoController extends Controller
         }
     }
 
-    public function show(VideoRecording $recording)
+    public function show(AudioRecording $recording)
     {
-        // TODO: add proper company/tenant authorization here
+        // TODO: Add tenant authorization here
 
         if (! Storage::disk($recording->storage_disk)->exists($recording->storage_path)) {
             abort(404);
         }
 
-        $stream = Storage::disk($recording->storage_disk)
-            ->readStream($recording->storage_path);
+        $path = Storage::disk($recording->storage_disk)
+            ->path($recording->storage_path);
 
-        if ($stream === false) {
-            abort(404);
-        }
-
-        return response()->stream(function () use ($stream) {
-            fpassthru($stream);
-            fclose($stream);
-        }, 200, [
-            'Content-Type' => Storage::disk($recording->storage_disk)
-                ->mimeType($recording->storage_path),
+        return response()->file($path, [
+            'Content-Type' => mime_content_type($path),
             'Accept-Ranges' => 'bytes',
-            'Cache-Control' => 'public, max-age=3600',
         ]);
-    }
-
-    /**
-     * Upload video in chunks (for large files)
-     */
-    public function uploadChunk(Request $request)
-    {
-        // TODO: Implement chunked upload logic
-        // This allows devices to upload large videos in smaller pieces
-    }
-
-    /**
-     * Mark upload as complete and trigger processing
-     */
-    public function completeUpload(Request $request)
-    {
-        // TODO: Finalize chunked upload and start processing
     }
 }

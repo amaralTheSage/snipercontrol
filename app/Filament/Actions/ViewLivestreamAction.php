@@ -33,7 +33,6 @@ class ViewLivestreamAction extends Action
             });
     }
 
-
     /**
      * Set the stream URL
      */

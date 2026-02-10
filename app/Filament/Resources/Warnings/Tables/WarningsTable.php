@@ -6,7 +6,6 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\IconColumn;
@@ -27,8 +26,8 @@ class WarningsTable
                 TextColumn::make('type')
                     ->label('Tipo')
                     ->badge()
-                    ->formatStateUsing(fn($record) => $record->getTypeLabel())
-                    ->color(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn ($record) => $record->getTypeLabel())
+                    ->color(fn (string $state): string => match ($state) {
                         'route_diversion' => 'warning',
                         'cargo_theft' => 'danger',
                         'fuel_theft' => 'danger',
@@ -67,7 +66,7 @@ class WarningsTable
                     ->searchable()
                     ->sortable()
                     ->placeholder('N/A')
-                    ->description(fn($record) => $record->vehicle?->model),
+                    ->description(fn ($record) => $record->vehicle?->model),
 
                 // TextColumn::make('location')
                 //     ->label('Local')
@@ -96,7 +95,7 @@ class WarningsTable
                     ->label('Data/Hora')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
-                    ->description(fn($record) => $record->occurred_at->diffForHumans()),
+                    ->description(fn ($record) => $record->occurred_at->diffForHumans()),
 
                 TextColumn::make('resolver.name')
                     ->label('Resolvido por')
@@ -137,7 +136,6 @@ class WarningsTable
                     ])
                     ->multiple(),
 
-
                 Filter::make('occurred_at')
                     ->schema([
                         \Filament\Forms\Components\DatePicker::make('occurred_from')
@@ -149,22 +147,22 @@ class WarningsTable
                         return $query
                             ->when(
                                 $data['occurred_from'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('occurred_at', '>=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('occurred_at', '>=', $date),
                             )
                             ->when(
                                 $data['occurred_until'],
-                                fn(Builder $query, $date): Builder => $query->whereDate('occurred_at', '<=', $date),
+                                fn (Builder $query, $date): Builder => $query->whereDate('occurred_at', '<=', $date),
                             );
                     })
                     ->indicateUsing(function (array $data): array {
                         $indicators = [];
 
                         if ($data['occurred_from'] ?? null) {
-                            $indicators[] = 'De: ' . \Carbon\Carbon::parse($data['occurred_from'])->format('d/m/Y');
+                            $indicators[] = 'De: '.\Carbon\Carbon::parse($data['occurred_from'])->format('d/m/Y');
                         }
 
                         if ($data['occurred_until'] ?? null) {
-                            $indicators[] = 'Até: ' . \Carbon\Carbon::parse($data['occurred_until'])->format('d/m/Y');
+                            $indicators[] = 'Até: '.\Carbon\Carbon::parse($data['occurred_until'])->format('d/m/Y');
                         }
 
                         return $indicators;
@@ -176,7 +174,7 @@ class WarningsTable
                     ->label('Resolver')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
-                    ->visible(fn($record) => !$record->isResolved())
+                    ->visible(fn ($record) => ! $record->isResolved())
                     ->schema([
                         Textarea::make('resolution_notes')
                             ->label('Notas de Resolução')
@@ -225,7 +223,7 @@ class WarningsTable
                         ])
                         ->action(function ($records, array $data): void {
                             foreach ($records as $record) {
-                                if (!$record->isResolved()) {
+                                if (! $record->isResolved()) {
                                     $record->markAsResolved(
                                         userId: auth()->id(),
                                         notes: $data['resolution_notes'] ?? null
@@ -235,7 +233,7 @@ class WarningsTable
 
                             \Filament\Notifications\Notification::make()
                                 ->title('Avisos resolvidos com sucesso')
-                                ->body(count($records) . ' aviso(s) marcado(s) como resolvido(s)')
+                                ->body(count($records).' aviso(s) marcado(s) como resolvido(s)')
                                 ->success()
                                 ->send();
                         })
