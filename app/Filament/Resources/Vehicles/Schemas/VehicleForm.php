@@ -49,7 +49,7 @@ class VehicleForm
                         ->nullable()
                         ->createOptionForm([
                             TextInput::make('mac_address')
-                                ->label('Número de Série')
+                                ->label('Endereço MAC')
                                 ->required()
                                 ->unique(ignoreRecord: true),
                         ])
@@ -65,7 +65,7 @@ class VehicleForm
                         ->searchable()
                         ->preload()
                         ->nullable()
-                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->name.' - '.$record->cpf)
+                        ->getOptionLabelFromRecordUsing(fn($record) => $record->name . ' - ' . $record->cpf)
                         ->createOptionForm([
                             FileUpload::make('avatar')
                                 ->hiddenLabel()

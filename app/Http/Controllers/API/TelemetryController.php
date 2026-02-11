@@ -26,6 +26,7 @@ class TelemetryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+
     public function receiveTelemetry(Request $request, string $mac)
     {
         $data = [
@@ -39,6 +40,12 @@ class TelemetryController extends Controller
                 : null,
         ];
 
+        // Log incoming telemetry data
+        Log::info('Incoming telemetry data received', [
+            'mac_address' => $mac,
+            'data' => $data,
+        ]);
+
         $validator = Validator::make($data, [
             'lat' => 'required|numeric|between:-90,90',
             'lon' => 'required|numeric|between:-180,180',
@@ -49,6 +56,10 @@ class TelemetryController extends Controller
         ]);
 
         if ($validator->fails()) {
+            Log::warning('Telemetry validation failed', [
+                'mac_address' => $mac,
+                'errors' => $validator->errors(),
+            ]);
             return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
@@ -67,7 +78,7 @@ class TelemetryController extends Controller
             'ignition_on' => $data['ignition_on'],
         ]);
 
-        $device->vehicle->update([
+        $vehicleUpdateSuccess = $device->vehicle->update([
             'last_latitude' => $data['lat'],
             'last_longitude' => $data['lon'],
             'current_speed' => $data['speed'] ?? 0,
@@ -76,9 +87,27 @@ class TelemetryController extends Controller
             'last_update_at' => now(),
         ]);
 
+        if ($vehicleUpdateSuccess) {
+            Log::info('Vehicle updated successfully', [
+                'vehicle_id' => $device->vehicle->id,
+                'mac_address' => $mac,
+                'updated_fields' => [
+                    'last_latitude' => $data['lat'],
+                    'last_longitude' => $data['lon'],
+                    'current_speed' => $data['speed'] ?? 0,
+                    'fuel_level' => $data['fuel'],
+                    'ignition_on' => $data['ignition_on'],
+                ],
+            ]);
+        } else {
+            Log::error('Vehicle update failed', [
+                'vehicle_id' => $device->vehicle->id,
+                'mac_address' => $mac,
+            ]);
+        }
+
         return response()->json(['success' => true, 'telemetry_event_id' => $event->id], 201);
     }
-
 
     /**
      * Handle trip creation or retrieval based on ignition status

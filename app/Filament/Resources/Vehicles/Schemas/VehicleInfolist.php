@@ -354,7 +354,7 @@ class VehicleInfolist
                     Section::make('Dispositivo')
                         ->schema([
                             TextEntry::make('device.mac_address')
-                                ->label('Número de Série')
+                                ->label('Endereço MAC')
                                 ->placeholder('Nenhum dispositivo')
                                 ->icon('heroicon-o-hashtag')
                                 ->copyable()

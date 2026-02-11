@@ -22,19 +22,19 @@ class DeviceRelationManager extends RelationManager
 
             ->columns([
                 TextColumn::make('mac_address')
-                    ->label('Número de Série')
+                    ->label('Endereço MAC')
                     ->searchable()
                     ->toggleable(),
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->color(fn (string $state) => match ($state) {
+                    ->color(fn(string $state) => match ($state) {
                         'online' => 'success',
                         'offline' => 'danger',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn (string $state) => match ($state) {
+                    ->formatStateUsing(fn(string $state) => match ($state) {
                         'online' => 'Online',
                         'offline' => 'Offline',
                         default => $state,
