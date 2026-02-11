@@ -5,12 +5,14 @@ namespace App\Filament\Resources\Vehicles\Schemas;
 use App\Filament\Actions\ViewLivestreamAction;
 use App\Filament\Infolists\Components\VideoCarousel;
 use App\Filament\Resources\Warnings\WarningResource;
+use App\Services\RelayCommandService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -183,9 +185,11 @@ class VehicleInfolist
                         ->state(function ($record) {
                             $disk = Storage::disk('minio');
 
+
                             // Get all files directly from MinIO
                             $files = $disk->allFiles();
 
+                            $test_file = 'vid_1769583376.mp4';
 
                             // Process videos
                             $videos = collect($files)
@@ -270,7 +274,11 @@ class VehicleInfolist
                             ];
                         })
                         ->columnSpanFull(),
+
+
                 ])->columnSpanFull(),
+
+
 
                 // VehicleInfolist
                 ViewLivestreamAction::make(),

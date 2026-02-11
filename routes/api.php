@@ -68,8 +68,6 @@ Route::post('/livekit/device-token', function (Request $request) {
         ],
     ];
 
-
-
     $jwt = JWT::encode($payload, $apiSecret, 'HS256');
 
     Log::info('ROOM TOKEN: ' . $jwt);

@@ -41,7 +41,7 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/') . '/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -68,8 +68,7 @@ return [
             'bucket' => env('MINIO_BUCKET'),
             'endpoint' => env('MINIO_ENDPOINT'),
             'use_path_style_endpoint' => true, // Important for MinIO!
-            'throw' => false,
-            'url' => env('MINIO_ENDPOINT').'/'.env('MINIO_BUCKET'),
+            'url' => env('MINIO_ENDPOINT') . '/' . env('MINIO_BUCKET'),
             'visibility' => 'private',
         ],
 

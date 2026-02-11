@@ -28,7 +28,6 @@ class TelemetryController extends Controller
      */
     public function receiveTelemetry(Request $request)
     {
-        // Validate incoming data
         $validator = Validator::make($request->all(), [
             'device_id' => 'required',
             'lat' => 'required|numeric|between:-90,90',
@@ -48,7 +47,6 @@ class TelemetryController extends Controller
         }
 
         try {
-            // Find the device
             $device = Device::where('id', $request->device_id)
                 ->orWhere('id', $request->device_id)
                 ->first();
@@ -60,7 +58,6 @@ class TelemetryController extends Controller
                 ], 404);
             }
 
-            // Get or create trip based on ignition status
             $trip = $this->handleTrip($device, $request);
 
             if (! $trip) {
@@ -70,7 +67,6 @@ class TelemetryController extends Controller
                 ], 200);
             }
 
-            // Create telemetry event
             $telemetryEvent = TelemetryEvent::create([
                 'trip_id' => $trip->id,
                 'recorded_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
@@ -81,7 +77,6 @@ class TelemetryController extends Controller
                 'ignition_on' => $request->ignition_on,
             ]);
 
-            // Update trip's end location and calculate distance
             $this->updateTrip($trip, $request);
 
             // Update vehicle
@@ -108,7 +103,7 @@ class TelemetryController extends Controller
                 ],
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Telemetry receiving error: '.$e->getMessage(), [
+            Log::error('Telemetry receiving error: ' . $e->getMessage(), [
                 'device_id' => $request->device_id,
                 'trace' => $e->getTraceAsString(),
             ]);
@@ -294,11 +289,11 @@ class TelemetryController extends Controller
                         $successCount++;
                     } else {
                         $failedCount++;
-                        $errors[] = "Event {$index}: ".json_decode($response->getContent())->message;
+                        $errors[] = "Event {$index}: " . json_decode($response->getContent())->message;
                     }
                 } catch (\Exception $e) {
                     $failedCount++;
-                    $errors[] = "Event {$index}: ".$e->getMessage();
+                    $errors[] = "Event {$index}: " . $e->getMessage();
                 }
             }
 
@@ -313,7 +308,7 @@ class TelemetryController extends Controller
                 ],
             ], 200);
         } catch (\Exception $e) {
-            Log::error('Batch telemetry receiving error: '.$e->getMessage());
+            Log::error('Batch telemetry receiving error: ' . $e->getMessage());
 
             return response()->json([
                 'success' => false,

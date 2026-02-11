@@ -5,8 +5,12 @@ namespace App\Filament\Resources\Vehicles\Pages;
 use App\Filament\Actions\TurnVehicleOffAction;
 use App\Filament\Resources\Vehicles\VehicleResource;
 use App\Filament\Widgets\RouteWidget;
+use App\Services\RelayCommandService;
+use Filament\Actions\Action;
 use Filament\Actions\EditAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\HtmlString;
 
 class ViewVehicle extends ViewRecord
@@ -24,12 +28,12 @@ class ViewVehicle extends ViewRecord
         return new HtmlString(
             '<div class="flex items-center gap-3">
                 <span>Visualizar Veículo</span>
-                <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium rounded-full '.$statusColor.' text-white">
+                <span class="inline-flex items-center gap-2 px-3 py-1 text-xs font-medium rounded-full ' . $statusColor . ' text-white">
                     <span class="relative flex h-2 w-2">
-                        <span class="absolute inline-flex h-full w-full rounded-full '.($isOn ? 'bg-green-300 animate-ping ' : 'bg-gray-300').' opacity-75"></span>
+                        <span class="absolute inline-flex h-full w-full rounded-full ' . ($isOn ? 'bg-green-300 animate-ping ' : 'bg-gray-300') . ' opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
                     </span>
-                    '.$statusText.'
+                    ' . $statusText . '
                 </span>
             </div>'
         );
@@ -38,7 +42,55 @@ class ViewVehicle extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            TurnVehicleOffAction::make(),
+            Action::make('cutoff')
+                ->label('Desligar Motor')
+                ->icon(Heroicon::OutlinedExclamationTriangle)
+                ->color('warning')
+                ->requiresConfirmation()
+                ->modalHeading('Desligar Motor?')
+                ->modalDescription('Isso desativará imediatamente o motor. Tem certeza?')
+                ->action(function ($record) {
+                    $service = new RelayCommandService();
+
+                    if ($service->cutoff($record->device->id)) {
+                        Notification::make()
+                            ->title('Comando Enviado')
+                            ->success()
+                            ->body('Comando de desligamento enviado com sucesso.')
+                            ->send();
+                    } else {
+                        Notification::make()
+                            ->title('Comando Falhou')
+                            ->danger()
+                            ->body('Falha ao enviar comando de desligamento.')
+                            ->send();
+                    }
+                }),
+
+            Action::make('restore')
+                ->label('Ligar Motor')
+                ->icon('heroicon-o-bolt')
+                ->color('success')
+                ->requiresConfirmation()
+                ->modalHeading('Ligar Motor?')
+                ->modalDescription('Isso reativará o motor.')
+                ->action(function ($record) {
+                    $service = new RelayCommandService();
+
+                    if ($service->restore($record->device->id)) {
+                        Notification::make()
+                            ->title('Comando Enviado')
+                            ->success()
+                            ->body('Comando de ativação enviado com sucesso.')
+                            ->send();
+                    } else {
+                        Notification::make()
+                            ->title('Comando Falhou')
+                            ->danger()
+                            ->body('Falha ao enviar comando de ativação.')
+                            ->send();
+                    }
+                }),
             EditAction::make(),
         ];
     }

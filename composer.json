@@ -21,7 +21,8 @@
         "laravel/tinker": "^2.10.1",
         "laravel/wayfinder": "^0.1.9",
         "league/flysystem-aws-s3-v3": "^3.0",
-        "php-ffmpeg/php-ffmpeg": "^1.4"
+        "php-ffmpeg/php-ffmpeg": "^1.4",
+        "php-mqtt/client": "^2.3"
     },
     "require-dev": {
         "laravel/boost": "*",
