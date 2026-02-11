@@ -71,13 +71,6 @@ class VehicleInfolist
                                         'car' => 'warning',
                                         'pickup' => 'danger',
                                         default => 'gray',
-                                    })
-                                    ->icon(fn(string $state): string => match ($state) {
-                                        'truck' => 'heroicon-o-truck',
-                                        'van' => 'heroicon-o-building-office',
-                                        'car' => 'heroicon-m-home',
-                                        'pickup' => 'heroicon-o-cube-transparent',
-                                        default => 'heroicon-o-question-mark-circle',
                                     }),
 
                                 TextEntry::make('status')

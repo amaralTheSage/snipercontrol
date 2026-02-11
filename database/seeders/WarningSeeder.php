@@ -42,7 +42,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Desvio de rota detectado. Veículo saiu da rota programada por mais de 20 minutos.',
-                'location' => 'Rod. Presidente Dutra, Km 225 - Guarulhos, SP',
                 'latitude' => -23.4356,
                 'longitude' => -46.4731,
                 'severity' => 'medium',
@@ -56,7 +55,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Alerta de desvio significativo da rota. Motorista dirigiu para área não autorizada.',
-                'location' => 'Av. Paulista, 1578 - Bela Vista, São Paulo, SP',
                 'latitude' => -23.5613,
                 'longitude' => -46.6563,
                 'severity' => 'high',
@@ -72,7 +70,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Tentativa de roubo de carga relatada. Motorista acionou botão de pânico. Polícia acionada no local. Carga recuperada integralmente.',
-                'location' => 'Rod. Régis Bittencourt, Km 280 - Embu das Artes, SP',
                 'latitude' => -23.6489,
                 'longitude' => -46.8524,
                 'severity' => 'high',
@@ -86,7 +83,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Roubo de carga confirmado. Veículo encontrado abandonado sem a carga. Motorista ileso.',
-                'location' => 'Av. do Estado, 5533 - Ipiranga, São Paulo, SP',
                 'latitude' => -23.5876,
                 'longitude' => -46.6109,
                 'severity' => 'high',
@@ -100,7 +96,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Suspeita de roubo. Veículo parado em local não autorizado por tempo prolongado. Sem contato com motorista.',
-                'location' => 'Rod. Anchieta, Km 23 - São Bernardo do Campo, SP',
                 'latitude' => -23.7276,
                 'longitude' => -46.5731,
                 'severity' => 'high',
@@ -116,7 +111,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Queda abrupta no nível de combustível detectada. Aproximadamente 200 litros de diesel furtados durante a noite.',
-                'location' => 'Av. Cupecê, 3959 - Jardim da Saúde, São Paulo, SP',
                 'latitude' => -23.6247,
                 'longitude' => -46.6428,
                 'severity' => 'medium',
@@ -130,7 +124,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Sensor de combustível indicando vazamento ou furto. Nível caiu de 80% para 20% em 30 minutos sem abastecimento registrado.',
-                'location' => 'R. Vergueiro, 3185 - Vila Mariana, São Paulo, SP',
                 'latitude' => -23.5989,
                 'longitude' => -46.6392,
                 'severity' => 'medium',
@@ -144,7 +137,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Alerta de furto de combustível. Tanque violado durante período noturno.',
-                'location' => 'Av. Sapopemba, 9064 - Sapopemba, São Paulo, SP',
                 'latitude' => -23.5969,
                 'longitude' => -46.4911,
                 'severity' => 'low',
@@ -160,7 +152,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Motorista precisou desviar devido a acidente na pista principal. Rota alternativa aprovada pela central.',
-                'location' => 'Av. Bandeirantes, 2500 - Ipiranga, São Paulo, SP',
                 'latitude' => -23.5825,
                 'longitude' => -46.6064,
                 'severity' => 'low',
@@ -174,7 +165,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Falso frete detectado. Tentativa de roubo através de golpe de carga falsa.',
-                'location' => 'R. Dr. João Ribeiro, 304 - Penha, São Paulo, SP',
                 'latitude' => -23.5283,
                 'longitude' => -46.5411,
                 'severity' => 'high',
@@ -188,7 +178,6 @@ class WarningSeeder extends Seeder
                 'driver_id' => $drivers->random()->id,
                 'vehicle_id' => $vehicles->random()->id,
                 'description' => 'Múltiplas tentativas de acesso ao tanque de combustível detectadas pelos sensores.',
-                'location' => 'Av. Aricanduva, 5555 - Vila Formosa, São Paulo, SP',
                 'latitude' => -23.5611,
                 'longitude' => -46.5136,
                 'severity' => 'high',
@@ -203,6 +192,6 @@ class WarningSeeder extends Seeder
             Warning::create($warning);
         }
 
-        $this->command->info('Created '.count($warnings).' warnings successfully!');
+        $this->command->info('Created ' . count($warnings) . ' warnings successfully!');
     }
 }

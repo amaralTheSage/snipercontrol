@@ -25,6 +25,7 @@ class Trip extends Model
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'distance_km' => 'float',
     ];
 
     public function vehicle(): BelongsTo

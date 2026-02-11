@@ -250,6 +250,15 @@ body {
     @apply bg-card text-card-foreground;
 }
 
+.fi-wi-stats-overview-stat{
+    @apply bg-card;
+}
+
+.fi-sc.fi-sc-has-gap.fi-grid.\@xl\:fi-grid-cols.\!\@lg\:fi-grid-cols.fi-section-content {
+    @apply bg-background;
+}
+
+
 .fi-section {
     @apply bg-card;
 }
