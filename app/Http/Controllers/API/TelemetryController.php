@@ -39,6 +39,8 @@ class TelemetryController extends Controller
             'recorded_at' => 'nullable|date',
         ]);
 
+        Log::info('%--%--%--% Mac: ' . $mac . ' exists: ' . (Device::where('mac_address', $mac)->exists() ? 'yes' : 'no'));
+
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
@@ -47,7 +49,6 @@ class TelemetryController extends Controller
         }
 
         $device = Device::where('mac_address', $mac)->first();
-        Log::info('%--%--%--% Mac: ' . $mac . ' exists: ' . ($device ? 'yes' : 'no'));
 
 
         if (! $device) {
