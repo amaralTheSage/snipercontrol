@@ -172,7 +172,7 @@ class RouteWidget extends Widget
             ] : null,
 
             'device' => $vehicle->device ? [
-                'serial' => $vehicle->device->serial,
+                'mac_address' => $vehicle->device->mac_address,
                 'status' => $vehicle->device->status,
             ] : null,
 

@@ -19,7 +19,7 @@ beforeEach(function () {
 
     // Create a test device with correct fillable fields
     $this->device = Device::create([
-        'serial' => 'TEST_DEVICE_001',
+        'mac_address' => 'TEST_DEVICE_001',
         'vehicle_id' => $this->vehicle->id,
         'status' => 'online',
     ]);

@@ -25,7 +25,7 @@ class DeviceInfolist
                     ->icon('heroicon-o-cpu-chip')
                     ->columns(2)
                     ->schema([
-                        TextEntry::make('serial')
+                        TextEntry::make('mac_address')
                             ->label('Número de Série')
                             ->badge()
                             ->color('primary')

@@ -183,7 +183,7 @@ class DriverInfolist
                                 default => 'heroicon-o-question-mark-circle',
                             }),
 
-                        TextEntry::make('currentVehicle.device.serial')
+                        TextEntry::make('currentVehicle.device.mac_address')
                             ->label('Dispositivo')
                             ->placeholder('Nenhum dispositivo')
                             ->copyable()

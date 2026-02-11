@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->foreignId('vehicle_id')->constrained()->nullOnDelete();
             $table->foreignId('driver_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('device_id')->constrained()->nullOnDelete();
+            $table->foreignUuid('device_id')->constrained()->nullOnDelete();
 
             $table->timestamp('started_at');
             $table->timestamp('ended_at')->nullable();

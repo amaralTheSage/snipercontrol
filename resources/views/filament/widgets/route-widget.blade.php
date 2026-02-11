@@ -524,7 +524,7 @@ createWarningPopupContent(warning) {
                                                                                                             <hr>
                                                                                                             <div class="info-row">
                                                                                                                 <span class="label">Dispositivo:</span>
-                                                                                                                <span class="value">${data.device?.serial || 'N/A'}</span>
+                                                                                                                <span class="value">${data.device?.mac_address || 'N/A'}</span>
                                                                                                             </div>
                                                                                                         </div>
                                                                                                     `;

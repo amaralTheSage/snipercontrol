@@ -20,8 +20,8 @@ class CurrentVehicleDeviceRelationManager extends RelationManager
     {
         return $table
             ->columns([
-                TextColumn::make('serial')
-                    ->label('Serial')
+                TextColumn::make('mac_address')
+                    ->label('mac_address')
                     ->searchable(),
 
                 TextColumn::make('vehicle.plate')
@@ -62,7 +62,7 @@ class CurrentVehicleDeviceRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->heading(null)
-            ->recordTitleAttribute('serial')
+            ->recordTitleAttribute('mac_address')
             ->paginated(false)
             ->searchable(false)
             ->selectable(false)

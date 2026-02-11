@@ -47,7 +47,7 @@ class Map extends Page
                     ] : null,
 
                     'device' => $driver->currentVehicle?->device ? [
-                        'serial' => $driver->currentVehicle->device->serial,
+                        'mac_address' => $driver->currentVehicle->device->mac_address,
                         'status' => $driver->currentVehicleDevice->status,
                     ] : null,
 

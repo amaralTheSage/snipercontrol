@@ -43,12 +43,12 @@ class VehicleForm
                 Section::make('Associados')->schema([
                     Select::make('device_id')
                         ->label('Dispositivo')
-                        ->relationship('device', 'serial')
+                        ->relationship('device', 'mac_address')
                         ->searchable()
                         ->preload()
                         ->nullable()
                         ->createOptionForm([
-                            TextInput::make('serial')
+                            TextInput::make('mac_address')
                                 ->label('Número de Série')
                                 ->required()
                                 ->unique(ignoreRecord: true),

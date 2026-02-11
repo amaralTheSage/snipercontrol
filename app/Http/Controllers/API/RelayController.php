@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Device;
+use Illuminate\Container\Attributes\Log;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log as FacadesLog;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
 
@@ -34,8 +37,10 @@ class RelayController extends Controller
             'device_id' => 'required|string'
         ]);
 
-        $deviceId = $request->device_id;
-        $topic = "vehicle/cmd"; // Match your config
+        $device = Device::findOrFail($request->device_id)->mac_address;
+        $topic = "vehicle/" . $device . "/cmd";
+
+        FacadesLog::info("Sending CUTOFF command to topic: " . $topic);
 
         try {
             $mqtt = $this->getMqttClient();
@@ -68,8 +73,8 @@ class RelayController extends Controller
             'device_id' => 'required|string'
         ]);
 
-        $deviceId = $request->device_id;
-        $topic = "vehicle/cmd";
+        $device = Device::findOrFail($request->device_id)->mac_address;
+        $topic = "vehicle/" . $device . "/cmd";
 
         try {
             $mqtt = $this->getMqttClient();
@@ -101,8 +106,8 @@ class RelayController extends Controller
             'device_id' => 'required|string'
         ]);
 
-        $deviceId = $request->device_id;
-        $topic = "vehicle/cmd";
+        $device = Device::findOrFail($request->device_id)->mac_address;
+        $topic = "vehicle/" . $device . "/cmd";
 
         try {
             $mqtt = $this->getMqttClient();

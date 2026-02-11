@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Device;
 use Illuminate\Support\Facades\Log;
 use PhpMqtt\Client\MqttClient;
 use PhpMqtt\Client\ConnectionSettings;
@@ -10,7 +11,8 @@ class RelayCommandService
 {
     public function sendCommand(string $deviceId, string $command): bool
     {
-        $topic = "vehicle/cmd";
+        $mac_address = Device::findOrFail($deviceId)->mac_address;
+        $topic = "vehicle/" . $mac_address . "/cmd";
 
         try {
             $mqtt = new MqttClient(

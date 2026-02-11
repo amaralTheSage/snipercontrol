@@ -26,10 +26,11 @@ class TelemetryController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function receiveTelemetry(Request $request)
+    public function receiveTelemetry(Request $request, string $mac)
     {
+        Log::info('%--%--%--% Received telemetry data ', $request->toArray());
+
         $validator = Validator::make($request->all(), [
-            'device_id' => 'required',
             'lat' => 'required|numeric|between:-90,90',
             'lng' => 'required|numeric|between:-180,180',
             'speed' => 'nullable|numeric|min:0',
@@ -41,80 +42,55 @@ class TelemetryController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
                 'errors' => $validator->errors(),
             ], 422);
         }
 
-        try {
-            $device = Device::where('id', $request->device_id)
-                ->orWhere('id', $request->device_id)
-                ->first();
+        $device = Device::where('mac_address', $mac)->first();
 
-            if (! $device) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Device not found',
-                ], 404);
-            }
-
-            $trip = $this->handleTrip($device, $request);
-
-            if (! $trip) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No active trip and ignition is off',
-                ], 200);
-            }
-
-            $telemetryEvent = TelemetryEvent::create([
-                'trip_id' => $trip->id,
-                'recorded_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
-                'lat' => $request->lat,
-                'lng' => $request->lng,
-                'speed' => $request->speed ?? 0,
-                'fuel' => $request->fuel,
-                'ignition_on' => $request->ignition_on,
-            ]);
-
-            $this->updateTrip($trip, $request);
-
-            // Update vehicle
-            $device->vehicle->update([
-                'last_latitude' => $request->lat,
-                'last_longitude' => $request->lng,
-                'current_speed' => $request->speed ?? 0,
-                'fuel_level' => $request->fuel,
-                'ignition_on' => $request->ignition_on,
-                'last_update_at' => now(),
-            ]);
-
-            // CHECK FOR SUSPICIOUS ACTIVITY
-            $this->warningService->checkForSuspiciousActivity($device, $telemetryEvent, $trip);
-            $this->warningService->checkUnexpectedStop($device, $telemetryEvent);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Telemetry data received successfully',
-                'data' => [
-                    'trip_id' => $trip->id,
-                    'telemetry_event_id' => $telemetryEvent->id,
-                    'status' => $trip->status,
-                ],
-            ], 201);
-        } catch (\Exception $e) {
-            Log::error('Telemetry receiving error: ' . $e->getMessage(), [
-                'device_id' => $request->device_id,
-                'trace' => $e->getTraceAsString(),
-            ]);
-
+        if (! $device) {
             return response()->json([
                 'success' => false,
-                'message' => 'An error occurred while processing telemetry data',
-                'error' => config('app.debug') ? $e->getMessage() : 'Internal server error',
-            ], 500);
+                'message' => 'Device not found',
+            ], 404);
         }
+
+        $trip = $this->handleTrip($device, $request);
+        if (! $trip) {
+            return response()->json(['success' => true, 'message' => 'Ignition off'], 200);
+        }
+
+        $event = TelemetryEvent::create([
+            'trip_id' => $trip->id,
+            'recorded_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
+            'lat' => $request->lat,
+            'lng' => $request->lng,
+            'speed' => $request->speed ?? 0,
+            'fuel' => $request->fuel,
+            'ignition_on' => $request->ignition_on,
+        ]);
+
+        $this->updateTrip($trip, $request);
+
+        $device->vehicle->update([
+            'last_latitude' => $request->lat,
+            'last_longitude' => $request->lng,
+            'current_speed' => $request->speed ?? 0,
+            'fuel_level' => $request->fuel,
+            'ignition_on' => $request->ignition_on,
+            'last_update_at' => now(),
+        ]);
+
+        $this->warningService->checkForSuspiciousActivity($device, $event, $trip);
+        $this->warningService->checkUnexpectedStop($device, $event);
+
+        return response()->json([
+            'success' => true,
+            'trip_id' => $trip->id,
+            'telemetry_event_id' => $event->id,
+        ], 201);
     }
+
 
     /**
      * Handle trip creation or retrieval based on ignition status

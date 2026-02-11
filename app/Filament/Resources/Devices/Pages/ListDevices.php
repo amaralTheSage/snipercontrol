@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Devices\Pages;
 use App\Filament\Resources\Devices\DeviceResource;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\Width;
 
 class ListDevices extends ListRecords
 {
@@ -13,7 +14,7 @@ class ListDevices extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make()->modal()->modalWidth(Width::Medium),
         ];
     }
 }

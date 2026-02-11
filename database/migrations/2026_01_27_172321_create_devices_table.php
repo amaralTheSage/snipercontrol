@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('devices', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
 
-            $table->string('serial')->unique();
+            $table->macAddress('mac_address')->unique();
             $table->foreignId('vehicle_id')->nullable()->constrained()->nullOnDelete();
 
             $table->enum('status', ['online', 'offline'])->default('offline');

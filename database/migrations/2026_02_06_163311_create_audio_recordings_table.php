@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('vehicle_id')->constrained(); // Assuming you have these tables
             $table->foreignId('driver_id')->nullable()->constrained();
-            $table->foreignId('device_id')->constrained();
+            $table->foreignUuid('device_id')->constrained();
             $table->foreignId('trip_id')->nullable()->constrained();
             $table->foreignId('warning_id')->nullable()->constrained();
 

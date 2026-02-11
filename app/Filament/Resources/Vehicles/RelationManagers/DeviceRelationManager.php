@@ -21,7 +21,7 @@ class DeviceRelationManager extends RelationManager
         return $table
 
             ->columns([
-                TextColumn::make('serial')
+                TextColumn::make('mac_address')
                     ->label('Número de Série')
                     ->searchable()
                     ->toggleable(),
@@ -59,7 +59,7 @@ class DeviceRelationManager extends RelationManager
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->heading(null)
-            ->recordTitleAttribute('serial')
+            ->recordTitleAttribute('mac_address')
             ->paginated(false)
             ->searchable(false)
             ->selectable(false)
