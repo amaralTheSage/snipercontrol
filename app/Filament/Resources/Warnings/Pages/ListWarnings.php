@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Warnings\Pages;
 
+use App\Filament\Resources\Warnings\Widgets\WarningSeverityStats;
 use App\Filament\Resources\Warnings\WarningResource;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
@@ -16,16 +17,23 @@ class ListWarnings extends ListRecords
         return [
             'unresolved' => Tab::make('Unresolved')->label('Não Resolvidos')
                 ->modifyQueryUsing(
-                    fn (Builder $query) => $query->whereNull('resolved_at')
+                    fn(Builder $query) => $query->whereNull('resolved_at')
                 ),
 
             'resolved' => Tab::make('Resolved')->label('Resolvidos')
                 ->modifyQueryUsing(
-                    fn (Builder $query) => $query->whereNotNull('resolved_at')
+                    fn(Builder $query) => $query->whereNotNull('resolved_at')
                 ),
 
         ];
     }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [WarningSeverityStats::class];
+    }
+
+
 
     protected function getHeaderActions(): array
     {

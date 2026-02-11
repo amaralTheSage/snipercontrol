@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Warnings;
 
+use App\Filament\Resources\WarningResource\Widgets\WarningSeverityStats;
 use App\Filament\Resources\Warnings\Pages\CreateWarning;
 use App\Filament\Resources\Warnings\Pages\EditWarning;
 use App\Filament\Resources\Warnings\Pages\ListWarnings;
@@ -40,6 +41,7 @@ class WarningResource extends Resource
     {
         return WarningsTable::configure($table);
     }
+
 
     public static function getRelations(): array
     {

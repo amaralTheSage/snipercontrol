@@ -80,7 +80,7 @@ class DashboardStatsOverview extends BaseWidget
 
     protected function getWarningsChart(): array
     {
-        $companyId = Auth::user()->company_id;
+        $companyId = Auth::id();
 
         // Últimos 7 dias
         return collect(range(6, 0))->map(function ($daysAgo) use ($companyId) {
@@ -92,7 +92,7 @@ class DashboardStatsOverview extends BaseWidget
 
     protected function getTripsChart(): array
     {
-        $companyId = Auth::user()->company_id;
+        $companyId = Auth::id();
 
         // Últimos 7 dias
         return collect(range(6, 0))->map(function ($daysAgo) use ($companyId) {
