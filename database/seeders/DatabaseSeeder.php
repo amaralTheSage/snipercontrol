@@ -102,7 +102,7 @@ class DatabaseSeeder extends Seeder
                 // cria device único
                 Device::create([
                     'vehicle_id' => $vehicle->id,
-                    'mac_address' => strtoupper(implode(':', str_split(Str::random(12), 2))),
+                    'mac_address' => strtoupper(implode(':', str_split(bin2hex(random_bytes(6)), 2))),
                     'status' => 'online',
                     'company_id' => $user->id,
                 ]);
