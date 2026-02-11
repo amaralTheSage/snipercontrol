@@ -28,70 +28,55 @@ class TelemetryController extends Controller
      */
     public function receiveTelemetry(Request $request, string $mac)
     {
-        Log::info('%--%--%--% Received telemetry data ', $request->toArray());
+        $data = [
+            'lat' => $request->lat,
+            'lon' => $request->lon,
+            'speed' => $request->speed ?? null,
+            'fuel' => $request->fuel ?? null,
+            'ignition_on' => $request->ignition_on,
+            'recorded_at' => isset($request->timestamp)
+                ? Carbon::createFromTimestamp($request->timestamp)
+                : null,
+        ];
 
-        $validator = Validator::make($request->all(), [
+        $validator = Validator::make($data, [
             'lat' => 'required|numeric|between:-90,90',
-            'lng' => 'required|numeric|between:-180,180',
+            'lon' => 'required|numeric|between:-180,180',
             'speed' => 'nullable|numeric|min:0',
             'fuel' => 'nullable|numeric|min:0|max:100',
             'ignition_on' => 'required|boolean',
             'recorded_at' => 'nullable|date',
         ]);
 
-        Log::info('%--%--%--% Mac: ' . $mac . ' exists: ' . (Device::where('mac_address', $mac)->exists() ? 'yes' : 'no'));
-
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-            ], 422);
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        $device = Device::where('mac_address', $mac)->first();
+        $device = Device::where('mac_address', $mac)->firstOrFail();
 
-
-        if (! $device) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Device not found',
-            ], 404);
-        }
-
-        $trip = $this->handleTrip($device, $request);
-        if (! $trip) {
-            return response()->json(['success' => true, 'message' => 'Ignition off'], 200);
-        }
+        $trip = $this->handleTrip($device, new Request($data));
+        if (! $trip) return response()->json(['success' => true, 'message' => 'Ignition off']);
 
         $event = TelemetryEvent::create([
             'trip_id' => $trip->id,
-            'recorded_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
-            'lat' => $request->lat,
-            'lng' => $request->lng,
-            'speed' => $request->speed ?? 0,
-            'fuel' => $request->fuel,
-            'ignition_on' => $request->ignition_on,
+            'recorded_at' => $data['recorded_at'] ?? now(),
+            'lat' => $data['lat'],
+            'lng' => $data['lon'],
+            'speed' => $data['speed'] ?? 0,
+            'fuel' => $data['fuel'],
+            'ignition_on' => $data['ignition_on'],
         ]);
 
-        $this->updateTrip($trip, $request);
-
         $device->vehicle->update([
-            'last_latitude' => $request->lat,
-            'last_longitude' => $request->lng,
-            'current_speed' => $request->speed ?? 0,
-            'fuel_level' => $request->fuel,
-            'ignition_on' => $request->ignition_on,
+            'last_latitude' => $data['lat'],
+            'last_longitude' => $data['lon'],
+            'current_speed' => $data['speed'] ?? 0,
+            'fuel_level' => $data['fuel'],
+            'ignition_on' => $data['ignition_on'],
             'last_update_at' => now(),
         ]);
 
-        $this->warningService->checkForSuspiciousActivity($device, $event, $trip);
-        $this->warningService->checkUnexpectedStop($device, $event);
-
-        return response()->json([
-            'success' => true,
-            'trip_id' => $trip->id,
-            'telemetry_event_id' => $event->id,
-        ], 201);
+        return response()->json(['success' => true, 'telemetry_event_id' => $event->id], 201);
     }
 
 
@@ -116,7 +101,7 @@ class TelemetryController extends Controller
                     'device_id' => $device->id,
                     'started_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
                     'start_lat' => $request->lat,
-                    'start_lng' => $request->lng,
+                    'start_lng' => $request->lon,
                     'status' => 'ongoing',
                     'distance_km' => 0,
                 ]);
@@ -135,7 +120,7 @@ class TelemetryController extends Controller
             $currentTrip->update([
                 'ended_at' => $request->recorded_at ? Carbon::parse($request->recorded_at) : now(),
                 'end_lat' => $request->lat,
-                'end_lng' => $request->lng,
+                'end_lng' => $request->lon,
                 'status' => 'finished',
             ]);
 
@@ -155,7 +140,7 @@ class TelemetryController extends Controller
     {
         // Update end location
         $trip->end_lat = $request->lat;
-        $trip->end_lng = $request->lng;
+        $trip->end_lng = $request->lon;
 
         // Calculate total distance using Haversine formula
         $distance = $this->calculateTotalDistance($trip);
