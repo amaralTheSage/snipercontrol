@@ -13,7 +13,6 @@ class VehicleListStats extends StatsOverviewWidget
 {
     protected int|string|array $columnSpan = 'full';
 
-    protected int|string|array $columnStart = 2;
 
     protected function getStats(): array
     {
