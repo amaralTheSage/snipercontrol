@@ -268,7 +268,7 @@ body {
 }
 
 .fi-sidebar-header {
-    @apply py-12;
+    @apply pb-8 pt-16 gap-2;
 }
 
 .fi-sidebar-item-label {
