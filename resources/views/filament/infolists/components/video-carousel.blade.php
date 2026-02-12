@@ -2,7 +2,6 @@
     $state = $getState() ?? [];
     $videos = $state['videos'] ?? [];
     $audios = $state['audios'] ?? [];
-
 @endphp
 
 @include('filament.infolists.components.livestream-player')

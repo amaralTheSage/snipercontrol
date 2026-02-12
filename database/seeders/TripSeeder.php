@@ -45,7 +45,7 @@ class TripSeeder extends Seeder
                 'start_lng' => -46.6897700,
                 'end_lat' => null,
                 'end_lng' => null,
-                'distance_km' => 0,
+                'distance_km' => 19.8,
                 'status' => 'ongoing',
             ]);
 
