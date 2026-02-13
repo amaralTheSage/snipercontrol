@@ -1,7 +1,8 @@
 import { useAppearance } from '@/hooks/use-appearance';
 import type { SharedData } from '@/types';
 import { Head, usePage } from '@inertiajs/react';
-import CarouselSection from './landing-components/CarouselSection';
+import 
+CarouselSection from './landing-components/CarouselSection';
 import CTASection from './landing-components/CTASection';
 import FeaturesSection from './landing-components/FeaturesSection';
 import Footer from './landing-components/Footer';

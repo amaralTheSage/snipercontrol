@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Drivers\Schemas;
 
 use App\Filament\Widgets\RouteWidget;
+use Carbon\Carbon;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\RepeatableEntry\TableColumn;
@@ -21,129 +22,70 @@ class DriverInfolist
         return $schema
             ->components([
 
-                Section::make('Perfil do Motorista')
-                    ->icon('heroicon-o-user-circle')
-                    ->columns(4)
-                    ->schema([
-                        ImageEntry::make('avatar_url')
-                            ->hiddenLabel()
-                            ->circular()
-                            ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name))
-                            ->columnSpan(1)
-                            ->imageSize(90),
-
-                        TextEntry::make('name')
-                            ->label('Nome Completo')
-                            ->size(TextSize::Large)
-                            ->weight(FontWeight::Bold)
-                            ->color('primary')
-                            ->columnSpan(2),
-
-                        TextEntry::make('status')
-                            ->hiddenLabel()
-                            ->badge()
-                            ->size(TextSize::Large)
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
-                                'active' => 'Ativo',
-                                'inactive' => 'Inativo',
-                                default => $state,
-                            })
-                            ->color(fn(string $state): string => match ($state) {
-                                'active' => 'success',
-                                'inactive' => 'danger',
-                                default => 'gray',
-                            })
-                            ->icon(fn(string $state): string => match ($state) {
-                                'active' => 'heroicon-o-check-circle',
-                                'inactive' => 'heroicon-o-x-circle',
-                                default => 'heroicon-o-question-mark-circle',
-                            }),
-
-                        TextEntry::make('cpf')
-                            ->label('CPF')
-                            ->icon('heroicon-o-identification')
-                            ->copyable()
-                            ->copyMessage('CPF copiado!')
-                            ->weight(FontWeight::Medium)
-                            ->columnSpan(2)
-                            ->formatStateUsing(
-                                fn(string $state): string => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $state)
-                            ),
-
-                        TextEntry::make('phone')
-                            ->label('Telefone')
-                            ->icon('heroicon-o-phone')
-                            ->columnSpan(2)
-                            ->placeholder('Não informado')
-                            ->copyable()
-                            ->copyMessage('Telefone copiado!')
-                            ->url(fn($state) => $state ? 'tel:' . $state : null)
-                            ->formatStateUsing(
-                                fn(?string $state): ?string => $state ? preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)) : null
-                            ),
-
-                    ]),
 
                 Group::make([
-                    Section::make('Veículo Atual')
-                        ->icon('heroicon-o-truck')
+                    Section::make('Perfil do Motorista')
+                        ->icon('heroicon-o-user-circle')
                         ->columns(4)
-
                         ->schema([
-                            TextEntry::make('currentVehicle.plate')
-                                ->label('Placa')
-                                ->placeholder('Nenhum veículo')
-                                ->badge()
-                                ->color('primary')
+                            ImageEntry::make('avatar_url')
+                                ->hiddenLabel()
+                                ->circular()
+                                ->defaultImageUrl(fn($record) => 'https://ui-avatars.com/api/?name=' . urlencode($record->name))
+                                ->columnSpan(1)
+                                ->imageSize(90),
+
+                            TextEntry::make('name')
+                                ->label('Nome Completo')
+                                ->size(TextSize::Large)
                                 ->weight(FontWeight::Bold)
-                                ->icon('heroicon-o-hashtag'),
+                                ->color('primary')
+                                ->columnSpan(2),
 
-                            TextEntry::make('currentVehicle.model')
-                                ->label('Modelo')
-                                ->placeholder('-')
-                                ->icon('heroicon-o-cube')
-                                ->weight(FontWeight::Medium),
-
-                            TextEntry::make('currentVehicle.type')
-                                ->label('Tipo')
-                                ->placeholder('-')
+                            TextEntry::make('status')
+                                ->hiddenLabel()
                                 ->badge()
-                                ->formatStateUsing(fn(?string $state): string => match ($state) {
-                                    'truck' => 'Caminhão',
-                                    'van' => 'Van',
-                                    'car' => 'Carro',
-                                    'pickup' => 'Pickup',
-                                    null => '-',
-                                    default => $state,
-                                })
-                                ->color(fn(?string $state): string => match ($state) {
-                                    'truck' => 'info',
-                                    'van' => 'success',
-                                    'car' => 'warning',
-                                    'pickup' => 'danger',
-                                    default => 'gray',
-                                }),
-
-                            TextEntry::make('currentVehicle.status')
-                                ->label('Status do Veículo')
-                                ->placeholder('-')
-                                ->badge()
-                                ->formatStateUsing(fn(?string $state): string => match ($state) {
+                                ->size(TextSize::Large)
+                                ->formatStateUsing(fn(string $state): string => match ($state) {
                                     'active' => 'Ativo',
-                                    'maintenance' => 'Manutenção',
-                                    'blocked' => 'Bloqueado',
-                                    null => '-',
+                                    'inactive' => 'Inativo',
                                     default => $state,
                                 })
-                                ->color(fn(?string $state): string => match ($state) {
+                                ->color(fn(string $state): string => match ($state) {
                                     'active' => 'success',
-                                    'maintenance' => 'warning',
-                                    'blocked' => 'danger',
+                                    'inactive' => 'danger',
                                     default => 'gray',
+                                })
+                                ->icon(fn(string $state): string => match ($state) {
+                                    'active' => 'heroicon-o-check-circle',
+                                    'inactive' => 'heroicon-o-x-circle',
+                                    default => 'heroicon-o-question-mark-circle',
                                 }),
-                        ])
-                        ->hidden(fn($record) => ! $record->currentVehicle)
-                        ->collapsible(),
+
+                            TextEntry::make('cpf')
+                                ->label('CPF')
+                                ->icon('heroicon-o-identification')
+                                ->copyable()
+                                ->copyMessage('CPF copiado!')
+                                ->weight(FontWeight::Medium)
+                                ->columnSpan(2)
+                                ->formatStateUsing(
+                                    fn(string $state): string => preg_replace('/(\d{3})(\d{3})(\d{3})(\d{2})/', '$1.$2.$3-$4', $state)
+                                ),
+
+                            TextEntry::make('phone')
+                                ->label('Telefone')
+                                ->icon('heroicon-o-phone')
+                                ->columnSpan(2)
+                                ->placeholder('Não informado')
+                                ->copyable()
+                                ->copyMessage('Telefone copiado!')
+                                ->url(fn($state) => $state ? 'tel:' . $state : null)
+                                ->formatStateUsing(
+                                    fn(?string $state): ?string => $state ? preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', preg_replace('/\D/', '', $state)) : null
+                                ),
+
+                        ]),
 
                     // Vehicle Details (if assigned)
                     Section::make('Detalhes do Veículo')
@@ -215,56 +157,113 @@ class DriverInfolist
                                 ->since()
                                 ->color('gray'),
                         ])
-                        ->hidden(fn($record) => ! $record->currentVehicle)
-                        ->collapsed(),
-
+                        ->hidden(fn($record) => ! $record->currentVehicle),
                 ]),
 
-                Section::make('Últimos Veículos')
-                    ->columnSpanFull()
-                    ->icon('heroicon-o-clock')
-                    ->schema([
-                        RepeatableEntry::make('latestVehicleHistory')
-                            ->hiddenLabel()
-                            ->table(
-                                [
-                                    TableColumn::make('Placa'),
-                                    TableColumn::make('Modelo'),
-                                    TableColumn::make('De'),
-                                    TableColumn::make('À'),
-                                    TableColumn::make('Duração'),
-                                ]
-                            )
-                            ->schema([
-                                TextEntry::make('vehicle.plate')
-                                    ->label('Placa')
-                                    ->badge()
-                                    ->color('primary')
-                                    ->weight(FontWeight::Bold),
+                Group::make([
+                    Section::make('Veículo Atual')
+                        ->icon('heroicon-o-truck')
+                        ->columns(4)
 
-                                TextEntry::make('vehicle.model')
-                                    ->label('Modelo'),
+                        ->schema([
+                            TextEntry::make('currentVehicle.plate')
+                                ->label('Placa')
+                                ->placeholder('Nenhum veículo')
+                                ->badge()
+                                ->color('primary')
+                                ->weight(FontWeight::Bold)
+                                ->icon('heroicon-o-hashtag'),
 
-                                TextEntry::make('started_at')
-                                    ->label('Início')
-                                    ->dateTime('d/m/Y'),
-                                TextEntry::make('ended_at')
-                                    ->label('Fim')
-                                    ->dateTime('d/m/Y')
-                                    ->placeholder('- '),
-                                TextEntry::make('duration_human')
-                                    ->label('Duração')
-                                    ->badge()
-                                    ->color(
-                                        fn($state) =>
-                                        $state === 'Atual' ? 'success' : 'gray'
-                                    ),
-                            ])
-                            ->columns(5)
-                            ->contained(false),
-                    ])
-                    ->collapsible()
-                    ->collapsed(),
+                            TextEntry::make('currentVehicle.model')
+                                ->label('Modelo')
+                                ->placeholder('-')
+                                ->icon('heroicon-o-cube')
+                                ->weight(FontWeight::Medium),
+
+                            TextEntry::make('currentVehicle.type')
+                                ->label('Tipo')
+                                ->placeholder('-')
+                                ->badge()
+                                ->formatStateUsing(fn(?string $state): string => match ($state) {
+                                    'truck' => 'Caminhão',
+                                    'van' => 'Van',
+                                    'car' => 'Carro',
+                                    'pickup' => 'Pickup',
+                                    null => '-',
+                                    default => $state,
+                                })
+                                ->color(fn(?string $state): string => match ($state) {
+                                    'truck' => 'info',
+                                    'van' => 'success',
+                                    'car' => 'warning',
+                                    'pickup' => 'danger',
+                                    default => 'gray',
+                                }),
+
+                            TextEntry::make('currentVehicle.status')
+                                ->label('Status do Veículo')
+                                ->placeholder('-')
+                                ->badge()
+                                ->formatStateUsing(fn(?string $state): string => match ($state) {
+                                    'active' => 'Ativo',
+                                    'maintenance' => 'Manutenção',
+                                    'blocked' => 'Bloqueado',
+                                    null => '-',
+                                    default => $state,
+                                })
+                                ->color(fn(?string $state): string => match ($state) {
+                                    'active' => 'success',
+                                    'maintenance' => 'warning',
+                                    'blocked' => 'danger',
+                                    default => 'gray',
+                                }),
+                        ])
+                        ->hidden(fn($record) => ! $record->currentVehicle)
+                        ->collapsible(),
+
+
+                    Section::make('Últimos Veículos')
+                        ->icon('heroicon-o-clock')
+
+                        ->schema([
+                            RepeatableEntry::make('latestVehicleHistory')
+                                ->hiddenLabel()
+
+                                ->schema([
+                                    TextEntry::make('vehicle.plate')
+                                        ->badge()
+                                        ->hiddenLabel()
+                                        ->color('primary')
+                                        ->weight(FontWeight::Bold),
+
+                                    TextEntry::make('vehicle.model')
+                                        ->hiddenLabel(),
+
+                                    TextEntry::make('started_at')
+                                        ->hiddenLabel()
+                                        ->formatStateUsing(fn($state, $record) => $state ? 'De ' . Carbon::parse($state)->format('d/m/Y') : 'De -')
+                                        ->helperText(fn($record) => $record->started_at ? 'à ' . Carbon::parse($record->started_at)->format('d/m/Y') : 'à -'),
+
+
+                                    TextEntry::make('duration_human')
+                                        ->hiddenLabel()
+
+                                        ->badge()
+                                        ->color(
+                                            fn($state) =>
+                                            $state === 'Atual' ? 'success' : 'gray'
+                                        ),
+                                ])
+                                ->columns(4)
+                                ->contained(false),
+                        ])
+                        ->collapsible()
+                ]),
+
+
+
+
+
 
 
             ]);
