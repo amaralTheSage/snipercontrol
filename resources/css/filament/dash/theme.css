@@ -271,6 +271,20 @@ body {
     @apply pb-8 pt-16 gap-2;
 }
 
+
+.fi-in-entry  {
+    @apply bg-card;
+}
+
+tr{
+    @apply bg-card;
+}
+
+td{
+    @apply bg-inherit;
+}
+
+
 .fi-sidebar-item-label {
     @apply text-primary-foreground;
 }

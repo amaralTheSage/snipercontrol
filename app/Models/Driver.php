@@ -37,6 +37,18 @@ class Driver extends Model
         return $this->hasOneThrough(Device::class, Vehicle::class, 'current_driver_id', 'vehicle_id');
     }
 
+    public function vehicleHistory(): HasMany
+    {
+        return $this->hasMany(DriverHistory::class);
+    }
+
+    public function latestVehicleHistory(): HasMany
+    {
+        return $this->hasMany(DriverHistory::class)
+            ->latest('started_at')
+            ->limit(5);
+    }
+
     public function warnings(): HasMany
     {
         return $this->hasMany(Warning::class);

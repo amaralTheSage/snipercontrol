@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Vehicles\Schemas;
 use App\Filament\Actions\ViewLivestreamAction;
 use App\Filament\Infolists\Components\VideoCarousel;
 use App\Filament\Resources\Warnings\WarningResource;
+use App\Models\DriverHistory;
 use App\Services\RelayCommandService;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -25,6 +26,18 @@ use Illuminate\Support\Facades\Storage;
 
 class VehicleInfolist
 {
+
+    protected static function formatBytes(int $bytes, int $precision = 2): string
+    {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, $precision) . ' ' . $units[$pow];
+    }
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -176,6 +189,8 @@ class VehicleInfolist
                     ])->columns(2)->columnSpanFull(),
 
 
+
+                    // ... inside your Infolist schema
                     VideoCarousel::make('media_carousel')
                         ->state(function ($record) {
                             $macAddress = $record->device?->mac_address;
@@ -187,27 +202,74 @@ class VehicleInfolist
                                 return ['videos' => [], 'audios' => []];
                             }
 
-                            $disk = Storage::disk('minio');
+                            $videoDisk = Storage::disk('minio');
+                            $audioDisk = Storage::disk('minio_audio');
 
-                            return Cache::remember("vehicle_media_{$record->id}_{$directory}", 300, function () use ($record, $directory, $disk) {
-                                $files = $disk->allFiles($directory);
+                            return Cache::remember("vehicle_media_{$record->id}_{$directory}", 300, function () use ($record, $directory, $videoDisk, $audioDisk) {
 
-                                $videos = collect($files)
+                                // 1. Pre-fetch Driver History to avoid N+1 queries loop
+                                // We load only necessary fields and eager load the driver name
+                                $driverHistory = DriverHistory::query()
+                                    ->where('vehicle_id', $record->id)
+                                    ->with('driver:id,name')
+                                    ->orderBy('started_at')
+                                    ->get();
+
+                                // Helper to find driver in memory
+                                $getDriverAtTimestamp = function (int $timestamp) use ($driverHistory) {
+                                    $fileTime = Carbon::createFromTimestamp($timestamp);
+
+                                    $history = $driverHistory->first(function ($log) use ($fileTime) {
+                                        return $log->started_at <= $fileTime &&
+                                            ($log->ended_at === null || $log->ended_at > $fileTime);
+                                    });
+
+                                    return $history?->driver?->name ?? 'Desconhecido';
+                                };
+
+                                // ==================== VIDEOS ====================
+                                $videoFiles = $videoDisk->allFiles($directory);
+
+                                $videos = collect($videoFiles)
                                     ->filter(function ($path) {
                                         $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
-                                        // Skip thumbnails and non-video files
-                                        return in_array($ext, ['mp4', 'webm', 'mov']) && !str_contains($path, '_thumb');
+                                        return in_array($ext, ['mp4', 'webm', 'mov', 'avi', 'mkv']) && !str_contains($path, '_thumb');
                                     })
-                                    ->map(function ($path) use ($disk) {
+                                    ->map(function ($path) use ($videoDisk, $record, $getDriverAtTimestamp) {
                                         $filename = basename($path);
 
-                                        // Parse timestamp (vid_1770832661.mp4)
-                                        $timestamp = preg_match('/vid_(\d+)/', $filename, $matches) ? (int)$matches[1] : time();
+                                        // Parse timestamp
+                                        $timestamp = preg_match('/vid_(\d+)/', $filename, $matches)
+                                            ? (int)$matches[1]
+                                            : time();
 
-                                        // Signed URLs are generated locally (no network request)
-                                        $videoUrl = $disk->temporaryUrl($path, now()->addMinutes(60));
-                                        $thumbPath = str_replace(['.mp4', '.webm', '.mov'], '_thumb.jpg', $path);
-                                        $thumbnailUrl = $disk->temporaryUrl($thumbPath, now()->addMinutes(60));
+                                        // Resolve Driver based on History
+                                        $driverName = $getDriverAtTimestamp($timestamp);
+
+                                        // Generate signed URLs
+                                        try {
+                                            $videoUrl = $videoDisk->temporaryUrl($path, now()->addMinutes(60));
+                                        } catch (\Exception $e) {
+                                            $videoUrl = $videoDisk->url($path);
+                                        }
+
+                                        $thumbPath = preg_replace('/\.(mp4|webm|mov|avi|mkv)$/i', '_thumb.jpg', $path);
+
+                                        try {
+                                            $thumbnailUrl = $videoDisk->exists($thumbPath)
+                                                ? $videoDisk->temporaryUrl($thumbPath, now()->addMinutes(60))
+                                                : null;
+                                        } catch (\Exception $e) {
+                                            $thumbnailUrl = null;
+                                        }
+
+                                        // Get file size
+                                        try {
+                                            $size = $videoDisk->size($path);
+                                            $sizeHuman = $size ? self::formatBytes($size) : '---';
+                                        } catch (\Exception $e) {
+                                            $sizeHuman = '---';
+                                        }
 
                                         return [
                                             'id' => md5($path),
@@ -216,10 +278,10 @@ class VehicleInfolist
                                             'url' => $videoUrl,
                                             'thumbnail_url' => $thumbnailUrl,
                                             'duration' => 'N/A',
-                                            'size' => '---',
+                                            'size' => $sizeHuman,
                                             'date' => \Carbon\Carbon::createFromTimestamp($timestamp)->format('d/m/Y H:i'),
-                                            'driver' => 'Unknown',
-                                            'vehicle' => 'Unknown',
+                                            'driver' => $driverName, // <--- Now using history
+                                            'vehicle' => $record->plate ?? 'Desconhecido',
                                             'status' => 'ready',
                                         ];
                                     })
@@ -227,24 +289,58 @@ class VehicleInfolist
                                     ->values()
                                     ->toArray();
 
-                                // Mapping audios from your DB relation
-                                $audios = $record->audioRecordings()
-                                    ->with(['driver', 'vehicle'])
-                                    ->latest()
-                                    ->get()
-                                    ->map(fn($audio) => [
-                                        'id' => $audio->id,
-                                        'type' => 'audio',
-                                        'title' => $audio->filename ?? 'Audio Recording',
-                                        'url' => route('audios.show', $audio->id),
-                                        'thumbnail_url' => null,
-                                        'duration' => $audio->duration_human,
-                                        'size' => $audio->file_size_human,
-                                        'date' => $audio->created_at->format('d/m/Y H:i'),
-                                        'driver' => $audio->driver?->name,
-                                        'vehicle' => $audio->vehicle?->plate,
-                                        'status' => 'ready',
-                                    ])
+                                // ==================== AUDIOS ====================
+                                $audioFiles = $audioDisk->allFiles($directory);
+
+                                $audios = collect($audioFiles)
+                                    ->filter(function ($path) {
+                                        $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                                        return in_array($ext, ['mp3', 'wav', 'ogg', 'm4a', 'aac']);
+                                    })
+                                    ->map(function ($path) use ($audioDisk, $record, $getDriverAtTimestamp) {
+                                        $filename = basename($path);
+
+                                        // Parse timestamp
+                                        $timestamp = preg_match('/aud_(\d+)/', $filename, $matches)
+                                            ? (int)$matches[1]
+                                            : (preg_match('/_(\d{10})/', $filename, $matches2)
+                                                ? (int)$matches2[1]
+                                                : time());
+
+                                        // Resolve Driver based on History
+                                        $driverName = $getDriverAtTimestamp($timestamp);
+
+                                        // Generate signed URL
+                                        try {
+                                            $audioUrl = $audioDisk->temporaryUrl($path, now()->addMinutes(60));
+                                        } catch (\Exception $e) {
+                                            $audioUrl = $audioDisk->url($path);
+                                        }
+
+                                        // Get file size
+                                        try {
+                                            $size = $audioDisk->size($path);
+                                            $sizeHuman = $size ? self::formatBytes($size) : '---';
+                                        } catch (\Exception $e) {
+                                            $sizeHuman = '---';
+                                        }
+
+                                        return [
+                                            'id' => md5($path),
+                                            'type' => 'audio',
+                                            'title' => $filename,
+                                            'url' => $audioUrl,
+                                            'thumbnail_url' => null,
+                                            'duration' => 'N/A',
+                                            'size' => $sizeHuman,
+                                            'date' => \Carbon\Carbon::createFromTimestamp($timestamp)->format('d/m/Y H:i'),
+                                            'driver' => $driverName, // <--- Now using history
+                                            'vehicle' => $record->plate ?? 'Desconhecido',
+                                            'status' => 'ready',
+                                        ];
+                                    })
+                                    ->sortByDesc('date')
+                                    ->values()
                                     ->toArray();
 
                                 return [

@@ -63,13 +63,11 @@
                             <div class="text-lg font-medium text-card-foreground" x-text="currentMedia?.duration"></div>
                         </div>
                     </div>
-                    <div class="mt-3 flex items-center gap-4 text-sm text-gray-400 flex-wrap">
+                    <div class="mt-3 flex items-center justify-between text-sm text-gray-400 flex-wrap">
                         <span x-show="currentMedia?.driver">
-                            Motorista: <span class="text-card-foreground" x-text="currentMedia?.driver"></span>
+                            Motorista: <span class="text-card-foreground" x-text="currentMedia?.driver"></span> 
                         </span>
-                        <span x-show="currentMedia?.vehicle">
-                            Veículo: <span class="text-card-foreground" x-text="currentMedia?.vehicle"></span>
-                        </span>
+                       
                         <span x-show="currentMedia?.size">
                             <span x-text="currentMedia?.size"></span>
                         </span>
@@ -404,6 +402,8 @@
                 playMedia(media) {
                     if (media.status !== 'ready' && media.type === 'video') return;
                     this.currentMedia = media;
+
+
                     this.$nextTick(() => {
                         const player = this.$refs.mediaPlayer;
                         if (!player) return;
@@ -417,6 +417,7 @@
                 },
 
                 init() {
+
                     const containers = [this.$refs.timelineContainer, this.$refs.audioTimelineContainer];
                     containers.forEach(container => {
                         if (container) {

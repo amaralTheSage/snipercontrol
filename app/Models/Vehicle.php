@@ -58,6 +58,11 @@ class Vehicle extends Model
         return $this->hasMany(Warning::class);
     }
 
+    public function driverHistory(): HasMany
+    {
+        return $this->hasMany(DriverHistory::class);
+    }
+
     public function company(): BelongsTo
     {
         return $this->belongsTo(User::class, 'company_id', 'id');
