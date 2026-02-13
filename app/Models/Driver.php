@@ -23,8 +23,8 @@ class Driver extends Model
     public function getAvatarUrlAttribute(): string
     {
         return $this->avatar
-            ? asset('storage/'.$this->avatar)
-            : 'https://ui-avatars.com/api/?name='.urlencode($this->name);
+            ? asset('storage/' . $this->avatar)
+            : 'https://ui-avatars.com/api/?name=' . urlencode($this->name);
     }
 
     public function currentVehicle()
@@ -45,5 +45,10 @@ class Driver extends Model
     public function company(): BelongsTo
     {
         return $this->belongsTo(User::class, 'company_id', 'id');
+    }
+
+    public function trips(): HasMany
+    {
+        return $this->hasMany(Trip::class);
     }
 }

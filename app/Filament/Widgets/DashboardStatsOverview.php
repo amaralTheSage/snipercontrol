@@ -2,6 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\Vehicles\VehicleResource;
+use App\Filament\Resources\Warnings\WarningResource;
 use App\Models\Trip;
 use App\Models\Vehicle;
 use App\Models\Warning;
@@ -17,24 +19,24 @@ class DashboardStatsOverview extends BaseWidget
     {
         $companyId = Auth::id();
 
-        // 1. Avisos não resolvidos (total)
+        // 1. Avisos não resolvidos
         $unresolvedWarnings = Warning::whereHas('vehicle', fn($q) => $q->where('company_id', $companyId))
             ->unresolved()
             ->count();
 
-        // 2. Avisos não resolvidos de alta severidade
+        // 2. Avisos Críticos
         $criticalWarnings = Warning::whereHas('vehicle', fn($q) => $q->where('company_id', $companyId))
             ->unresolved()
             ->where('severity', 'high')
             ->count();
 
-        // 3. Total de veículos + em manutenção
+        // 3. Veículos
         $totalVehicles = Vehicle::where('company_id', $companyId)->count();
         $maintenanceVehicles = Vehicle::where('company_id', $companyId)
             ->where('status', 'maintenance')
             ->count();
 
-        // 5. Viagens em andamento
+        // 4. Viagens
         $ongoingTrips = Trip::whereHas('vehicle', fn($q) => $q->where('company_id', $companyId))
             ->where('status', 'ongoing')
             ->count();
@@ -44,7 +46,11 @@ class DashboardStatsOverview extends BaseWidget
                 ->description('Pendentes de resolução')
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
                 ->color($unresolvedWarnings > 0 ? 'warning' : 'success')
-                ->chart([2, 3, 4, 6, 5, 7, 9]),
+                ->chart([2, 3, 4, 6, 5, 7, 9])
+                // Filtra por status 'unresolved' ou 'pending' (ajuste o nome do seu filtro)
+                ->url(WarningResource::getUrl('index', [
+                    'tab' => 'unresolved',
+                ])),
 
             Stat::make('Avisos Críticos', $criticalWarnings)
                 ->description('Alta severidade')
@@ -53,7 +59,12 @@ class DashboardStatsOverview extends BaseWidget
                 ->chart([3, 1, 0, 2, 2, 1, 0])
                 ->extraAttributes([
                     'class' => $criticalWarnings > 0 ? 'animate-pulse' : '',
-                ]),
+                ])
+                // Filtra por severidade High
+                ->url(WarningResource::getUrl('index', [
+                    'filters[severity][values][0]' => 'high',
+                    'tab' => 'unresolved',
+                ])),
 
             Stat::make('Veículos', $totalVehicles)
                 ->description(
@@ -67,14 +78,18 @@ class DashboardStatsOverview extends BaseWidget
                         : 'heroicon-o-check-circle'
                 )
                 ->color($maintenanceVehicles > 0 ? 'warning' : 'primary')
-                ->chart([3, 5, 4, 6, 5, 7, 5]),
-
+                ->chart([3, 5, 4, 6, 5, 7, 5])
+                // Redireciona para a lista de veículos (se quiser filtrar só os em manutenção, adicione o filtro abaixo)
+                ->url(VehicleResource::getUrl('index', $maintenanceVehicles > 0 ? [
+                    'filters[status][values][0]' => 'maintenance'
+                ] : [])),
 
             Stat::make('Viagens Ativas', $ongoingTrips)
                 ->description('no momento')
                 ->descriptionIcon('heroicon-o-truck')
                 ->color($ongoingTrips > 0 ? 'success' : 'gray')
-                ->chart([1, 3, 2, 5, 4, 6]),
+                ->chart([1, 3, 2, 5, 4, 6])
+                ->url("/dash/map"),
         ];
     }
 

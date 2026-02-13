@@ -24,37 +24,40 @@ class Map extends Page
 
     public function mount()
     {
-        // Simulate driver data
         $this->drivers = $this->getDriversProperty();
     }
 
     public function getDriversProperty()
     {
-        return Driver::with([
-            'currentVehicle.device',
-        ])
-            ->get()
-            ->map(function ($driver) {
-                return [
-                    'name' => $driver->name,
-                    'phone' => $driver->phone,
-                    'avatar' => $driver->avatar_url,
-
-                    'vehicle' => $driver->currentVehicle ? [
-                        'id' => $driver->currentVehicle->id,
-                        'plate' => $driver->currentVehicle->plate,
-                        'model' => $driver->currentVehicle->model,
-                    ] : null,
-
-                    'device' => $driver->currentVehicle?->device ? [
-                        'mac_address' => $driver->currentVehicle->device->mac_address,
-                        'status' => $driver->currentVehicleDevice->status,
-                    ] : null,
-
-                    // TEMP simulated coordinates
-                    'lat' => fake()->latitude(-23.7, -23.4),  // São Paulo latitude range
-                    'lng' => fake()->longitude(-46.8, -46.4),
-                ];
-            });
+        return Driver::with(['currentVehicle', 'currentVehicleDevice', 'trips'])->get()->map(function ($driver) {
+            return [
+                'id' => $driver->id,
+                'name' => $driver->name,
+                'phone' => $driver->phone,
+                'avatar' => $driver->avatar_url,
+                'lat' => $driver->currentVehicle->last_latitude,
+                'lng' => $driver->currentVehicle->last_longitude,
+                'vehicle' => [
+                    'id' => $driver->currentVehicle?->id,
+                    'model' => $driver->currentVehicle?->model,
+                    'plate' => $driver->currentVehicle?->plate,
+                    'ignition_on' => $driver->currentVehicle?->ignition_on,
+                    'current_speed' => $driver->currentVehicle?->current_speed,
+                    'fuel_level' => $driver->currentVehicle?->fuel_level,
+                ],
+                'device' => [
+                    'status' => $driver->currentVehicleDevice?->status,
+                ],
+                'trips' => $driver->trips->map(function ($trip) {
+                    return [
+                        'id' => $trip->id,
+                        'started_at' => $trip->started_at,
+                        'ended_at' => $trip->ended_at,
+                        'distance_km' => $trip->distance_km,
+                        'status' => $trip->status,
+                    ];
+                })->toArray(),
+            ];
+        });
     }
 }
